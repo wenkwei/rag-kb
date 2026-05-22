@@ -163,9 +163,9 @@
 
             <!-- 文档列表 -->
             <div class="flex-1 overflow-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-center border-collapse">
                     <thead class="bg-slate-50 sticky top-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
-                        <tr>
+                        <tr class="text-center">
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文件大小</th>
@@ -829,7 +829,7 @@ macOS系统：
 
                 return `
                     <tr class="hover:bg-slate-50 transition-colors group">
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 text-left">
                             <div class="flex items-center gap-3">
                                 <div class="p-2 ${tc.icon} rounded-lg">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
