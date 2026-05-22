@@ -121,7 +121,14 @@
             <!-- 文档列表标题 -->
             <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
                 <h2 class="text-base font-bold text-slate-800">文档列表</h2>
-                <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
+                <div class="flex items-center gap-3">
+                    <button id="batch-delete-btn" onclick="batchDelete()" class="hidden px-3 py-1.5 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-all shadow-sm items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        <span>批量删除</span>
+                        <span id="selected-count" class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">0</span>
+                    </button>
+                    <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
+                </div>
             </div>
 
             <!-- 筛选栏 -->
@@ -166,6 +173,9 @@
                 <table class="w-full text-center border-collapse">
                     <thead class="bg-slate-50 sticky top-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
                         <tr class="text-center">
+                            <th class="px-4 py-4 w-10">
+                                <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                            </th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文件大小</th>
@@ -176,7 +186,7 @@
                     </thead>
                     <tbody id="doc-list-body" class="divide-y divide-slate-100">
                         <tr id="empty-row">
-                            <td colspan="5" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td>
+                            <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td>
                         </tr>
                     </tbody>
                 </table>
@@ -349,6 +359,7 @@
         let allDocuments = [];
         let filterType = '';
         let filterStatus = '';
+        let selectedDocs = new Set();
 
         // ============ 文档预览 ============
         const DEMO_PREVIEW = {
@@ -782,6 +793,7 @@ macOS系统：
             if (filterType) filtered = filtered.filter(d => d.type === filterType);
             if (filterStatus) filtered = filtered.filter(d => d.status === filterStatus);
             renderDocumentList(filtered);
+            document.getElementById('select-all-checkbox').checked = false;
         }
 
         // 点击页面其他区域关闭下拉菜单
@@ -816,7 +828,7 @@ macOS系统：
             badge.textContent = `共 ${docs.length} 个文档`;
 
             if (docs.length === 0) {
-                tbody.innerHTML = `<tr id="empty-row"><td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td></tr>`;
+                tbody.innerHTML = `<tr id="empty-row"><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td></tr>`;
                 return;
             }
 
@@ -828,7 +840,10 @@ macOS系统：
                 const sc = statusConfig[doc.status] || statusConfig.completed;
 
                 return `
-                    <tr class="hover:bg-slate-50 transition-colors group">
+                    <tr class="hover:bg-slate-50 transition-colors group ${selectedDocs.has(doc.filename) ? 'bg-blue-50/50' : ''}" data-filename="${doc.filename}">
+                        <td class="px-4 py-4 w-10">
+                            <input type="checkbox" onchange="toggleSelectDoc('${doc.filename}')" ${selectedDocs.has(doc.filename) ? 'checked' : ''} class="row-checkbox w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                        </td>
                         <td class="px-6 py-4 text-left">
                             <div class="flex items-center gap-3">
                                 <div class="p-2 ${tc.icon} rounded-lg">
@@ -858,6 +873,55 @@ macOS系统：
                     </tr>
                 `;
             }).join('');
+        }
+
+        // ============ 批量选择 ============
+        function toggleSelectDoc(filename) {
+            if (selectedDocs.has(filename)) {
+                selectedDocs.delete(filename);
+            } else {
+                selectedDocs.add(filename);
+            }
+            updateBatchDeleteButton();
+            applyFilters();
+        }
+
+        function toggleSelectAll() {
+            const checked = document.getElementById('select-all-checkbox').checked;
+            const filtered = allDocuments.filter(d => {
+                const matchType = !filterType || d.type === filterType;
+                const matchStatus = !filterStatus || d.status === filterStatus;
+                return matchType && matchStatus;
+            });
+            if (checked) {
+                filtered.forEach(d => selectedDocs.add(d.filename));
+            } else {
+                filtered.forEach(d => selectedDocs.delete(d.filename));
+            }
+            updateBatchDeleteButton();
+            applyFilters();
+        }
+
+        function updateBatchDeleteButton() {
+            const btn = document.getElementById('batch-delete-btn');
+            const count = document.getElementById('selected-count');
+            count.textContent = selectedDocs.size;
+            btn.classList.toggle('hidden', selectedDocs.size === 0);
+            btn.classList.toggle('inline-flex', selectedDocs.size > 0);
+        }
+
+        function batchDelete() {
+            const count = selectedDocs.size;
+            if (count === 0) return;
+            if (!confirm(`确定要删除选中的 ${count} 个文档吗？此操作不可撤销。`)) return;
+
+            selectedDocs.forEach(name => {
+                allDocuments = allDocuments.filter(d => d.filename !== name);
+            });
+            selectedDocs.clear();
+            updateBatchDeleteButton();
+            document.getElementById('select-all-checkbox').checked = false;
+            applyFilters();
         }
 
         function confirmDelete(filename) {
