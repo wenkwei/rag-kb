@@ -144,8 +144,15 @@
                 localStorage.setItem('auth_username', data.username);
                 window.location.href = 'admin-dashboard.html';
             } catch (e) {
-                errorText.textContent = '无法连接到服务器，请确认后端已启动';
-                errorBanner.classList.remove('hidden');
+                // 演示模式：后端不可用时使用默认账号
+                if (username === 'admin' && password === 'admin123') {
+                    localStorage.setItem('auth_token', 'demo_token_' + Date.now());
+                    localStorage.setItem('auth_username', '管理员');
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    errorText.textContent = '无法连接到服务器，演示模式请使用 admin / admin123 登录';
+                    errorBanner.classList.remove('hidden');
+                }
             } finally {
                 btn.disabled = false;
                 btnText.textContent = '进入系统';
