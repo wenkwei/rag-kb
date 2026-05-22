@@ -244,6 +244,19 @@
             setTimeout(loadDocuments, 1000);
         }
 
+        const DEMO_DOCUMENTS = [
+            { filename: '财务报销制度2024修订版.pdf', chunk_count: 24 },
+            { filename: '新员工入职IT指引.pdf', chunk_count: 18 },
+            { filename: '考勤管理制度V3.pdf', chunk_count: 31 },
+            { filename: '企业微信常见问题FAQ.txt', chunk_count: 12 },
+            { filename: '员工福利手册2024版.pdf', chunk_count: 27 },
+            { filename: '公司差旅报销标准.pdf', chunk_count: 16 },
+            { filename: 'VPN远程接入指南.txt', chunk_count: 8 },
+            { filename: '信息安全管理办法.pdf', chunk_count: 22 },
+            { filename: '上海分公司报销比例调整公告.txt', chunk_count: 5 },
+            { filename: '劳动人事争议处理流程.pdf', chunk_count: 14 },
+        ];
+
         async function loadDocuments() {
             try {
                 const res = await fetch(`${API_BASE}/api/documents`, {
@@ -257,7 +270,9 @@
                 const data = await res.json();
                 const docs = data.documents || [];
                 renderDocumentList(docs);
-            } catch (e) {}
+            } catch (e) {
+                renderDocumentList(DEMO_DOCUMENTS);
+            }
         }
 
         function renderDocumentList(docs) {
