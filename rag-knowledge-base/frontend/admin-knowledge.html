@@ -106,104 +106,105 @@
         </header>
 
         <!-- 内容区 -->
-        <div class="flex-1 flex flex-col min-w-0 bg-white">
-            <!-- 上传区域 -->
-            <div class="px-6 pt-4 pb-2">
-                <div id="upload-zone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-white hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
-                    <svg class="w-10 h-10 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                    <p class="text-sm font-medium text-slate-600">点击或将文件拖拽至此处上传</p>
-                    <p class="text-xs text-slate-400 mt-1">支持 PDF, TXT (单个文件最大 50MB)</p>
-                    <input id="file-input" type="file" accept=".pdf,.txt" class="hidden" multiple>
+            <div class="flex-1 flex flex-col min-w-0 min-h-0 bg-white">
+                <!-- 上传区域 -->
+                <div class="px-6 pt-4 pb-2 shrink-0">
+                    <div id="upload-zone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-white hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
+                        <svg class="w-10 h-10 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        <p class="text-sm font-medium text-slate-600">点击或将文件拖拽至此处上传</p>
+                        <p class="text-xs text-slate-400 mt-1">支持 PDF, TXT (单个文件最大 50MB)</p>
+                        <input id="file-input" type="file" accept=".pdf,.txt" class="hidden" multiple>
+                    </div>
+                    <div id="upload-status" class="hidden mt-3"></div>
                 </div>
-                <div id="upload-status" class="hidden mt-3"></div>
-            </div>
 
-            <!-- 文档列表标题 -->
-            <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
-                <h2 class="text-base font-bold text-slate-800">文档列表</h2>
-                <div class="flex items-center gap-3">
-                    <button id="batch-delete-btn" onclick="batchDelete()" class="hidden px-3 py-1.5 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-all shadow-sm items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        <span>批量删除</span>
-                        <span id="selected-count" class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">0</span>
-                    </button>
-                    <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
-                </div>
-            </div>
-
-            <!-- 筛选栏 -->
-            <div class="px-6 py-3 border-b border-slate-50 flex flex-wrap items-center gap-3">
-                <div class="relative flex-1 min-w-[300px]">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </span>
-                    <input type="text" id="search-input" placeholder="搜索文档名称 / 内容..." oninput="onFilterChange()" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
-                </div>
-                <!-- 类型筛选 -->
-                <div class="relative ml-auto">
-                    <button onclick="toggleDropdown('type-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
-                        <span id="type-label">全部类型</span>
-                        <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="type-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
-                        <div class="dropdown-option" data-type="" onclick="selectType('')">全部类型</div>
-                        <div class="dropdown-option" data-type="pdf" onclick="selectType('pdf')">PDF</div>
-                        <div class="dropdown-option" data-type="docx" onclick="selectType('docx')">Word</div>
-                        <div class="dropdown-option" data-type="pptx" onclick="selectType('pptx')">PPT</div>
-                        <div class="dropdown-option" data-type="txt" onclick="selectType('txt')">TXT</div>
+                <!-- 文档列表标题 -->
+                <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
+                    <h2 class="text-base font-bold text-slate-800">文档列表</h2>
+                    <div class="flex items-center gap-3">
+                        <button id="batch-delete-btn" onclick="batchDelete()" class="hidden px-3 py-1.5 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-all shadow-sm items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            <span>批量删除</span>
+                            <span id="selected-count" class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">0</span>
+                        </button>
+                        <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
                     </div>
                 </div>
-                <!-- 状态筛选 -->
-                <div class="relative">
-                    <button onclick="toggleDropdown('status-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
-                        <span id="status-label">全部状态</span>
-                        <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="status-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
-                        <div class="dropdown-option" data-status="" onclick="selectStatus('')">全部状态</div>
-                        <div class="dropdown-option" data-status="completed" onclick="selectStatus('completed')">已索引</div>
-                        <div class="dropdown-option" data-status="indexing" onclick="selectStatus('indexing')">索引中</div>
-                        <div class="dropdown-option" data-status="failed" onclick="selectStatus('failed')">索引失败</div>
+
+                <!-- 筛选栏 -->
+                <div class="px-6 py-3 border-b border-slate-50 flex flex-wrap items-center gap-3 shrink-0">
+                    <div class="relative flex-1 min-w-[300px]">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" id="search-input" placeholder="搜索文档名称 / 内容..." oninput="onFilterChange()" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    </div>
+                    <!-- 类型筛选 -->
+                    <div class="relative ml-auto">
+                        <button onclick="toggleDropdown('type-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
+                            <span id="type-label">全部类型</span>
+                            <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="type-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
+                            <div class="dropdown-option" data-type="" onclick="selectType('')">全部类型</div>
+                            <div class="dropdown-option" data-type="pdf" onclick="selectType('pdf')">PDF</div>
+                            <div class="dropdown-option" data-type="docx" onclick="selectType('docx')">Word</div>
+                            <div class="dropdown-option" data-type="pptx" onclick="selectType('pptx')">PPT</div>
+                            <div class="dropdown-option" data-type="txt" onclick="selectType('txt')">TXT</div>
+                        </div>
+                    </div>
+                    <!-- 状态筛选 -->
+                    <div class="relative">
+                        <button onclick="toggleDropdown('status-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
+                            <span id="status-label">全部状态</span>
+                            <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="status-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
+                            <div class="dropdown-option" data-status="" onclick="selectStatus('')">全部状态</div>
+                            <div class="dropdown-option" data-status="completed" onclick="selectStatus('completed')">已索引</div>
+                            <div class="dropdown-option" data-status="indexing" onclick="selectStatus('indexing')">索引中</div>
+                            <div class="dropdown-option" data-status="failed" onclick="selectStatus('failed')">索引失败</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 文档列表 -->
-            <div class="flex-1 overflow-auto custom-scrollbar">
-                <table class="w-full text-center border-collapse">
-                    <thead class="bg-slate-50 sticky top-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
-                        <tr class="text-center">
-                            <th class="px-4 py-4 w-10">
-                                <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                            </th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文件大小</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">最后更新</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">状态</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="doc-list-body" class="divide-y divide-slate-100">
-                        <tr id="empty-row">
-                            <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td>
-                        </tr>
-                    </tbody>
-                </table>
-            <!-- 分页 -->
-            <div id="pagination-bar" class="px-6 py-3 border-t border-slate-100 flex items-center justify-center gap-6">
-                <div class="text-xs text-slate-400">
-                    显示第 <span id="page-start" class="font-semibold text-slate-600">0</span>-<span id="page-end" class="font-semibold text-slate-600">0</span> 条，共 <span id="pagination-total" class="font-semibold text-slate-600">0</span> 条
+                <!-- 文档列表 -->
+                <div class="flex-1 overflow-auto min-h-0 custom-scrollbar">
+                    <table class="w-full text-center border-collapse">
+                        <thead class="bg-slate-50 sticky top-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
+                            <tr class="text-center">
+                                <th class="px-4 py-4 w-10">
+                                    <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                </th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文件大小</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">最后更新</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">状态</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doc-list-body" class="divide-y divide-slate-100">
+                            <tr id="empty-row">
+                                <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="flex items-center gap-1">
-                    <button onclick="goToPage(currentPage - 1)" id="prev-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed" disabled>上一页</button>
-                    <div id="page-numbers" class="flex items-center gap-1"></div>
-                    <button onclick="goToPage(currentPage + 1)" id="next-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed">下一页</button>
+
+                <!-- 分页 (始终固定在底部) -->
+                <div id="pagination-bar" class="px-6 py-3 border-t border-slate-100 flex items-center justify-center gap-6 shrink-0 bg-white">
+                    <div class="text-xs text-slate-400">
+                        显示第 <span id="page-start" class="font-semibold text-slate-600">0</span>-<span id="page-end" class="font-semibold text-slate-600">0</span> 条，共 <span id="pagination-total" class="font-semibold text-slate-600">0</span> 条
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="goToPage(currentPage - 1)" id="prev-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed" disabled>上一页</button>
+                        <div id="page-numbers" class="flex items-center gap-1"></div>
+                        <button onclick="goToPage(currentPage + 1)" id="next-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed">下一页</button>
+                    </div>
                 </div>
-            </div>
             </div>
         </div>
-    </div>
 
     <!-- 删除确认弹窗 -->
     <div id="delete-modal" class="fixed inset-0 bg-black/30 items-center justify-center z-50" style="display:none">
