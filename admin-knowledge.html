@@ -60,7 +60,7 @@
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span class="text-sm font-medium">用户管理</span>
             </a>
-        </nav>
+                    </nav>
 
         <div class="p-6 border-t border-slate-700">
             <div class="flex items-center p-3 bg-slate-800 rounded-xl">
@@ -69,7 +69,7 @@
                     <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
                     <p class="text-[10px] text-slate-400">超级管理员</p>
                 </div>
-                <button onclick="logout()" class="text-slate-400 hover:text-white" title="退出登录">
+                <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </button>
             </div>
@@ -80,35 +80,20 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         <!-- 顶部导航 -->
-        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
-            <div class="flex items-center gap-4">
-                <nav class="flex text-sm text-slate-500" aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                        <li class="inline-flex items-center">
-                            <a href="admin-dashboard.html" class="hover:text-slate-800 flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
-                                仪表盘
-                            </a>
-                        </li>
-                        <li aria-current="page">
-                            <div class="flex items-center">
-                                <svg class="w-6 h-6 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                                <span class="ml-1 font-semibold text-slate-800">知识库管理</span>
-                            </div>
-                        </li>
-                    </ol>
-                </nav>
-            </div>
+	        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+	            <div class="flex items-center gap-4">
+	                <h2 class="text-lg font-bold text-slate-800">知识库管理</h2>
+	            </div>
             <div class="flex items-center gap-3">
                 <span id="header-username" class="text-sm text-slate-500"></span>
                 <button onclick="logout()" class="text-sm text-slate-400 hover:text-red-500 transition-colors">退出</button>
             </div>
         </header>
 
-        <!-- 内容区 -->
-        <div class="flex-1 flex flex-col min-w-0 bg-white">
+        <!-- 内容: flex 列布局，分页在底部自然排列 -->
+        <div class="flex-1 flex flex-col min-h-0 min-w-0 bg-white">
             <!-- 上传区域 -->
-            <div class="px-6 pt-4 pb-2">
+            <div class="px-6 pt-4 pb-2 shrink-0">
                 <div id="upload-zone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-white hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
                     <svg class="w-10 h-10 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                     <p class="text-sm font-medium text-slate-600">点击或将文件拖拽至此处上传</p>
@@ -119,7 +104,7 @@
             </div>
 
             <!-- 文档列表标题 -->
-            <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
                 <h2 class="text-base font-bold text-slate-800">文档列表</h2>
                 <div class="flex items-center gap-3">
                     <button id="batch-delete-btn" onclick="batchDelete()" class="hidden px-3 py-1.5 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-all shadow-sm items-center gap-1.5">
@@ -132,7 +117,7 @@
             </div>
 
             <!-- 筛选栏 -->
-            <div class="px-6 py-3 border-b border-slate-50 flex flex-wrap items-center gap-3">
+            <div class="px-6 py-3 border-b border-slate-50 flex flex-wrap items-center gap-3 shrink-0">
                 <div class="relative flex-1 min-w-[300px]">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -168,8 +153,8 @@
                 </div>
             </div>
 
-            <!-- 文档列表 -->
-            <div class="flex-1 overflow-auto custom-scrollbar">
+            <!-- 文档列表 (可滚动表格) -->
+            <div class="flex-1 overflow-auto min-h-0 custom-scrollbar">
                 <table class="w-full text-center border-collapse">
                     <thead class="bg-slate-50 sticky top-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
                         <tr class="text-center">
@@ -191,8 +176,9 @@
                     </tbody>
                 </table>
             </div>
-            <!-- 分页 -->
-            <div id="pagination-bar" class="px-6 py-3 border-t border-slate-100 flex items-center justify-between">
+
+            <!-- 分页 (shrink-0 保持在底部) -->
+            <div id="pagination-bar" class="px-6 py-3 border-t border-slate-100 flex items-center justify-center gap-6 shrink-0 bg-white">
                 <div class="text-xs text-slate-400">
                     显示第 <span id="page-start" class="font-semibold text-slate-600">0</span>-<span id="page-end" class="font-semibold text-slate-600">0</span> 条，共 <span id="pagination-total" class="font-semibold text-slate-600">0</span> 条
                 </div>
@@ -204,8 +190,7 @@
             </div>
         </div>
     </div>
-
-    <!-- 删除确认弹窗 -->
+<!-- 删除确认弹窗 -->
     <div id="delete-modal" class="fixed inset-0 bg-black/30 items-center justify-center z-50" style="display:none">
         <div class="bg-white rounded-2xl p-6 w-96 shadow-xl">
             <h3 class="text-lg font-bold text-slate-800 mb-2">确认删除</h3>
