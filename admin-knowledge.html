@@ -168,7 +168,7 @@
                         <tr>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">切片数</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文件大小</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">状态</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">操作</th>
                         </tr>
@@ -213,7 +213,7 @@
             <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div><span class="text-slate-400">文档类型</span><p class="font-semibold text-slate-700" id="preview-type">-</p></div>
-                    <div><span class="text-slate-400">切片数量</span><p class="font-semibold text-slate-700" id="preview-chunks">-</p></div>
+                    <div><span class="text-slate-400">文件大小</span><p class="font-semibold text-slate-700" id="preview-size-label">-</p></div>
                     <div><span class="text-slate-400">文件大小</span><p class="font-semibold text-slate-700" id="preview-size">-</p></div>
                     <div><span class="text-slate-400">上传时间</span><p class="font-semibold text-slate-700" id="preview-date">-</p></div>
                     <div><span class="text-slate-400">索引状态</span><p class="font-semibold" id="preview-status">-</p></div>
@@ -331,18 +331,18 @@
         }
 
         const DEMO_DOCUMENTS = [
-            { filename: '财务报销制度2024修订版.pdf', type: 'pdf', status: 'completed', chunk_count: 24 },
-            { filename: '新员工入职IT指引.pdf', type: 'pdf', status: 'completed', chunk_count: 18 },
-            { filename: '考勤管理制度V3.docx', type: 'docx', status: 'completed', chunk_count: 31 },
-            { filename: '企业微信常见问题FAQ.txt', type: 'txt', status: 'completed', chunk_count: 12 },
-            { filename: '员工福利手册2024版.pdf', type: 'pdf', status: 'completed', chunk_count: 27 },
-            { filename: '公司年度总结汇报.pptx', type: 'pptx', status: 'indexing', chunk_count: 0 },
-            { filename: 'VPN远程接入指南.txt', type: 'txt', status: 'completed', chunk_count: 8 },
-            { filename: '信息安全管理办法.pdf', type: 'pdf', status: 'completed', chunk_count: 22 },
-            { filename: '上海分公司报销比例调整公告.txt', type: 'txt', status: 'completed', chunk_count: 5 },
-            { filename: '产品路线图规划.pptx', type: 'pptx', status: 'failed', chunk_count: 0 },
-            { filename: '劳动合同模板.docx', type: 'docx', status: 'completed', chunk_count: 16 },
-            { filename: '人事管理制度汇编.docx', type: 'docx', status: 'indexing', chunk_count: 0 },
+            { filename: '财务报销制度2024修订版.pdf', type: 'pdf', status: 'completed', size: '2.4 MB' },
+            { filename: '新员工入职IT指引.pdf', type: 'pdf', status: 'completed', size: '1.8 MB' },
+            { filename: '考勤管理制度V3.docx', type: 'docx', status: 'completed', size: '1.2 MB' },
+            { filename: '企业微信常见问题FAQ.txt', type: 'txt', status: 'completed', size: '156 KB' },
+            { filename: '员工福利手册2024版.pdf', type: 'pdf', status: 'completed', size: '3.1 MB' },
+            { filename: '公司年度总结汇报.pptx', type: 'pptx', status: 'indexing', size: '8.5 MB' },
+            { filename: 'VPN远程接入指南.txt', type: 'txt', status: 'completed', size: '98 KB' },
+            { filename: '信息安全管理办法.pdf', type: 'pdf', status: 'completed', size: '2.8 MB' },
+            { filename: '上海分公司报销比例调整公告.txt', type: 'txt', status: 'completed', size: '45 KB' },
+            { filename: '产品路线图规划.pptx', type: 'pptx', status: 'failed', size: '5.2 MB' },
+            { filename: '劳动合同模板.docx', type: 'docx', status: 'completed', size: '680 KB' },
+            { filename: '人事管理制度汇编.docx', type: 'docx', status: 'indexing', size: '2.1 MB' },
         ];
 
         let allDocuments = [];
@@ -709,7 +709,7 @@ macOS系统：
             document.getElementById('preview-icon').className = 'p-1.5 rounded-lg ' + (icons[ext] || icons.txt) + ' shrink-0';
             document.getElementById('preview-title').textContent = filename;
             document.getElementById('preview-type').textContent = ({ pdf: 'PDF', docx: 'Word', pptx: 'PPT', txt: 'TXT' })[ext] || ext.toUpperCase();
-            document.getElementById('preview-chunks').textContent = doc.chunk_count + ' 个切片';
+            document.getElementById('preview-size-label').textContent = doc.size || '-';
             document.getElementById('preview-size').textContent = preview.size;
             document.getElementById('preview-date').textContent = preview.date;
             document.getElementById('preview-updated').textContent = preview.updated;
@@ -722,22 +722,19 @@ macOS系统：
             document.getElementById('preview-body').textContent = preview.content;
             // Chunks
             const chunksBody = document.getElementById('preview-chunks-body');
-            if (doc.chunk_count > 0) {
-                const chunkItems = [];
-                for (let i = 1; i <= Math.min(doc.chunk_count, 10); i++) {
-                    const score = (0.82 + Math.random() * 0.15).toFixed(3);
-                    chunkItems.push(`<div class="p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 transition-all">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-slate-400">切片 #${i}</span>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${parseFloat(score)>=0.9?'bg-emerald-50 text-emerald-600':'bg-blue-50 text-blue-600'}">${score}</span>
-                        </div>
-                        <p class="text-xs text-slate-600 leading-relaxed">${preview.content.substring(0,80).split('\n').filter(Boolean)[0] || '文档内容片段...'}...</p>
-                    </div>`);
-                }
-                chunksBody.innerHTML = chunkItems.join('\n') + `<div class="text-center text-xs text-slate-400 py-2">仅展示前10个切片</div>`;
-            } else {
-                chunksBody.innerHTML = '<div class="text-center text-sm text-slate-400 py-8">暂无切片数据</div>';
+            const chunkCount = Math.floor(Math.random() * 8) + 5;
+            const chunkItems = [];
+            for (let i = 1; i <= chunkCount; i++) {
+                const score = (0.82 + Math.random() * 0.15).toFixed(3);
+                chunkItems.push(`<div class="p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-400">切片 #${i}</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${parseFloat(score)>=0.9?'bg-emerald-50 text-emerald-600':'bg-blue-50 text-blue-600'}">${score}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${preview.content.substring(0,80).split('\n').filter(Boolean)[0] || '文档内容片段...'}...</p>
+                </div>`);
             }
+            chunksBody.innerHTML = chunkItems.join('\n') + `<div class="text-center text-xs text-slate-400 py-2">仅展示前${chunkCount}个切片</div>`;
 
             switchPreviewTab('content');
             document.getElementById('preview-panel').classList.remove('translate-x-full');
@@ -842,7 +839,7 @@ macOS系统：
                         <td class="px-6 py-4">
                             <span class="px-2 py-0.5 text-xs font-bold ${tc.color} rounded">${tc.label}</span>
                         </td>
-                        <td class="px-6 py-4 text-sm text-slate-500">${doc.chunk_count} 个切片</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">${doc.size || '-'}</td>
                         <td class="px-6 py-4">
                             <span class="px-2 py-1 rounded-full text-[11px] font-bold border ${sc.color}">${sc.label}</span>
                         </td>
