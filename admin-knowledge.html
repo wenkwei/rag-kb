@@ -258,21 +258,18 @@
         ];
 
         async function loadDocuments() {
+            // 立即显示演示数据
+            renderDocumentList(DEMO_DOCUMENTS);
+            // 后台尝试从API加载真实数据
             try {
                 const res = await fetch(`${API_BASE}/api/documents`, {
                     headers: { 'Authorization': `Bearer ${authToken()}` },
                 });
-                if (res.status === 401) {
-                    localStorage.removeItem('auth_token');
-                    window.location.href = 'admin-login.html';
-                    return;
-                }
+                if (res.status === 401) return;
                 const data = await res.json();
                 const docs = data.documents || [];
-                renderDocumentList(docs);
-            } catch (e) {
-                renderDocumentList(DEMO_DOCUMENTS);
-            }
+                if (docs.length > 0) renderDocumentList(docs);
+            } catch (e) {}
         }
 
         function renderDocumentList(docs) {
