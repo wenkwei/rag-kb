@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档预览详情 - 浏览器查看版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 自定义滚动条样式，增强精致感 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+
+        /* 磨砂玻璃效果背景遮罩 */
+        .glass-overlay {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        /* 占位符渐变效果 */
+        .placeholder-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+    <!-- 模拟背景：问答界面 -->
+    <div class="fixed inset-0 flex items-center justify-center pointer-events-none">
+        <div class="text-slate-300 text-6xl font-black rotate-12 select-none opacity-20">
+            Q&A SYSTEM BACKGROUND
+        </div>
+    </div>
+
+    <!-- 模态框容器 -->
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 glass-overlay">
+        
+        <!-- 模态框主体 (宽度固定 800px) -->
+        <div class="bg-white w-full max-w-[800px] h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+            
+            <!-- 顶部标题栏 -->
+            <header class="px-8 py-6 border-b border-slate-100 shrink-0">
+                <div class="flex justify-between items-start mb-3">
+                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+                        2024年度企业数字化转型战略白皮书
+                    </h1>
+                    <button class="p-1 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 uppercase">
+                        战略规划部
+                    </span>
+                    <div class="flex items-center text-sm text-slate-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 mr-2"></span>
+                        版本: <span class="ml-1 text-slate-600 font-medium">v2.4.0</span>
+                    </div>
+                    <div class="flex items-center text-sm text-slate-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 mr-2"></span>
+                        更新时间: <span class="ml-1 text-slate-600 font-medium">2024-05-12 14:30</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 中间内容滚动区域 -->
+            <main class="flex-1 overflow-hidden flex flex-col md:flex-row">
+                
+                <!-- 左侧：文档正文 (带滚动条) -->
+                <section class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                    <div class="max-w-none">
+                        <p class="text-slate-600 leading-relaxed mb-8">
+                            数字化转型已成为现代企业生存与发展的必由之路。本报告通过对行业趋势的深度解析，结合我司业务现状，提出了“云端协同、智能驱动”的总体战略架构。
+                        </p>
+
+                        <!-- 图片占位符：架构图 -->
+                        <figure class="mb-8">
+                            <div class="placeholder-bg w-full h-64 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 transition-all hover:border-blue-200 group">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                                </svg>
+                                <span class="text-sm font-medium">图 1.1：数字化转型核心架构体系图</span>
+                                <span class="text-[10px] mt-1 uppercase tracking-widest opacity-40">System Architecture Diagram</span>
+                            </div>
+                        </figure>
+
+                        <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                            <span class="w-1 h-5 bg-blue-500 rounded-full mr-3"></span>
+                            战略核心要素
+                        </h3>
+                        <p class="text-slate-600 mb-4 leading-relaxed">
+                            数字化转型的核心在于数据价值的释放。我们不仅要关注技术的引入，更要关注业务流程的重塑。通过统一的数据湖，我们将各部门的孤立数据进行清洗与关联。
+                        </p>
+
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start gap-3 text-slate-600">
+                                <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
+                                <span><strong>技术底座：</strong> 构建高可用、可扩展的混合云架构。</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-slate-600">
+                                <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
+                                <span><strong>数据中台：</strong> 实现跨部门的数据实时共享与分析。</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-slate-600">
+                                <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
+                                <span><strong>安全保障：</strong> 全链路零信任安全防护体系。</span>
+                            </li>
+                        </ul>
+
+                        <!-- 图片占位符：趋势图 -->
+                        <figure class="mb-8">
+                            <div class="placeholder-bg w-full h-48 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 hover:border-emerald-200 group">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-3 opacity-50 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                </svg>
+                                <span class="text-sm font-medium">图 1.2：年度数字化成熟度增长曲线预测</span>
+                            </div>
+                        </figure>
+
+                        <p class="text-slate-500 text-sm italic mb-10 text-center">
+                            * 本文档内容属于机密资料，仅供内部传阅。
+                        </p>
+                    </div>
+                </section>
+
+                <!-- 右侧：侧边栏推荐 (固定宽度) -->
+                <aside class="w-full md:w-[240px] bg-slate-50 border-l border-slate-100 p-6 overflow-y-auto shrink-0">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">相关推荐文档</h4>
+                    <div class="space-y-4">
+                        <!-- 推荐项 1 -->
+                        <a href="#" class="block p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+                            <p class="text-[10px] text-blue-500 font-bold mb-1">技术手册</p>
+                            <p class="text-sm text-slate-800 font-semibold group-hover:text-blue-600 leading-snug">混合云部署最佳实践规范</p>
+                        </a>
+                        <!-- 推荐项 2 -->
+                        <a href="#" class="block p-3 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+                            <p class="text-[10px] text-emerald-500 font-bold mb-1">案例研究</p>
+                            <p class="text-sm text-slate-800 font-semibold group-hover:text-emerald-600 leading-snug">智能制造二期工程总结报告</p>
+                        </a>
+                        <!-- 推荐项 3 -->
+                        <a href="#" class="block p-3 bg-white rounded-xl border border-slate-200 hover:border-amber-300 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+                            <p class="text-[10px] text-amber-500 font-bold mb-1">合规指南</p>
+                            <p class="text-sm text-slate-800 font-semibold group-hover:text-amber-600 leading-snug">数据安全分级分类管理办法</p>
+                        </a>
+                    </div>
+                </aside>
+            </main>
+
+            <!-- 底部操作栏 -->
+            <footer class="px-8 py-5 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+                <button class="flex items-center gap-2 px-4 py-2 text-slate-500 hover:text-slate-800 font-semibold transition-colors group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                    </svg>
+                    返回问答列表
+                </button>
+                
+                <div class="flex items-center gap-3">
+                    <button class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-lg hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        </svg>
+                        收藏文档
+                    </button>
+                    <button class="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-all shadow-lg active:scale-95">
+                        下载全文
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+</body>
+</html>

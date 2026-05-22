@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - RAG知识库系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { 
+            background-color: white; 
+            color: #4f46e5; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-6xl h-[800px] bg-white rounded-3xl shadow-2xl overflow-hidden flex">
+        
+        <!-- 左侧个人资料卡片 -->
+        <aside class="w-80 bg-slate-50 border-r border-slate-200 flex flex-col items-center py-12 px-6">
+            <div class="relative group">
+                <div class="w-32 h-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-indigo-100 flex items-center justify-center">
+                    <span class="text-4xl font-bold text-indigo-600">陈</span>
+                </div>
+                <button class="absolute bottom-0 right-0 p-2 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-transform hover:scale-110">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </button>
+            </div>
+            
+            <h2 class="mt-6 text-xl font-bold text-slate-800">陈经理</h2>
+            <p class="text-sm text-slate-500 font-medium">chen_admin@company.com</p>
+            
+            <div class="mt-8 w-full space-y-2">
+                <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-semibold text-slate-600">
+                    <span>所属部门</span>
+                    <span class="text-indigo-600">管理层</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 text-xs font-semibold text-slate-600">
+                    <span>角色等级</span>
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-md">超级管理员</span>
+                </div>
+            </div>
+
+            <div class="mt-auto w-full pt-6 border-t border-slate-200">
+                <button class="w-full flex items-center justify-center gap-2 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    退出登录
+                </button>
+            </div>
+        </aside>
+
+        <!-- 右侧内容区 -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- 导航 Tabs -->
+            <nav class="px-8 pt-6 border-b border-slate-100 bg-white flex gap-2 shrink-0">
+                <button onclick="showTab('info')" class="tab-btn active px-6 py-3 text-sm font-bold rounded-t-xl transition-all">基本信息</button>
+                <button onclick="showTab('favorites')" class="tab-btn px-6 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 rounded-t-xl transition-all">我的收藏</button>
+                <button onclick="showTab('history')" class="tab-btn px-6 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 rounded-t-xl transition-all">对话历史</button>
+                <button onclick="showTab('settings')" class="tab-btn px-6 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 rounded-t-xl transition-all">通知与安全</button>
+            </nav>
+
+            <div class="flex-1 overflow-y-auto p-8 bg-slate-50/50">
+                
+                <!-- Tab: 基本信息 -->
+                <div id="info" class="tab-content active space-y-6 animate-in fade-in duration-300">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="text-base font-bold text-slate-800 mb-6">编辑资料</h3>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-400 uppercase">真实姓名</label>
+                                <input type="text" value="陈大文" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-400 uppercase">所属部门</label>
+                                <input type="text" value="核心管理部" disabled class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-500 cursor-not-allowed">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-400 uppercase">手机号码</label>
+                                <input type="text" value="138-0000-0000" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-400 uppercase">办公地点</label>
+                                <input type="text" value="上海总部 A栋 22F" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-end">
+                            <button class="px-6 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">保存更改</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: 我的收藏 -->
+                <div id="favorites" class="tab-content space-y-4 animate-in slide-in-from-bottom-2 duration-300">
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- 收藏卡片 -->
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 flex gap-4 group hover:border-indigo-300 transition-all">
+                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"></path><path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path></svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-slate-800">2024年度研发项目管理规范.pdf</h4>
+                                <p class="text-xs text-slate-400 mt-1">更新于: 2024-03-10</p>
+                            </div>
+                            <button class="text-rose-400 opacity-0 group-hover:opacity-100 hover:text-rose-600 p-1 transition-opacity">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 flex gap-4 group hover:border-indigo-300 transition-all">
+                            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"></path><path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path></svg>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-slate-800">RAG 系统 Prompt 优化指南.md</h4>
+                                <p class="text-xs text-slate-400 mt-1">更新于: 2024-03-20</p>
+                            </div>
+                            <button class="text-rose-400 opacity-0 group-hover:opacity-100 hover:text-rose-600 p-1 transition-opacity">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: 对话历史 -->
+                <div id="history" class="tab-content space-y-3 animate-in fade-in duration-300">
+                    <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center justify-between group hover:shadow-md transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-700">“如何配置混合检索的权重系数？”</h4>
+                                <p class="text-[10px] text-slate-400 mt-0.5">2024-03-22 14:20 · 消耗 850 Tokens</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="px-3 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">查看对话</button>
+                            <button class="p-1.5 text-slate-300 hover:text-rose-500 rounded-lg transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                        </div>
+                    </div>
+                    <!-- 更多记录... -->
+                </div>
+
+                <!-- Tab: 通知与安全 -->
+                <div id="settings" class="tab-content space-y-6 animate-in slide-in-from-right-2 duration-300">
+                    <!-- 通知设置 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-800 mb-6 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            消息通知设置
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-2">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-700">邮件接收周报</p>
+                                    <p class="text-xs text-slate-400">每周一上午发送知识库使用分析及Bad Case报告</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-t border-slate-50">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-700">新文档发布提醒</p>
+                                    <p class="text-xs text-slate-400">当所属部门有新的共享文档导入时通知我</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 修改密码 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="text-sm font-bold text-slate-800 mb-6 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            密码修改
+                        </h3>
+                        <div class="space-y-4 max-w-md">
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">当前密码</label>
+                                <input type="password" placeholder="••••••••" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">新密码</label>
+                                <input type="password" placeholder="••••••••" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                                <p class="text-[10px] text-slate-400">长度不少于8位，需包含字母和数字。</p>
+                            </div>
+                        </div>
+                        <div class="mt-8">
+                            <button class="px-6 py-2 bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-slate-900 transition-all">更新安全凭证</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // 隐藏所有内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // 取消所有按钮高亮
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-slate-800');
+                btn.classList.add('text-slate-500');
+            });
+            
+            // 显示选中的内容
+            document.getElementById(tabId).classList.add('active');
+            // 高亮当前按钮
+            const activeBtn = event.currentTarget;
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-500');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 检索测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
+        .score-pill { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .debug-bg { background-color: #1e293b; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+        </nav>
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white border-b border-slate-200 px-8 py-3 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-4">
+                <h1 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    检索测试实验室
+                </h1>
+                <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase">Evaluation Mode</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="header-username" class="text-sm text-slate-500"></span>
+                <button onclick="logout()" class="text-sm text-slate-400 hover:text-red-500">退出</button>
+            </div>
+        </header>
+
+        <main class="flex-1 flex overflow-hidden">
+            <!-- 左侧：输入面板 -->
+            <aside class="w-[400px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto custom-scrollbar">
+                <div class="p-6 space-y-6">
+                    <div class="space-y-3">
+                        <label class="text-sm font-bold text-slate-700">测试问题</label>
+                        <textarea id="test-question" placeholder="输入测试问题，例如：2024年Q3的市场预期是多少？"
+                            class="w-full h-32 p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none bg-slate-50"></textarea>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <span class="text-sm font-bold text-slate-700">检索参数配置</span>
+                        </div>
+                        <div class="space-y-4 pt-2">
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <label class="text-xs text-slate-500 font-medium">Top K (结果数量)</label>
+                                    <span id="topk-val" class="text-xs font-bold text-blue-600">4</span>
+                                </div>
+                                <input type="range" id="topk-range" min="1" max="20" value="4" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="document.getElementById('topk-val').textContent = this.value">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <label class="text-xs text-slate-500 font-medium">相似度阈值</label>
+                                    <span id="threshold-val" class="text-xs font-bold text-blue-600">0.60</span>
+                                </div>
+                                <input type="range" min="0" max="1" step="0.05" value="0.6" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="document.getElementById('threshold-val').textContent = parseFloat(this.value).toFixed(2)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="search-btn" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        执行检索测试
+                    </button>
+                </div>
+            </aside>
+
+            <!-- 右侧：结果区 -->
+            <section class="flex-1 flex flex-col overflow-hidden">
+                <!-- 结果标签切换 -->
+                <div class="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-6 shrink-0">
+                    <button class="result-tab active text-sm font-bold text-blue-600 border-b-2 border-blue-600 pb-3 -mb-3" data-tab="results">检索结果</button>
+                    <button class="result-tab text-sm font-medium text-slate-400 hover:text-slate-600 pb-3 -mb-3" data-tab="debug">调试信息</button>
+                </div>
+
+                <div id="result-area" class="flex-1 overflow-y-auto custom-scrollbar">
+                    <!-- 检索结果视图 -->
+                    <div id="tab-results" class="p-6 space-y-6">
+                        <!-- 空状态 -->
+                        <div id="empty-state" class="flex flex-col items-center justify-center h-full text-slate-400">
+                            <svg class="w-20 h-20 mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <p class="text-sm font-medium">在左侧输入问题并点击「执行检索测试」</p>
+                            <p class="text-xs text-slate-300 mt-1">可调整 Top K 和相似度阈值参数进行测试</p>
+                        </div>
+
+                        <!-- 动态结果将在此渲染 -->
+                        <div id="result-content" class="hidden space-y-6"></div>
+                    </div>
+
+                    <!-- 调试信息视图 -->
+                    <div id="tab-debug" class="hidden p-6 space-y-6">
+                        <div id="empty-debug" class="flex flex-col items-center justify-center h-full text-slate-400">
+                            <svg class="w-20 h-20 mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <p class="text-sm font-medium">执行检索后查看详细调试信息</p>
+                        </div>
+                        <div id="debug-content" class="hidden space-y-4"></div>
+                    </div>
+                </div>
+
+                <footer class="bg-slate-900 text-slate-300 shrink-0">
+                    <div class="px-6 py-2 flex items-center justify-between text-[10px] text-slate-500">
+                        <span>Embedding: text-embedding-3-small</span>
+                        <span id="footer-params">Top K: 4 | 阈值: 0.60</span>
+                    </div>
+                </footer>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        const token = localStorage.getItem('auth_token');
+        if (!token) window.location.href = 'admin-login.html';
+
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('header-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+
+        function authToken() { return localStorage.getItem('auth_token'); }
+
+        // Tab切换
+        document.querySelectorAll('.result-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.result-tab').forEach(t => {
+                    t.classList.remove('text-blue-600', 'border-blue-600', 'font-bold', 'active');
+                    t.classList.add('text-slate-400');
+                });
+                tab.classList.add('text-blue-600', 'border-blue-600', 'font-bold', 'active');
+                tab.classList.remove('text-slate-400');
+
+                const target = tab.dataset.tab;
+                document.getElementById('tab-results').classList.toggle('hidden', target !== 'results');
+                document.getElementById('tab-debug').classList.toggle('hidden', target !== 'debug');
+            });
+        });
+
+        // 实时更新底部参数
+        document.getElementById('topk-range').addEventListener('input', function() {
+            document.getElementById('footer-params').textContent = `Top K: ${this.value} | 阈值: ${parseFloat(document.getElementById('threshold-val').textContent).toFixed(2)}`;
+        });
+        document.querySelector('input[type="range"][step="0.05"]').addEventListener('input', function() {
+            document.getElementById('footer-params').textContent = `Top K: ${document.getElementById('topk-range').value} | 阈值: ${parseFloat(this.value).toFixed(2)}`;
+        });
+
+        document.getElementById('search-btn').addEventListener('click', async () => {
+            const question = document.getElementById('test-question').value.trim();
+            if (!question) { alert('请输入测试问题'); return; }
+
+            const btn = document.getElementById('search-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loader" style="border:2px solid #f3f3f3;border-top:2px solid #fff;border-radius:50%;width:14px;height:14px;animation:spin 1s linear infinite;display:inline-block;margin-right:8px"></div> 检索中...';
+
+            const startTime = performance.now();
+            try {
+                const res = await fetch(`${API_BASE}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken()}` },
+                    body: JSON.stringify({
+                        question,
+                        k: parseInt(document.getElementById('topk-range').value),
+                        threshold: parseFloat(document.getElementById('threshold-val').textContent),
+                    }),
+                });
+                const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+                if (res.status === 401) { localStorage.removeItem('auth_token'); window.location.href = 'admin-login.html'; return; }
+                const data = await res.json();
+                renderResults(question, data, elapsed);
+            } catch (e) {
+                document.getElementById('result-content').classList.add('hidden');
+                document.getElementById('empty-state').classList.remove('hidden');
+                document.getElementById('result-area').innerHTML = `<div class="flex items-center justify-center h-full text-red-500"><p>无法连接到服务器</p></div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 执行检索测试';
+            }
+        });
+
+        function renderResults(question, data, elapsed) {
+            const sources = data.sources || [];
+            const answer = data.answer || '';
+            const avgScore = sources.length ? sources.reduce((s, src) => s + (src.score || 0), 0) / sources.length : 0;
+            const minScore = sources.length ? Math.min(...sources.map(s => s.score || 0)) : 0;
+            const maxScore = sources.length ? Math.max(...sources.map(s => s.score || 0)) : 0;
+
+            // 隐藏空状态，显示结果
+            document.getElementById('empty-state').classList.add('hidden');
+            const content = document.getElementById('result-content');
+            content.classList.remove('hidden');
+
+            // 生成分数分布柱
+            const distBars = [];
+            if (sources.length > 0) {
+                const ranges = [
+                    { label: '0-0.2', min: 0, max: 0.2, color: 'bg-red-400' },
+                    { label: '0.2-0.4', min: 0.2, max: 0.4, color: 'bg-orange-400' },
+                    { label: '0.4-0.6', min: 0.4, max: 0.6, color: 'bg-amber-400' },
+                    { label: '0.6-0.8', min: 0.6, max: 0.8, color: 'bg-lime-500' },
+                    { label: '0.8-1.0', min: 0.8, max: 1.0, color: 'bg-emerald-500' },
+                ];
+                const maxCount = Math.max(1, ...ranges.map(r => sources.filter(s => (s.score || 0) >= r.min && (s.score || 0) <= r.max).length));
+                ranges.forEach(r => {
+                    const count = sources.filter(s => (s.score || 0) >= r.min && (s.score || 0) <= r.max).length;
+                    const pct = (count / sources.length * 100).toFixed(0);
+                    distBars.push({ ...r, count, pct, barHeight: (count / maxCount * 100).toFixed(0) });
+                });
+            }
+
+            content.innerHTML = `
+                <!-- 检索概览 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            检索概览
+                        </h3>
+                        <span class="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded-full">${elapsed}s</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 rounded-xl p-3 text-center">
+                            <p class="text-xs text-slate-400">命中片段</p>
+                            <p class="text-xl font-bold text-slate-800 mt-0.5">${sources.length}</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3 text-center">
+                            <p class="text-xs text-slate-400">最高分数</p>
+                            <p class="text-xl font-bold text-emerald-600 mt-0.5">${maxScore.toFixed(2)}</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3 text-center">
+                            <p class="text-xs text-slate-400">平均分数</p>
+                            <p class="text-xl font-bold text-blue-600 mt-0.5">${avgScore.toFixed(2)}</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3 text-center">
+                            <p class="text-xs text-slate-400">最低分数</p>
+                            <p class="text-xl font-bold text-slate-600 mt-0.5">${minScore.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <!-- 分数分布 -->
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <div class="flex items-end gap-2 h-20">
+                            ${distBars.map(b => `
+                                <div class="flex-1 flex flex-col items-center gap-1">
+                                    <span class="text-[10px] font-bold text-slate-500">${b.count}</span>
+                                    <div class="w-full rounded-t" style="height:${b.barHeight}%;background:${b.count > 0 ? 'linear-gradient(180deg, #3b82f6 0%, #60a5fa 100%)' : '#f1f5f9'}"></div>
+                                    <span class="text-[8px] text-slate-400">${b.label}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 命中片段 -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            命中片段 (${sources.length})
+                        </h3>
+                        <span class="text-[10px] text-slate-400">按相似度排序</span>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3">
+                        ${sources.map((s, i) => `
+                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-300 hover:shadow-md transition-all relative overflow-hidden">
+                                <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold text-slate-500 w-5">#${i + 1}</span>
+                                        <span class="text-xs font-medium text-slate-700">${s.filename || '未知文档'}</span>
+                                        <span class="text-[10px] text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200">Chunk ${s.chunk_index || 0}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] text-white font-bold px-2 py-0.5 rounded-full ${(s.score || 0) >= 0.7 ? 'bg-emerald-500' : (s.score || 0) >= 0.4 ? 'bg-amber-500' : 'bg-slate-400'}">${(s.score || 0).toFixed(3)}</span>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-sm text-slate-600 leading-relaxed">${s.content || '(无内容)'}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 大模型回答 -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                            LLM 回答
+                        </h3>
+                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded">GPT-4o-mini</span>
+                    </div>
+                    <div class="bg-white border border-indigo-100 rounded-2xl p-5 shadow-sm border-l-4 border-l-indigo-400">
+                        <div class="prose prose-sm text-slate-700 leading-relaxed whitespace-pre-wrap">${answer || '（无回答）'}</div>
+                    </div>
+                    <!-- 反馈 -->
+                    <div class="flex items-center gap-4 text-xs text-slate-400 pt-1">
+                        <span class="text-slate-500">这个回答有帮助吗？</span>
+                        <button class="flex items-center gap-1 hover:text-emerald-500 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg>
+                            有用
+                        </button>
+                        <button class="flex items-center gap-1 hover:text-red-500 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"></path></svg>
+                            无用
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // 切换结果显示
+            const tabResults = document.querySelector('.result-tab[data-tab="results"]');
+            if (!tabResults.classList.contains('active')) tabResults.click();
+
+            // 渲染调试信息
+            renderDebug(question, data, elapsed);
+        }
+
+        function renderDebug(question, data, elapsed) {
+            const debugContent = document.getElementById('debug-content');
+            debugContent.classList.remove('hidden');
+            document.getElementById('empty-debug').classList.add('hidden');
+
+            const sources = data.sources || [];
+            debugContent.innerHTML = `
+                <div class="bg-[#1e293b] rounded-2xl p-5 text-slate-300 font-mono text-xs space-y-3 overflow-x-auto">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <span class="text-slate-400 font-bold text-[10px] uppercase tracking-wider">请求 / 响应</span>
+                        <span class="text-slate-500">${elapsed}s</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500">// Request</span>
+                        <pre class="text-emerald-300 mt-1">POST /api/chat
+Content-Type: application/json
+Authorization: Bearer ****
+
+${JSON.stringify({
+    question,
+    k: parseInt(document.getElementById('topk-range').value),
+    threshold: parseFloat(document.getElementById('threshold-val').textContent),
+}, null, 2)}</pre>
+                    </div>
+                    <div>
+                        <span class="text-slate-500">// Response Summary</span>
+                        <pre class="text-blue-300 mt-1">${JSON.stringify({
+    total_sources: sources.length,
+    avg_score: sources.length ? (sources.reduce((s, src) => s + (src.score || 0), 0) / sources.length).toFixed(3) : 0,
+    elapsed_seconds: elapsed,
+    top_score: sources.length ? Math.max(...sources.map(s => s.score || 0)).toFixed(3) : 0,
+}, null, 2)}</pre>
+                    </div>
+                    <div>
+                        <span class="text-slate-500">// Sources Detail</span>
+                        <pre class="text-amber-300/80 mt-1">${JSON.stringify(sources.map((s, i) => ({
+    rank: i + 1,
+    filename: s.filename || 'unknown',
+    chunk: s.chunk_index || 0,
+    score: (s.score || 0).toFixed(3),
+    content_preview: (s.content || '').substring(0, 100) + '...',
+})), null, 2)}</pre>
+                    </div>
+                    <div>
+                        <span class="text-slate-500">// Raw Answer (${(data.answer || '').length} chars)</span>
+                        <pre class="text-slate-400 mt-1 whitespace-pre-wrap">${(data.answer || '（无回答）').substring(0, 500)}${(data.answer || '').length > 500 ? '...' : ''}</pre>
+                    </div>
+                </div>
+            `;
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+</body>
+</html>

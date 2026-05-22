@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业知识库 - 系统配置</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .nav-active { background-color: rgba(255, 255, 255, 0.1); color: #ffffff; border-left: 3px solid #3b82f6; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
+
+        /* 编辑抽屉动画 */
+        #editDrawer {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+        }
+        .drawer-open #editDrawer {
+            transform: translateX(0);
+        }
+        .drawer-overlay {
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            display: none;
+        }
+        .drawer-open .drawer-overlay {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex overflow-hidden">
+
+    <!-- 左侧导航栏 -->
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 text-slate-300">
+        <div class="h-14 flex items-center px-6 border-b border-slate-800 shrink-0">
+            <div class="bg-blue-600 p-1.5 rounded-lg text-white mr-2">
+                <i data-lucide="layout-dashboard" size="18"></i>
+            </div>
+            <span class="font-bold text-white tracking-tight">管理后台</span>
+        </div>
+        <nav class="flex-1 py-6">
+            <div class="space-y-1">
+                <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-white/5 hover:text-white">
+                    <i data-lucide="database" size="18"></i>
+                    <span>知识库管理</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-white/5 hover:text-white">
+                    <i data-lucide="alert-circle" size="18"></i>
+                    <span>Bad Case 管理</span>
+                </a>
+                <a href="#" class="nav-active flex items-center gap-3 px-6 py-3 text-sm font-semibold">
+                    <i data-lucide="settings" size="18"></i>
+                    <span>系统配置</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- 主体内容 -->
+    <div class="flex-1 flex flex-col overflow-hidden relative">
+        <header class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-20 shrink-0">
+            <div class="flex items-center gap-4">
+                <span class="font-semibold text-slate-800">系统配置</span>
+            </div>
+        </header>
+
+        <div class="bg-white px-6 border-b border-slate-200 shrink-0">
+            <div class="flex gap-8">
+                <button onclick="switchTab('users')" id="btn-users" class="tab-btn active py-4 text-sm font-bold text-slate-500 hover:text-slate-800">用户管理</button>
+                <button onclick="switchTab('roles')" id="btn-roles" class="tab-btn py-4 text-sm font-bold text-slate-500 hover:text-slate-800">角色权限</button>
+            </div>
+        </div>
+
+        <main class="flex-1 overflow-y-auto custom-scrollbar p-6">
+            <div id="tab-users" class="tab-content active space-y-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-slate-800">活跃用户列表</h2>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <i data-lucide="plus" size="16"></i> 新增用户
+                    </button>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-medium">
+                            <tr>
+                                <th class="px-6 py-4">用户信息</th>
+                                <th class="px-4 py-4">分配角色</th>
+                                <th class="px-4 py-4">状态</th>
+                                <th class="px-4 py-4 text-right">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="px-6 py-4 flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">M</div>
+                                    <div>
+                                        <p class="font-bold text-slate-800">momo.zxy</p>
+                                        <p class="text-xs text-slate-400">momo@company.com</p>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4"><span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[11px] font-bold rounded-lg border border-blue-100">系统管理员</span></td>
+                                <td class="px-4 py-4"><span class="text-emerald-600 font-bold text-xs">● 正常</span></td>
+                                <td class="px-4 py-4 text-right">
+                                    <button onclick="toggleEditDrawer(true, 'momo.zxy', 'momo@company.com', '系统管理员')" class="text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg font-bold transition-all">编辑</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="px-6 py-4 flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs">O</div>
+                                    <div>
+                                        <p class="font-bold text-slate-800">op_chen</p>
+                                        <p class="text-xs text-slate-400">chen.y@company.com</p>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4"><span class="px-2.5 py-1 bg-amber-50 text-amber-600 text-[11px] font-bold rounded-lg border border-amber-100">运营人员</span></td>
+                                <td class="px-4 py-4"><span class="text-emerald-600 font-bold text-xs">● 正常</span></td>
+                                <td class="px-4 py-4 text-right">
+                                    <button onclick="toggleEditDrawer(true, 'op_chen', 'chen.y@company.com', '运营人员')" class="text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg font-bold transition-all">编辑</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- 编辑用户抽屉 -->
+        <div id="drawerContainer" class="fixed inset-0 z-[100] pointer-events-none">
+            <!-- 遮罩 -->
+            <div onclick="toggleEditDrawer(false)" class="drawer-overlay absolute inset-0 bg-slate-900/40 backdrop-blur-sm pointer-events-auto"></div>
+            
+            <!-- 抽屉主体 -->
+            <div id="editDrawer" class="absolute right-0 top-0 bottom-0 w-[480px] bg-white shadow-2xl pointer-events-auto flex flex-col">
+                <!-- 头部 -->
+                <div class="h-16 px-6 border-b border-slate-100 flex items-center justify-between shrink-0 bg-slate-50/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                            <i data-lucide="user-cog" size="18"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800">编辑用户信息</h3>
+                    </div>
+                    <button onclick="toggleEditDrawer(false)" class="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-400">
+                        <i data-lucide="x" size="20"></i>
+                    </button>
+                </div>
+
+                <!-- 表单内容 -->
+                <div class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+                    <!-- 头像修改区 -->
+                    <div class="flex flex-col items-center gap-4 py-4">
+                        <div class="relative group">
+                            <div class="w-24 h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-slate-100 flex items-center justify-center">
+                                <img id="edit-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=momo" alt="avatar" class="w-full h-full object-cover">
+                            </div>
+                            <button class="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-lg border border-slate-100 flex items-center justify-center text-slate-500 hover:text-blue-600 transition-all">
+                                <i data-lucide="camera" size="14"></i>
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">点击更换头像</p>
+                    </div>
+
+                    <!-- 基础字段 -->
+                    <div class="space-y-5">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 flex items-center gap-1">
+                                用户名称 <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="text" id="input-username" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-500 flex items-center gap-1">
+                                电子邮箱 <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="email" id="input-email" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- 角色分配 (关键交互) -->
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-slate-500">分配角色权限</label>
+                        <div class="space-y-2">
+                            <!-- 管理员选项 -->
+                            <label class="flex items-start gap-3 p-4 border-2 border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/30">
+                                <input type="radio" name="role" value="管理员" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-slate-800">管理员</span>
+                                        <i data-lucide="shield-check" size="14" class="text-blue-600"></i>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-1">拥有最高权限，可修改系统配置与管理所有用户</p>
+                                </div>
+                            </label>
+                            <!-- 运营选项 -->
+                            <label class="flex items-start gap-3 p-4 border-2 border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/30">
+                                <input type="radio" name="role" value="运营人员" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-slate-800">运营人员</span>
+                                        <i data-lucide="edit-3" size="14" class="text-amber-500"></i>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-1">可管理知识库内容、处理 Bad Case，无系统设置权限</p>
+                                </div>
+                            </label>
+                            <!-- 普通用户 -->
+                            <label class="flex items-start gap-3 p-4 border-2 border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50/30">
+                                <input type="radio" name="role" value="普通用户" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-slate-800">普通用户</span>
+                                        <i data-lucide="user" size="14" class="text-slate-400"></i>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-1">仅可查看分配权限内的知识库，无法进行修改</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 底部按钮 -->
+                <div class="h-20 px-8 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0 bg-white">
+                    <button onclick="toggleEditDrawer(false)" class="px-6 py-2.5 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">取消修改</button>
+                    <button onclick="toggleEditDrawer(false)" class="px-8 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all">保存更改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        function toggleEditDrawer(show, name = '', email = '', role = '') {
+            const container = document.getElementById('drawerContainer');
+            if (show) {
+                // 填充数据
+                document.getElementById('input-username').value = name;
+                document.getElementById('input-email').value = email;
+                document.getElementById('edit-avatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
+                
+                // 选中对应的单选框
+                const radios = document.getElementsByName('role');
+                radios.forEach(radio => {
+                    if(radio.value === role || (role === '系统管理员' && radio.value === '管理员')) {
+                        radio.checked = true;
+                    }
+                });
+
+                document.body.classList.add('drawer-open');
+                container.classList.remove('pointer-events-none');
+            } else {
+                document.body.classList.remove('drawer-open');
+                setTimeout(() => {
+                    container.classList.add('pointer-events-none');
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>

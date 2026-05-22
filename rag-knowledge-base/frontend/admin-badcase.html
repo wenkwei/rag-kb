@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - Bad Case</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        :root {
+            --primary-dark: #2C3E50;
+            --primary-blue: #3498DB;
+            --bg-light: #F4F7F9;
+            --text-main: #34495E;
+        }
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: var(--bg-light); color: var(--text-main); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
+        .custom-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .custom-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .status-pill-pending { background-color: #fef3c7; color: #d97706; }
+        .status-pill-resolved { background-color: #dcfce7; color: #166534; }
+        #detail-panel { transition: opacity 0.2s ease; }
+        #detail-panel > div:last-child { animation: slideIn 0.25s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+        </nav>
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Bad Case 质量管理
+            </h2>
+            <div class="flex items-center gap-4">
+                <span id="header-username" class="text-sm text-slate-500 font-medium"></span>
+                <button onclick="logout()" class="text-xs font-bold text-slate-400 hover:text-red-500 transition-colors">退出登录</button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            <!-- 统计行 -->
+            <div class="grid grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <p class="text-sm text-slate-400 font-medium">待处理</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1" id="stat-pending">0</h3>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <p class="text-sm text-slate-400 font-medium">已处理</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1" id="stat-resolved">0</h3>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <p class="text-sm text-slate-400 font-medium">今日新增</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1" id="stat-today">0</h3>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <p class="text-sm text-slate-400 font-medium">处理率</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1" id="stat-rate">0%</h3>
+                </div>
+            </div>
+
+            <!-- 筛选栏 -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="relative w-72">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input id="search-input" type="text" placeholder="搜索问题内容..." oninput="filterCases()" class="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <select id="status-filter" onchange="filterCases()" class="bg-slate-100 border-none text-slate-600 text-xs font-medium rounded-lg px-3 py-2 outline-none">
+                        <option value="all">所有状态</option>
+                        <option value="pending">待处理</option>
+                        <option value="resolved">已处理</option>
+                    </select>
+                    <select id="category-filter" onchange="filterCases()" class="bg-slate-100 border-none text-slate-600 text-xs font-medium rounded-lg px-3 py-2 outline-none">
+                        <option value="all">全部分类</option>
+                        <option value="检索遗漏">检索遗漏</option>
+                        <option value="答案错误">答案错误</option>
+                        <option value="逻辑混淆">逻辑混淆</option>
+                        <option value="格式异常">格式异常</option>
+                    </select>
+                </div>
+                <button onclick="exportCases()" class="px-4 py-2.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    导出报表
+                </button>
+            </div>
+
+            <!-- 表格 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-100">
+                                <th class="w-8 px-2 py-4"></th>
+                                <th class="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase">问题内容</th>
+                                <th class="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase w-28">分类</th>
+                                <th class="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase w-36">发生时间</th>
+                                <th class="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase w-28 text-center">状态</th>
+                                <th class="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase w-36 text-right">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="badcase-body" class="divide-y divide-slate-50">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- 详情侧面板 -->
+        <div id="detail-panel" class="fixed inset-0 z-50 hidden">
+            <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeDetail()"></div>
+            <div class="absolute right-0 top-0 h-full w-[520px] bg-white shadow-2xl overflow-y-auto custom-scrollbar">
+                <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Bad Case 详情
+                    </h3>
+                    <button onclick="closeDetail()" class="p-1 hover:bg-slate-100 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div id="detail-content" class="p-6 space-y-6">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        const token = localStorage.getItem('auth_token');
+        if (!token) window.location.href = 'admin-login.html';
+
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('header-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+
+        function authToken() { return localStorage.getItem('auth_token'); }
+
+        // Demo reference data — 当后端无数据时展示
+        const DEMO_BAD_CASES = [
+            {
+                id: 'demo-1',
+                question: '公司的年假制度是怎么规定的？',
+                category: '检索遗漏',
+                wrong_answer: '抱歉，我无法找到关于年假制度的相关信息，请咨询人力资源部门。',
+                expected_answer: '根据公司《员工考勤与休假管理制度》，员工入职满一年后可享受每年5个工作日的带薪年假；满三年后可享受每年7个工作日；满五年后可享受每年10个工作日。年假需提前3个工作日通过OA系统提交申请，经部门主管审批后方可安排。',
+                time: '2024-03-21 14:32',
+                status: 'pending',
+                feedback: '根本不对，我要的是年假天数规定',
+                sources: [
+                    { name: '员工考勤与休假管理制度_v3.2.pdf', chunk: 5, score: 0.32 },
+                    { name: 'HR常见问题FAQ.docx', chunk: 12, score: 0.28 },
+                ]
+            },
+            {
+                id: 'demo-2',
+                question: 'VPN密码重置后多久生效？IT说马上生效但我试了不行。',
+                category: '答案错误',
+                wrong_answer: 'VPN密码重置后通常需要等待30分钟才能生效，请您稍后再试。',
+                expected_answer: 'VPN密码重置后理论上立即生效，但实际使用中可能需要以下步骤：1）如果您当前已连接VPN，请先断开连接；2）清除浏览器缓存或VPN客户端缓存；3）重新启动VPN客户端后再次尝试登录。如仍无法登录，请联系IT服务台（分机：8899）核查AD账号同步状态。',
+                time: '2024-03-21 11:15',
+                status: 'pending',
+                feedback: '等了一个小时还是不行，你们的答案不对',
+                sources: [
+                    { name: 'IT服务台运维手册.docx', chunk: 23, score: 0.45 },
+                    { name: 'VPN接入指南_v2.1.pdf', chunk: 8, score: 0.41 },
+                ]
+            },
+            {
+                id: 'demo-3',
+                question: '我们部门预算审批到哪一步了？上个月提交的。',
+                category: '逻辑混淆',
+                wrong_answer: '根据公司预算管理制度，部门预算审批流程分为：编制、汇总、初审、复审、终审五个阶段。具体到您的申请，建议登录OA系统查看审批进度。',
+                expected_answer: '抱歉，我无法查询具体的审批进度数据。预算审批进度需要您登录OA系统 -> 预算管理 -> 我的申请中查看当前状态。一般来说，部门预算审批流程需要经过：部门负责人审批 -> 财务部初审 -> 分管领导复审 -> 总经理终审，全程预计需要5-10个工作日。如果您的申请已提交超过10个工作日，建议联系财务部（分机：6601）跟进。',
+                time: '2024-03-20 16:48',
+                status: 'pending',
+                feedback: '说了跟没说一样，我需要知道具体到哪步了',
+                sources: [
+                    { name: '预算管理制度_2024版.pdf', chunk: 15, score: 0.52 },
+                ]
+            },
+            {
+                id: 'demo-4',
+                question: '食堂今天中午有什么菜？',
+                category: '格式异常',
+                wrong_answer: '公司食堂位于B1层，营业时间为周一至周五中午11:30-13:00。今天中午的菜单包括：红烧肉、清蒸鱼、时令蔬菜、番茄蛋汤。祝您用餐愉快！',
+                expected_answer: '抱歉，我目前无法获取每日食堂菜单的实时信息。您可以：1）关注企业微信「行政服务」公众号，每天上午10点会推送当日菜单；2）查看B1层食堂入口处的电子屏；3）拨打食堂管理办公室（分机：6608）咨询。',
+                time: '2024-03-20 12:05',
+                status: 'resolved',
+                feedback: '菜单已经过期了，昨天是周三不是这个菜单',
+                sources: [
+                    { name: '食堂服务指南.docx', chunk: 3, score: 0.61 },
+                    { name: '行政服务手册_v2.0.pdf', chunk: 7, score: 0.55 },
+                ]
+            },
+            {
+                id: 'demo-5',
+                question: '怎么查看自己的绩效评分？上季度考核结果出来了没有？',
+                category: '检索遗漏',
+                wrong_answer: '绩效评分相关问题请咨询您的直属上级或HRBP。',
+                expected_answer: '季度绩效考核结果一般在次月15日前由部门负责人完成评分。您可以登录OA系统 -> 绩效管理 -> 考核结果查询查看您的评分详情。如对评分有异议，可在结果公布后5个工作日内向HRBP（人力资源业务伙伴）提出申诉。上季度（Q4）的考核结果已于3月15日前全部录入系统，如您仍无法查看，请联系HR服务中心（分机：6600）。',
+                time: '2024-03-19 09:20',
+                status: 'resolved',
+                feedback: '我需要知道怎么看，不是让你踢皮球',
+                sources: [
+                    { name: '绩效管理制度_2024版.pdf', chunk: 10, score: 0.38 },
+                    { name: 'OA系统操作手册_Q4.pdf', chunk: 4, score: 0.33 },
+                ]
+            },
+            {
+                id: 'demo-6',
+                question: '企业微信收不到验证码怎么办？',
+                category: '答案错误',
+                wrong_answer: '请检查您的手机信号是否正常，或者尝试重启手机后重新获取验证码。',
+                expected_answer: '企业微信收不到验证码的常见原因及解决办法：1）检查是否开启了短信拦截功能，请查看拦截记录；2）确认手机号是否为在公司HR系统登记的号码，如已更换请联系IT服务台更新；3）获取验证码的频率不要超过60秒/次，频繁获取会触发风控限制；4）如以上方法均无效，请通过企业微信「设置」->「帮助与反馈」联系技术支持，或拨打IT服务台（分机：8899）。',
+                time: '2024-03-19 08:55',
+                status: 'pending',
+                feedback: '手机信号没问题，重启了也没用',
+                sources: [
+                    { name: '企业微信常见问题.docx', chunk: 6, score: 0.42 },
+                    { name: 'IT服务台知识库_2024.xlsx', chunk: 18, score: 0.36 },
+                ]
+            },
+        ];
+
+        let allBadCases = [];
+
+        function loadDemoData() {
+            allBadCases = DEMO_BAD_CASES;
+            updateStats();
+            renderTable();
+        }
+
+        async function loadBadCases() {
+            try {
+                const [casesRes, statsRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/badcases`, { headers: { 'Authorization': `Bearer ${authToken()}` } }),
+                    fetch(`${API_BASE}/api/badcases/stats`, { headers: { 'Authorization': `Bearer ${authToken()}` } }),
+                ]);
+                if (casesRes.status === 401) { localStorage.removeItem('auth_token'); window.location.href = 'admin-login.html'; return; }
+
+                const casesData = await casesRes.json();
+                const stats = await statsRes.json();
+                let cases = casesData.bad_cases || [];
+
+                // 如果后端返回空数据，使用 demo 数据
+                if (!cases.length) {
+                    loadDemoData();
+                    return;
+                }
+
+                allBadCases = cases.map(c => ({
+                    ...c,
+                    category: c.category || '未分类',
+                    wrong_answer: c.wrong_answer || '',
+                    expected_answer: c.expected_answer || '',
+                    sources: c.sources || [],
+                }));
+
+                document.getElementById('stat-pending').textContent = stats.pending || 0;
+                document.getElementById('stat-resolved').textContent = stats.resolved || 0;
+                document.getElementById('stat-today').textContent = stats.today || 0;
+                document.getElementById('stat-rate').textContent = (stats.resolution_rate || 0) + '%';
+                document.getElementById('stat-categories').textContent = stats.categories || '-';
+
+                renderTable();
+            } catch (e) {
+                // 后端不可用时加载 demo 数据
+                loadDemoData();
+            }
+        }
+
+        function updateStats() {
+            const pending = allBadCases.filter(c => c.status === 'pending').length;
+            const resolved = allBadCases.filter(c => c.status === 'resolved').length;
+            const total = allBadCases.length;
+            const rate = total ? Math.round(resolved / total * 100) : 0;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-resolved').textContent = resolved;
+            document.getElementById('stat-today').textContent = allBadCases.filter(c => c.time && c.time.startsWith('2024-03-21')).length;
+            document.getElementById('stat-rate').textContent = rate + '%';
+
+            const cats = [...new Set(allBadCases.map(c => c.category))];
+            document.getElementById('stat-categories').textContent = cats.join(' / ');
+        }
+
+        function filterCases() {
+            renderTable();
+        }
+
+        function renderTable() {
+            const search = (document.getElementById('search-input').value || '').toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            const catFilter = document.getElementById('category-filter').value;
+
+            const filtered = allBadCases.filter(c => {
+                if (statusFilter !== 'all' && c.status !== statusFilter) return false;
+                if (catFilter !== 'all' && c.category !== catFilter) return false;
+                if (search && !c.question.toLowerCase().includes(search)) return false;
+                return true;
+            });
+
+            const tbody = document.getElementById('badcase-body');
+            if (!filtered.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400">暂无匹配的 Bad Case 记录</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(c => {
+                const catColor = {
+                    '检索遗漏': 'bg-amber-50 text-amber-600',
+                    '答案错误': 'bg-red-50 text-red-600',
+                    '逻辑混淆': 'bg-purple-50 text-purple-600',
+                    '格式异常': 'bg-blue-50 text-blue-600',
+                }[c.category] || 'bg-slate-50 text-slate-600';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="toggleDetail('${c.id}')">
+                        <td class="px-2 py-4 text-center">
+                            <svg class="w-4 h-4 text-slate-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </td>
+                        <td class="px-4 py-4">
+                            <div class="text-sm font-medium text-slate-700 truncate max-w-md">${c.question}</div>
+                            ${c.feedback ? `<div class="text-[11px] text-slate-400 mt-0.5 truncate max-w-md">用户反馈：${c.feedback}</div>` : ''}
+                        </td>
+                        <td class="px-4 py-4">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${catColor}">${c.category || '未分类'}</span>
+                        </td>
+                        <td class="px-4 py-4 text-xs text-slate-500">${c.time || '-'}</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase ${c.status === 'pending' ? 'status-pill-pending' : 'status-pill-resolved'}">
+                                ${c.status === 'pending' ? '待处理' : '已处理'}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 text-right">
+                            ${c.status === 'pending'
+                                ? `<button onclick="event.stopPropagation();markResolved('${c.id}')" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold">标记处理</button>`
+                                : `<span class="text-xs text-slate-300">已处理</span>`
+                            }
+                        </td>
+                    </tr>
+                    <!-- 展开详情行 -->
+                    <tr id="detail-${c.id}" class="hidden bg-slate-50/50">
+                        <td colspan="6" class="px-8 py-4 border-b border-slate-100">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-3">
+                                    <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                                        <h4 class="text-[10px] font-bold text-red-500 uppercase mb-2 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            系统回答（错误）
+                                        </h4>
+                                        <p class="text-xs text-slate-600 leading-relaxed">${c.wrong_answer || '（无记录）'}</p>
+                                    </div>
+                                    <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                                        <h4 class="text-[10px] font-bold text-emerald-600 uppercase mb-2 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                            期望正确回答
+                                        </h4>
+                                        <p class="text-xs text-slate-600 leading-relaxed">${c.expected_answer || '（待补充）'}</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="bg-white rounded-xl p-4 border border-slate-200">
+                                        <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-3 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            相关命中文档
+                                        </h4>
+                                        ${(c.sources || []).length
+                                            ? c.sources.map(s => `
+                                                <div class="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <span class="w-1.5 h-1.5 rounded-full ${s.score >= 0.6 ? 'bg-emerald-400' : s.score >= 0.4 ? 'bg-amber-400' : 'bg-red-400'} shrink-0"></span>
+                                                        <span class="text-xs text-slate-600 truncate">${s.name}</span>
+                                                    </div>
+                                                    <span class="text-[10px] font-mono text-slate-400 shrink-0 ml-2">Chunk ${s.chunk} | ${s.score.toFixed(2)}</span>
+                                                </div>
+                                            `).join('')
+                                            : '<p class="text-xs text-slate-400">无相关文档</p>'
+                                        }
+                                    </div>
+                                    <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                        <h4 class="text-[10px] font-bold text-amber-600 uppercase mb-2 flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                                            用户反馈
+                                        </h4>
+                                        <p class="text-xs text-slate-600 italic">"${c.feedback || '（未提供反馈）'}"</p>
+                                    </div>
+                                    <div class="flex gap-2 pt-1">
+                                        <button onclick="event.stopPropagation();openDetailPanel('${c.id}')" class="flex-1 px-3 py-2 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-lg hover:bg-slate-50 transition-colors text-center">
+                                            查看完整详情
+                                        </button>
+                                        ${c.status === 'pending'
+                                            ? `<button onclick="event.stopPropagation();markResolved('${c.id}')" class="flex-1 px-3 py-2 bg-emerald-600 text-white text-[10px] font-bold rounded-lg hover:bg-emerald-700 transition-colors text-center">标记已处理</button>`
+                                            : ''
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleDetail(caseId) {
+            const row = document.getElementById('detail-' + caseId);
+            const isHidden = row.classList.contains('hidden');
+            // 收起其他展开的行
+            document.querySelectorAll('[id^="detail-"]').forEach(r => r.classList.add('hidden'));
+            if (isHidden) row.classList.remove('hidden');
+        }
+
+        function openDetailPanel(caseId) {
+            const c = allBadCases.find(item => item.id === caseId);
+            if (!c) return;
+
+            const catColor = {
+                '检索遗漏': 'bg-amber-50 text-amber-600',
+                '答案错误': 'bg-red-50 text-red-600',
+                '逻辑混淆': 'bg-purple-50 text-purple-600',
+                '格式异常': 'bg-blue-50 text-blue-600',
+            }[c.category] || 'bg-slate-50 text-slate-600';
+
+            document.getElementById('detail-content').innerHTML = `
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${catColor}">${c.category || '未分类'}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.status === 'pending' ? 'status-pill-pending' : 'status-pill-resolved'}">${c.status === 'pending' ? '待处理' : '已处理'}</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800">${c.question}</h4>
+                    <p class="text-xs text-slate-400">${c.time || ''}</p>
+                </div>
+
+                <div class="bg-red-50 rounded-xl p-5 border border-red-100">
+                    <h5 class="text-xs font-bold text-red-500 flex items-center gap-2 mb-3">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        系统回答（错误答案）
+                    </h5>
+                    <p class="text-sm text-slate-700 leading-relaxed">${c.wrong_answer || '（无记录）'}</p>
+                </div>
+
+                <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
+                    <h5 class="text-xs font-bold text-emerald-600 flex items-center gap-2 mb-3">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        期望正确回答
+                    </h5>
+                    <p class="text-sm text-slate-700 leading-relaxed">${c.expected_answer || '（待补充）'}</p>
+                </div>
+
+                <div class="bg-white rounded-xl p-5 border border-slate-200">
+                    <h5 class="text-xs font-bold text-slate-500 flex items-center gap-2 mb-3">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        检索命中文档
+                    </h5>
+                    <div class="space-y-2">
+                        ${(c.sources || []).map(s => `
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="w-2 h-2 rounded-full ${s.score >= 0.6 ? 'bg-emerald-400' : s.score >= 0.4 ? 'bg-amber-400' : 'bg-red-400'} shrink-0"></span>
+                                    <span class="text-sm text-slate-700 truncate">${s.name}</span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400 shrink-0 ml-2">Chunk ${s.chunk} | 相似度 ${(s.score * 100).toFixed(0)}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 rounded-xl p-5 border border-amber-100">
+                    <h5 class="text-xs font-bold text-amber-600 flex items-center gap-2 mb-3">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                        用户反馈
+                    </h5>
+                    <p class="text-sm text-slate-700 italic">"${c.feedback || '（未提供反馈）'}"</p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    ${c.status === 'pending'
+                        ? `<button onclick="markResolved('${c.id}');closeDetail()" class="flex-1 py-3 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-colors">标记为已处理</button>`
+                        : ''
+                    }
+                    <button onclick="closeDetail()" class="flex-1 py-3 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-50 transition-colors">关闭</button>
+                </div>
+            `;
+            document.getElementById('detail-panel').classList.remove('hidden');
+        }
+
+        function closeDetail() {
+            document.getElementById('detail-panel').classList.add('hidden');
+        }
+
+        async function markResolved(caseId) {
+            // 先尝试后端
+            if (caseId && !caseId.startsWith('demo-')) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/badcases/${caseId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken()}` },
+                        body: JSON.stringify({ status: 'resolved' }),
+                    });
+                    if (res.ok) { loadBadCases(); return; }
+                } catch (e) {}
+            }
+            // 后端不可用或 demo 数据，本地处理
+            const idx = allBadCases.findIndex(c => c.id === caseId);
+            if (idx !== -1) {
+                allBadCases[idx].status = 'resolved';
+                updateStats();
+                renderTable();
+            }
+            closeDetail();
+        }
+
+        function exportCases() {
+            const rows = [['问题', '分类', '系统回答', '期望回答', '时间', '状态', '反馈']];
+            allBadCases.forEach(c => {
+                rows.push([c.question, c.category, c.wrong_answer, c.expected_answer, c.time,
+                    c.status === 'pending' ? '待处理' : '已处理', c.feedback || ''
+                ]);
+            });
+            const csv = rows.map(r => r.map(v => '"' + (v || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'badcase_export_' + new Date().toISOString().slice(0, 10) + '.csv';
+            a.click();
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            window.location.href = 'admin-login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadBadCases);
+    </script>
+</body>
+</html>

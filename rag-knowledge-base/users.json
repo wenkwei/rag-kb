@@ -1,0 +1,32 @@
+[
+  {
+    "id": "u1",
+    "username": "chen_admin",
+    "display_name": "陈经理",
+    "role": "超级管理员",
+    "department": "管理层",
+    "status": "正常",
+    "last_login": "2024-03-22 10:15",
+    "password": "admin123"
+  },
+  {
+    "id": "u2",
+    "username": "li_tech",
+    "display_name": "李技术",
+    "role": "系统运营",
+    "department": "IT技术部",
+    "status": "正常",
+    "last_login": "2024-03-21 18:30",
+    "password": "123456"
+  },
+  {
+    "id": "u3",
+    "username": "wang_staff",
+    "display_name": "王客服",
+    "role": "普通用户",
+    "department": "客户服务部",
+    "status": "离线",
+    "last_login": "2024-03-15 09:00",
+    "password": "123456"
+  }
+]

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库元数据管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .sidebar-item-active { background-color: rgba(255, 255, 255, 0.1); border-left: 4px solid #3b82f6; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.5); }
+    </style>
+</head>
+<body class="bg-gray-50 flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col shrink-0">
+        <div class="p-6 flex items-center space-x-3">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18 18.246 18.477 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            </div>
+            <span class="text-xl font-bold tracking-tight">知识库后台</span>
+        </div>
+        
+        <nav class="flex-1 mt-4 space-y-1">
+            <a href="#" class="flex items-center px-6 py-3 text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                知识库管理
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 sidebar-item-active text-white">
+                <svg class="w-5 h-5 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                元数据管理
+            </a>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-800">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">运</div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium">运营专员</p>
+                    <p class="text-xs text-gray-400 italic">管理员权限</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0">
+            <h1 class="text-xl font-semibold text-gray-800">元数据管理</h1>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <input type="text" placeholder="搜索文档..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <button onclick="openAddModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">新增文档</button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto p-8 custom-scrollbar">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <table class="w-full text-left border-collapse" id="metadata-table">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">文档名称</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">类型</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">生效时间</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">失效时间</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">适用部门</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">版本</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200" id="table-body">
+                        <!-- Data rows will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Modal -->
+    <div id="add-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0" onclick="closeAddModal()"></div>
+        <div class="bg-white rounded-xl shadow-2xl z-10 max-w-lg w-full p-8 animate-in fade-in zoom-in duration-200">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">新增文档元数据</h3>
+                <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <form id="add-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">文档名称</label>
+                    <input type="text" id="new-name" required placeholder="例如：员工手册_v3.pdf" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">文档类型</label>
+                    <select id="new-type" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="制度文件">制度文件</option>
+                        <option value="技术文档">技术文档</option>
+                        <option value="业务方案">业务方案</option>
+                        <option value="财务报表">财务报表</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">生效时间</label>
+                        <input type="date" id="new-start" required class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">失效时间</label>
+                        <input type="date" id="new-end" required class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">适用部门</label>
+                    <div class="flex flex-wrap gap-4 px-2" id="new-depts">
+                        <label class="inline-flex items-center text-sm text-gray-600 cursor-pointer">
+                            <input type="checkbox" value="销售部" class="rounded text-blue-600 focus:ring-blue-500 mr-2"> 销售部
+                        </label>
+                        <label class="inline-flex items-center text-sm text-gray-600 cursor-pointer">
+                            <input type="checkbox" value="市场部" class="rounded text-blue-600 focus:ring-blue-500 mr-2"> 市场部
+                        </label>
+                        <label class="inline-flex items-center text-sm text-gray-600 cursor-pointer">
+                            <input type="checkbox" value="技术部" class="rounded text-blue-600 focus:ring-blue-500 mr-2"> 技术部
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">版本号</label>
+                    <input type="text" id="new-version" required placeholder="1.0" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="flex space-x-3 mt-8">
+                    <button type="button" onclick="closeAddModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">取消</button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">提交新增</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Modal (Delete Confirmation) -->
+    <div id="delete-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0" onclick="closeDeleteModal()"></div>
+        <div class="bg-white rounded-xl shadow-2xl z-10 max-w-sm w-full p-6 animate-in fade-in zoom-in duration-200">
+            <div class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mb-4 mx-auto">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-center text-gray-900 mb-2">确认删除？</h3>
+            <p class="text-sm text-gray-500 text-center mb-6">此操作不可撤销，该文档的元数据将从系统中永久移除。</p>
+            <div class="flex space-x-3">
+                <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">取消</button>
+                <button id="confirm-delete-btn" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Message (Toast) -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 transition-transform duration-300 z-50 flex items-center">
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        const departments = ["销售部", "市场部", "技术部"];
+        const docTypes = ["制度文件", "技术文档", "业务方案", "财务报表"];
+        
+        let initialData = [
+            { id: 1, name: "2024年Q2销售提成方案_v3.0.pdf", type: "业务方案", start: "2024-04-01", end: "2024-06-30", dept: ["销售部"], version: "3.0" },
+            { id: 2, name: "员工手册_v2.pdf", type: "制度文件", start: "2024-01-01", end: "2025-12-31", dept: ["销售部", "市场部", "技术部"], version: "2.0" },
+            { id: 3, name: "产品功能介绍_市场部_v1.5.pdf", type: "业务方案", start: "2024-03-15", end: "2024-12-31", dept: ["市场部"], version: "1.5" },
+            { id: 4, name: "技术架构白皮书_v1.0.pdf", type: "技术文档", start: "2023-11-20", end: "2025-11-20", dept: ["技术部"], version: "1.0" },
+            { id: 5, name: "2023年年度报告.pdf", type: "财务报表", start: "2024-01-20", end: "2024-12-31", dept: ["市场部", "技术部"], version: "1.0" }
+        ];
+
+        let deleteId = null;
+
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            initialData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 transition-colors group';
+                tr.id = `row-${item.id}`;
+                tr.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="text-sm font-medium text-gray-900 cell-view">${item.name}</div>
+                        <input type="text" class="hidden cell-edit w-full border rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none" value="${item.name}">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-600 cell-view">${item.type}</div>
+                        <select class="hidden cell-edit w-full border rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none">
+                            ${docTypes.map(t => `<option value="${t}" ${t === item.type ? 'selected' : ''}>${t}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-600 cell-view">${item.start}</div>
+                        <input type="date" class="hidden cell-edit w-full border rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none" value="${item.start}">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-600 cell-view">${item.end}</div>
+                        <input type="date" class="hidden cell-edit w-full border rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none" value="${item.end}">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-wrap gap-1 cell-view">
+                            ${item.dept.map(d => `<span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs font-medium border border-blue-100">${d}</span>`).join('')}
+                        </div>
+                        <div class="hidden cell-edit space-y-1">
+                            ${departments.map(d => `
+                                <label class="flex items-center text-xs text-gray-700">
+                                    <input type="checkbox" value="${d}" ${item.dept.includes(d) ? 'checked' : ''} class="mr-1 rounded text-blue-600 focus:ring-blue-500"> ${d}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-600 cell-view">${item.version}</div>
+                        <input type="text" class="hidden cell-edit w-16 border rounded px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 outline-none" value="${item.version}">
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end space-x-2 btn-group-view">
+                            <button onclick="toggleEdit(${item.id}, true)" class="text-blue-600 hover:text-blue-800 font-medium text-sm px-2 py-1">编辑</button>
+                            <button onclick="openDeleteModal(${item.id})" class="text-red-600 hover:text-red-800 font-medium text-sm px-2 py-1">删除</button>
+                        </div>
+                        <div class="hidden flex justify-end space-x-2 btn-group-edit">
+                            <button onclick="saveEdit(${item.id})" class="bg-blue-600 text-white px-3 py-1 rounded shadow-sm text-xs font-medium hover:bg-blue-700">保存</button>
+                            <button onclick="toggleEdit(${item.id}, false)" class="bg-gray-100 text-gray-600 px-3 py-1 rounded text-xs font-medium hover:bg-gray-200">取消</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleEdit(id, isEditing) {
+            const row = document.getElementById(`row-${id}`);
+            const viewCells = row.querySelectorAll('.cell-view, .btn-group-view');
+            const editCells = row.querySelectorAll('.cell-edit, .btn-group-edit');
+
+            if (isEditing) {
+                viewCells.forEach(el => el.classList.add('hidden'));
+                editCells.forEach(el => el.classList.remove('hidden'));
+            } else {
+                viewCells.forEach(el => el.classList.remove('hidden'));
+                editCells.forEach(el => el.classList.add('hidden'));
+                renderTable(); 
+            }
+        }
+
+        function saveEdit(id) {
+            const row = document.getElementById(`row-${id}`);
+            const inputs = row.querySelectorAll('.cell-edit');
+            
+            const name = inputs[0].value;
+            const type = inputs[1].value;
+            const start = inputs[2].value;
+            const end = inputs[3].value;
+            
+            const selectedDepts = [];
+            inputs[4].querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                selectedDepts.push(cb.value);
+            });
+            
+            const version = inputs[5].value;
+
+            const index = initialData.findIndex(item => item.id === id);
+            initialData[index] = { ...initialData[index], name, type, start, end, dept: selectedDepts, version };
+            
+            showToast("保存成功");
+            renderTable();
+        }
+
+        // Add Modal Logic
+        function openAddModal() {
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+            document.getElementById('add-form').reset();
+        }
+
+        document.getElementById('add-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedDepts = [];
+            document.querySelectorAll('#new-depts input[type="checkbox"]:checked').forEach(cb => {
+                selectedDepts.push(cb.value);
+            });
+
+            const newItem = {
+                id: Date.now(),
+                name: document.getElementById('new-name').value,
+                type: document.getElementById('new-type').value,
+                start: document.getElementById('new-start').value,
+                end: document.getElementById('new-end').value,
+                dept: selectedDepts,
+                version: document.getElementById('new-version').value
+            };
+
+            initialData.unshift(newItem); // Add to beginning of list
+            renderTable();
+            showToast("文档新增成功");
+            closeAddModal();
+        });
+
+        // Delete Logic
+        function openDeleteModal(id) {
+            deleteId = id;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+            deleteId = null;
+        }
+
+        function confirmDelete() {
+            if (deleteId) {
+                initialData = initialData.filter(item => item.id !== deleteId);
+                renderTable();
+                showToast("已成功删除该记录");
+                closeDeleteModal();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const message = document.getElementById('toast-message');
+            message.innerText = msg;
+            toast.classList.remove('translate-y-20');
+            toast.classList.add('translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20');
+                toast.classList.remove('translate-y-0');
+            }, 3000);
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', confirmDelete);
+
+        window.onload = renderTable;
+    </script>
+</body>
+</html>
