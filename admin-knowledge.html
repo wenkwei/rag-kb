@@ -13,6 +13,9 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
         .upload-dragover { border-color: #3b82f6 !important; background-color: #eff6ff !important; }
+        .dropdown-option { padding: 0.5rem 0.75rem; font-size: 0.8125rem; color: #475569; cursor: pointer; transition: all 0.15s; }
+        .dropdown-option:hover { background-color: #f1f5f9; color: #1e40af; }
+        .dropdown-option.active { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -120,13 +123,42 @@
                 <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
             </div>
 
-            <!-- 搜索框 -->
-            <div class="px-6 py-3 border-b border-slate-50">
-                <div class="relative max-w-md">
+            <!-- 筛选栏 -->
+            <div class="px-6 py-3 border-b border-slate-50 flex flex-wrap items-center gap-3">
+                <div class="relative flex-1 min-w-[200px] max-w-md">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </span>
-                    <input type="text" id="search-input" placeholder="搜索文档名称 / 内容..." oninput="searchDocuments(this.value)" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    <input type="text" id="search-input" placeholder="搜索文档名称 / 内容..." oninput="onFilterChange()" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                </div>
+                <!-- 类型筛选 -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('type-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
+                        <span id="type-label">全部类型</span>
+                        <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="type-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
+                        <div class="px-3 py-2 text-xs text-slate-400 font-bold bg-slate-50 border-b border-slate-100">文档类型</div>
+                        <div class="dropdown-option" data-type="" onclick="selectType('')">全部类型</div>
+                        <div class="dropdown-option" data-type="pdf" onclick="selectType('pdf')">PDF</div>
+                        <div class="dropdown-option" data-type="docx" onclick="selectType('docx')">Word</div>
+                        <div class="dropdown-option" data-type="pptx" onclick="selectType('pptx')">PPT</div>
+                        <div class="dropdown-option" data-type="txt" onclick="selectType('txt')">TXT</div>
+                    </div>
+                </div>
+                <!-- 状态筛选 -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('status-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
+                        <span id="status-label">全部状态</span>
+                        <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="status-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
+                        <div class="px-3 py-2 text-xs text-slate-400 font-bold bg-slate-50 border-b border-slate-100">索引状态</div>
+                        <div class="dropdown-option" data-status="" onclick="selectStatus('')">全部状态</div>
+                        <div class="dropdown-option" data-status="completed" onclick="selectStatus('completed')">已索引</div>
+                        <div class="dropdown-option" data-status="indexing" onclick="selectStatus('indexing')">索引中</div>
+                        <div class="dropdown-option" data-status="failed" onclick="selectStatus('failed')">索引失败</div>
+                    </div>
                 </div>
             </div>
 
@@ -255,30 +287,70 @@
         }
 
         const DEMO_DOCUMENTS = [
-            { filename: '财务报销制度2024修订版.pdf', chunk_count: 24 },
-            { filename: '新员工入职IT指引.pdf', chunk_count: 18 },
-            { filename: '考勤管理制度V3.pdf', chunk_count: 31 },
-            { filename: '企业微信常见问题FAQ.txt', chunk_count: 12 },
-            { filename: '员工福利手册2024版.pdf', chunk_count: 27 },
-            { filename: '公司差旅报销标准.pdf', chunk_count: 16 },
-            { filename: 'VPN远程接入指南.txt', chunk_count: 8 },
-            { filename: '信息安全管理办法.pdf', chunk_count: 22 },
-            { filename: '上海分公司报销比例调整公告.txt', chunk_count: 5 },
-            { filename: '劳动人事争议处理流程.pdf', chunk_count: 14 },
+            { filename: '财务报销制度2024修订版.pdf', type: 'pdf', status: 'completed', chunk_count: 24 },
+            { filename: '新员工入职IT指引.pdf', type: 'pdf', status: 'completed', chunk_count: 18 },
+            { filename: '考勤管理制度V3.docx', type: 'docx', status: 'completed', chunk_count: 31 },
+            { filename: '企业微信常见问题FAQ.txt', type: 'txt', status: 'completed', chunk_count: 12 },
+            { filename: '员工福利手册2024版.pdf', type: 'pdf', status: 'completed', chunk_count: 27 },
+            { filename: '公司年度总结汇报.pptx', type: 'pptx', status: 'indexing', chunk_count: 0 },
+            { filename: 'VPN远程接入指南.txt', type: 'txt', status: 'completed', chunk_count: 8 },
+            { filename: '信息安全管理办法.pdf', type: 'pdf', status: 'completed', chunk_count: 22 },
+            { filename: '上海分公司报销比例调整公告.txt', type: 'txt', status: 'completed', chunk_count: 5 },
+            { filename: '产品路线图规划.pptx', type: 'pptx', status: 'failed', chunk_count: 0 },
+            { filename: '劳动合同模板.docx', type: 'docx', status: 'completed', chunk_count: 16 },
+            { filename: '人事管理制度汇编.docx', type: 'docx', status: 'indexing', chunk_count: 0 },
         ];
 
         let allDocuments = [];
+        let filterType = '';
+        let filterStatus = '';
 
-        function searchDocuments(query) {
-            const q = query.trim().toLowerCase();
-            const filtered = q ? allDocuments.filter(d => d.filename.toLowerCase().includes(q)) : allDocuments;
+        function toggleDropdown(id) {
+            const dd = document.getElementById(id);
+            const all = document.querySelectorAll('.dropdown-menu');
+            all.forEach(d => { if (d.id !== id) d.classList.add('hidden'); });
+            dd.classList.toggle('hidden');
+        }
+        function selectType(val) {
+            filterType = val;
+            document.getElementById('type-label').textContent = val ? val.toUpperCase() : '全部类型';
+            document.querySelectorAll('#type-dropdown .dropdown-option').forEach(el => el.classList.remove('active'));
+            document.querySelector(`#type-dropdown .dropdown-option[data-type="${val}"]`)?.classList.add('active');
+            document.getElementById('type-dropdown').classList.add('hidden');
+            applyFilters();
+        }
+        function selectStatus(val) {
+            filterStatus = val;
+            document.getElementById('status-label').textContent = val ? ({completed:'已索引',indexing:'索引中',failed:'索引失败'})[val] || val : '全部状态';
+            document.querySelectorAll('#status-dropdown .dropdown-option').forEach(el => el.classList.remove('active'));
+            document.querySelector(`#status-dropdown .dropdown-option[data-status="${val}"]`)?.classList.add('active');
+            document.getElementById('status-dropdown').classList.add('hidden');
+            applyFilters();
+        }
+        function onFilterChange() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const q = document.getElementById('search-input').value.trim().toLowerCase();
+            let filtered = allDocuments;
+            if (q) filtered = filtered.filter(d => d.filename.toLowerCase().includes(q));
+            if (filterType) filtered = filtered.filter(d => d.type === filterType);
+            if (filterStatus) filtered = filtered.filter(d => d.status === filterStatus);
             renderDocumentList(filtered);
         }
+
+        // 点击页面其他区域关闭下拉菜单
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.add('hidden'));
+            }
+        });
 
         async function loadDocuments() {
             // 立即显示演示数据
             allDocuments = DEMO_DOCUMENTS;
-            renderDocumentList(allDocuments);
+            applyFilters();
             // 后台尝试从API加载真实数据
             try {
                 const res = await fetch(`${API_BASE}/api/documents`, {
@@ -289,7 +361,7 @@
                 const docs = data.documents || [];
                 if (docs.length > 0) {
                     allDocuments = docs;
-                    renderDocumentList(docs);
+                    applyFilters();
                 }
             } catch (e) {}
         }
@@ -306,26 +378,27 @@
 
             tbody.innerHTML = docs.map(doc => {
                 const ext = doc.filename.split('.').pop().toLowerCase();
-                const isPdf = ext === 'pdf';
-                const iconColor = isPdf ? 'text-red-500 bg-red-50' : 'text-blue-500 bg-blue-50';
-                const typeLabel = isPdf ? 'PDF' : 'TXT';
+                const typeConfig = { pdf: { label: 'PDF', color: 'text-red-600 bg-red-50', icon: 'text-red-500 bg-red-50' }, docx: { label: 'Word', color: 'text-blue-600 bg-blue-50', icon: 'text-blue-500 bg-blue-50' }, pptx: { label: 'PPT', color: 'text-orange-600 bg-orange-50', icon: 'text-orange-500 bg-orange-50' }, txt: { label: 'TXT', color: 'text-slate-600 bg-slate-50', icon: 'text-slate-500 bg-slate-50' } };
+                const tc = typeConfig[ext] || typeConfig.txt;
+                const statusConfig = { completed: { label: '已索引', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }, indexing: { label: '索引中', color: 'bg-amber-50 text-amber-600 border-amber-100' }, failed: { label: '索引失败', color: 'bg-rose-50 text-rose-600 border-rose-100' } };
+                const sc = statusConfig[doc.status] || statusConfig.completed;
 
                 return `
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="p-2 ${iconColor} rounded-lg">
+                                <div class="p-2 ${tc.icon} rounded-lg">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
                                 </div>
                                 <span class="text-sm font-semibold text-slate-700 group-hover:text-blue-600">${doc.filename}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-0.5 text-xs font-bold ${isPdf ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'} rounded">${typeLabel}</span>
+                            <span class="px-2 py-0.5 text-xs font-bold ${tc.color} rounded">${tc.label}</span>
                         </td>
                         <td class="px-6 py-4 text-sm text-slate-500">${doc.chunk_count} 个切片</td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold border border-emerald-100">已索引</span>
+                            <span class="px-2 py-1 rounded-full text-[11px] font-bold border ${sc.color}">${sc.label}</span>
                         </td>
                         <td class="px-6 py-4">
                             <button onclick="confirmDelete('${doc.filename}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-all" title="删除">
