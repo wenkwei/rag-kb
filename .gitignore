@@ -1,0 +1,21 @@
+# Python
+rag-knowledge-base/venv/
+rag-knowledge-base/**/__pycache__/
+rag-knowledge-base/**/.pytest_cache/
+*.pyc
+*.pyo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Vector store data
+rag-knowledge-base/chroma_db/
+
+# Uploads
+rag-knowledge-base/uploads/
+
+# OS
+.DS_Store
+Thumbs.db

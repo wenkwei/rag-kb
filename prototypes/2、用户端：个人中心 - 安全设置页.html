@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业级知识库 - 安全设置</title>
+    <style>
+        :root {
+            --primary-color: #1677ff;
+            --bg-color: #f5f7fa;
+            --text-main: #262626;
+            --text-secondary: #595959;
+            --border-color: #f0f0f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-color); color: var(--text-main); }
+
+        /* 页面容器 1200x800 */
+        .container {
+            width: 1200px;
+            height: 800px;
+            margin: 40px auto;
+            background: #fff;
+            display: flex;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* 左侧导航 */
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 32px 0;
+        }
+        .sidebar-title {
+            padding: 0 24px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            letter-spacing: 1px;
+        }
+        .nav-item {
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        .nav-item:hover { background: #f0f7ff; color: var(--primary-color); }
+        .nav-item.active {
+            background: #e6f4ff;
+            color: var(--primary-color);
+            border-right: 3px solid var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            padding: 40px 60px;
+            overflow-y: auto;
+        }
+        .section-header {
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+        .section-title { font-size: 22px; font-weight: 600; }
+
+        /* 卡片块 */
+        .card { margin-bottom: 40px; }
+        .card-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 表单对齐 */
+        .form-group { margin-bottom: 18px; display: flex; align-items: center; }
+        .form-label { width: 120px; font-size: 14px; color: var(--text-secondary); }
+        .form-input {
+            width: 320px;
+            padding: 9px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            outline: none;
+            font-size: 14px;
+        }
+        .form-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+        .btn-save {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 9px 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 120px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .btn-save:hover { background: #4096ff; }
+
+        /* 表格样式 */
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; color: var(--text-secondary); font-weight: 500; padding: 12px 8px; border-bottom: 2px solid var(--border-color); }
+        td { padding: 14px 8px; border-bottom: 1px solid var(--border-color); color: #434343; }
+        
+        /* 状态与开关 */
+        .tag-current { color: #52c41a; background: #f6ffed; border: 1px solid #b7eb8f; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px; }
+        .btn-kick { color: #ff4d4f; border: none; background: none; cursor: pointer; font-size: 14px; padding: 0; }
+        .btn-kick:hover { text-decoration: underline; }
+
+        /* Switch 开关 */
+        .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #d9d9d9; transition: .3s; border-radius: 18px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(18px); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-title">个人中心</div>
+        <div class="nav-item">个人信息</div>
+        <div class="nav-item active">安全设置</div>
+        <div class="nav-item">我的收藏</div>
+        <div class="nav-item">对话历史</div>
+        <div class="nav-item">通知设置</div>
+    </div>
+
+    <div class="main-content">
+        <div class="section-header">
+            <h2 class="section-title">安全设置</h2>
+        </div>
+
+        <div class="card">
+            <div class="card-header">修改登录密码</div>
+            <div class="form-group">
+                <span class="form-label">旧密码</span>
+                <input type="password" class="form-input" placeholder="请输入当前旧密码">
+            </div>
+            <div class="form-group">
+                <span class="form-label">新密码</span>
+                <input type="password" class="form-input" placeholder="请输入8-16位新密码">
+            </div>
+            <div class="form-group">
+                <span class="form-label">确认新密码</span>
+                <input type="password" class="form-input" placeholder="请再次确认新密码">
+            </div>
+            <button class="btn-save">保存新密码</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                最近5条登录记录
+                <div style="font-weight: normal; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center;">
+                    异地登录提醒 &nbsp;
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>IP地址</th>
+                        <th>设备类型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-12-10 14:22:15</td>
+                        <td>120.230.14.88 (广东·深圳)</td>
+                        <td>Chrome / macOS 14.2</td>
+                    </tr>
+                    <tr>
+                        <td>2024-11-28 09:15:42</td>
+                        <td>113.108.11.22 (广东·广州)</td>
+                        <td>Firefox / Windows 11</td>
+                    </tr>
+                    <tr>
+                        <td>2024-10-15 21:05:03</td>
+                        <td>221.218.44.12 (北京·朝阳)</td>
+                        <td>Safari / iPhone 16</td>
+                    </tr>
+                    <tr>
+                        <td>2024-09-22 10:45:11</td>
+                        <td>120.230.14.88 (广东·深圳)</td>
+                        <td>Edge / macOS 14.2</td>
+                    </tr>
+                    <tr>
+                        <td>2024-08-05 16:30:29</td>
+                        <td>183.62.17.55 (广东·东莞)</td>
+                        <td>Chrome / Linux</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">多端在线管理</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>在线设备</th>
+                        <th>最后活跃</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>MacBook Pro - 办公室</strong> 
+                            <span class="tag-current">当前在线</span>
+                        </td>
+                        <td>刚刚</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>iPhone 16 App</td>
+                        <td>2025-12-10 12:40</td>
+                        <td><button class="btn-kick">强制下线</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+
+

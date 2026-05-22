@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 用户管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
+        .tab-active { color: #4f46e5; border-bottom: 2px solid #4f46e5; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+        </nav>
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-3">
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800">权限与成员管理</h1>
+                    <p class="text-[10px] text-slate-400 font-medium uppercase">Access Control & Role Mapping</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="header-username" class="text-sm text-slate-500"></span>
+                <button onclick="logout()" class="text-sm text-slate-400 hover:text-red-500">退出</button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-hidden flex flex-col">
+            <!-- Tabs -->
+            <div class="bg-white border-b border-slate-200 px-8 flex gap-8 shrink-0">
+                <button class="py-4 text-sm font-bold tab-active" data-tab="user-list" onclick="switchTab('user-list')">用户列表</button>
+                <button class="py-4 text-sm font-medium text-slate-500 hover:text-slate-700" data-tab="role-config" onclick="switchTab('role-config')">角色权限配置</button>
+                <button class="py-4 text-sm font-medium text-slate-500 hover:text-slate-700" data-tab="audit-log" onclick="switchTab('audit-log')">安全审计日志</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <div class="max-w-6xl mx-auto space-y-6">
+
+                    <!-- ===================== TAB 1: 用户列表 ===================== -->
+                    <div id="tab-user-list" class="tab-content active space-y-6">
+                        <!-- 搜索与筛选 -->
+                        <div class="flex items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="relative flex-1 max-w-md">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </span>
+                                <input type="text" placeholder="搜索用户名、部门或角色..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <select class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 outline-none">
+                                    <option>所有部门</option>
+                                    <option>技术部</option>
+                                    <option>产品部</option>
+                                    <option>市场部</option>
+                                    <option>管理层</option>
+                                </select>
+                                <button class="p-2 text-slate-400 hover:text-slate-600 border border-slate-200 rounded-lg" title="批量导入">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                </button>
+                                <button onclick="toggleModal('userModal', true)" class="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-100 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    新增用户
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 用户列表表格 -->
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 border-b border-slate-100">
+                                    <tr>
+                                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">用户名</th>
+                                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">角色</th>
+                                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">所属部门</th>
+                                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">状态</th>
+                                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">最后登录</th>
+                                        <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-list-body" class="divide-y divide-slate-50"></tbody>
+                            </table>
+                            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-xs text-slate-500 font-medium" id="user-count-label">显示 1-3 共 3 条用户记录</span>
+                                <div class="flex gap-2">
+                                    <button class="p-1 border border-slate-200 rounded hover:bg-white text-slate-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                                    <button class="p-1 border border-slate-200 rounded hover:bg-white text-slate-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===================== TAB 2: 角色权限配置 ===================== -->
+                    <div id="tab-role-config" class="tab-content space-y-6">
+                        <section class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    <h2 class="text-base font-bold text-slate-800">快速角色权限概览</h2>
+                                </div>
+                                <button onclick="toggleModal('roleConfigModal', true)" class="text-xs text-indigo-600 font-bold hover:underline">编辑角色配置</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="text-slate-400 font-bold uppercase tracking-wider">
+                                        <tr>
+                                            <th class="pb-4">功能权限点</th>
+                                            <th class="pb-4 text-center">管理员</th>
+                                            <th class="pb-4 text-center">运营人员</th>
+                                            <th class="pb-4 text-center">普通用户</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 text-slate-600 font-medium">
+                                        <tr>
+                                            <td class="py-3">知识库全局可见性</td>
+                                            <td class="py-3 text-center text-emerald-500">● 全部</td>
+                                            <td class="py-3 text-center text-emerald-500">● 全部</td>
+                                            <td class="py-3 text-center text-amber-500">○ 仅指定分类</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3">文档上传与版本回滚</td>
+                                            <td class="py-3 text-center text-emerald-500">● 允许</td>
+                                            <td class="py-3 text-center text-emerald-500">● 允许</td>
+                                            <td class="py-3 text-center text-rose-400">✕ 禁止</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3">系统RAG参数调优</td>
+                                            <td class="py-3 text-center text-emerald-500">● 允许</td>
+                                            <td class="py-3 text-center text-rose-400">✕ 禁止</td>
+                                            <td class="py-3 text-center text-rose-400">✕ 禁止</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3">查看监控看板与Bad Case</td>
+                                            <td class="py-3 text-center text-emerald-500">● 允许</td>
+                                            <td class="py-3 text-center text-emerald-500">● 允许</td>
+                                            <td class="py-3 text-center text-rose-400">✕ 禁止</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ===================== TAB 3: 安全审计日志 ===================== -->
+                    <div id="tab-audit-log" class="tab-content space-y-6">
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <h3 class="text-sm font-bold text-slate-700">操作日志</h3>
+                                </div>
+                                <select class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-600 outline-none">
+                                    <option>全部类型</option>
+                                    <option>登录</option>
+                                    <option>文档操作</option>
+                                    <option>配置变更</option>
+                                    <option>权限变更</option>
+                                </select>
+                            </div>
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 border-b border-slate-100">
+                                    <tr>
+                                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase">时间</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase">用户</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase">操作类型</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase">操作详情</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="audit-log-body" class="divide-y divide-slate-50"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增用户模态框 -->
+    <div id="userModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 items-center justify-center p-4 hidden" style="display:none">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800">新增成员</h3>
+                <button onclick="toggleModal('userModal', false)" class="p-2 hover:bg-slate-50 rounded-full transition-colors">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <form class="p-6 space-y-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase">用户名</label>
+                    <input type="text" placeholder="例如：zhang_san" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase">初始密码</label>
+                    <input type="password" placeholder="••••••••" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">角色分配</label>
+                        <select class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                            <option>普通用户</option>
+                            <option>系统运营</option>
+                            <option>超级管理员</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-500 uppercase">所属部门</label>
+                        <select class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                            <option>客户服务部</option>
+                            <option>IT技术部</option>
+                            <option>产品部</option>
+                            <option>管理层</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pt-4 flex flex-col gap-3">
+                    <button type="button" onclick="createUser()" class="w-full py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-100 hover:bg-indigo-700">确认添加用户</button>
+                    <button type="button" onclick="toggleModal('userModal', false)" class="w-full py-2.5 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-xl">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 角色配置模态框 -->
+    <div id="roleConfigModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 items-center justify-center p-4 hidden" style="display:none">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800">编辑角色权限配置</h3>
+                <button onclick="toggleModal('roleConfigModal', false)" class="p-2 hover:bg-slate-50 rounded-full transition-colors">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-6">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                        <tr>
+                            <th class="pb-3">功能权限点</th>
+                            <th class="pb-3 text-center">管理员</th>
+                            <th class="pb-3 text-center">运营人员</th>
+                            <th class="pb-3 text-center">普通用户</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="py-3 text-sm text-slate-700 font-medium">知识库全局可见性</td>
+                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                            <td class="py-3 text-center">
+                                <select class="text-xs border border-slate-200 rounded px-2 py-1 bg-white outline-none">
+                                    <option selected>仅指定分类</option>
+                                    <option>全部</option>
+                                    <option>禁止</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-sm text-slate-700 font-medium">文档上传与版本回滚</td>
+                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                            <td class="py-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
+                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-sm text-slate-700 font-medium">系统RAG参数调优</td>
+                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
+                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-sm text-slate-700 font-medium">查看监控看板与Bad Case</td>
+                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                            <td class="py-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
+                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button onclick="toggleModal('roleConfigModal', false)" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all">取消</button>
+                    <button onclick="saveRoleConfig()" class="px-6 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100">保存配置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        const token = localStorage.getItem('auth_token');
+        if (!token) window.location.href = 'admin-login.html';
+
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('header-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+
+        function authToken() { return localStorage.getItem('auth_token'); }
+
+        // ===== 标签切换 =====
+        function switchTab(tabId) {
+            document.querySelectorAll('[data-tab]').forEach(btn => {
+                btn.classList.remove('tab-active', 'font-bold');
+                btn.classList.add('font-medium', 'text-slate-500');
+            });
+            document.querySelector(`[data-tab="${tabId}"]`).classList.remove('font-medium', 'text-slate-500');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('tab-active', 'font-bold');
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // ===== 弹窗 =====
+        function toggleModal(id, show) {
+            const modal = document.getElementById(id);
+            if (show) {
+                modal.style.display = 'flex';
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+
+        function saveRoleConfig() {
+            alert('角色权限配置已保存');
+            toggleModal('roleConfigModal', false);
+        }
+
+        // ===== 用户数据（从 API 加载） =====
+        const colors = { '超级管理员': 'indigo', '系统运营': 'blue', '普通用户': 'slate' };
+
+        async function loadUsers() {
+            try {
+                const res = await fetch(`${API_BASE}/api/users`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` }
+                });
+                if (res.status === 401) { localStorage.removeItem('auth_token'); window.location.href = 'admin-login.html'; return; }
+                const data = await res.json();
+                renderUsers(data.users || []);
+            } catch (e) {}
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('user-list-body');
+            if (!users.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400">暂无用户</td></tr>';
+                document.getElementById('user-count-label').textContent = '共 0 条用户记录';
+                return;
+            }
+            const statusColors = { '正常': 'emerald', '离线': 'slate', '禁用': 'rose' };
+            tbody.innerHTML = users.map(u => {
+                const avatar = u.display_name ? u.display_name.charAt(0).toUpperCase() : u.username.charAt(0).toUpperCase();
+                const sc = statusColors[u.status] || 'slate';
+                return `
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-${colors[u.role] || 'slate'}-100 text-${colors[u.role] || 'slate'}-700 flex items-center justify-center font-bold text-xs">${avatar}</div>
+                            <span class="text-sm font-semibold text-slate-700">${u.display_name} (${u.username})</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 bg-${colors[u.role]}-50 text-${colors[u.role]}-600 text-[10px] font-bold rounded uppercase">${u.role}</span></td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${u.department || '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="flex items-center gap-1.5 text-xs text-${sc}-600 font-medium">
+                            <span class="w-1.5 h-1.5 rounded-full bg-${sc}-500"></span> ${u.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-400 font-mono">${u.last_login || '-'}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="deleteUser('${u.id}')" class="text-slate-400 hover:text-rose-600 p-1" title="删除用户">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+            document.getElementById('user-count-label').textContent = `显示 1-${users.length} 共 ${users.length} 条用户记录`;
+        }
+
+        async function createUser() {
+            const form = document.querySelector('#userModal form');
+            const inputs = form.querySelectorAll('input, select');
+            const data = {
+                username: inputs[0].value.trim(),
+                password: inputs[1].value.trim(),
+                display_name: inputs[0].value.trim(),
+                role: inputs[2].value,
+                department: inputs[3].value,
+            };
+            if (!data.username) { alert('请输入用户名'); return; }
+            if (!data.password) { alert('请输入密码'); return; }
+            try {
+                const res = await fetch(`${API_BASE}/api/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken()}` },
+                    body: JSON.stringify(data),
+                });
+                if (res.ok) {
+                    toggleModal('userModal', false);
+                    inputs.forEach(i => i.value = '');
+                    loadUsers();
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || '创建失败');
+                }
+            } catch (e) {
+                alert('创建失败，请检查后端服务');
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('确定要删除该用户吗？')) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                });
+                if (res.ok) loadUsers();
+                else alert('删除失败');
+            } catch (e) {
+                alert('删除失败');
+            }
+        }
+
+        // ===== 审计日志 =====
+        const auditLogs = [
+            { time: '2024-03-22 10:20', user: '陈经理 (chen_admin)', type: '登录', detail: 'IP 192.168.1.100 登录系统' },
+            { time: '2024-03-22 09:15', user: '陈经理 (chen_admin)', type: '权限变更', detail: '修改了普通用户角色权限配置' },
+            { time: '2024-03-21 18:35', user: '李技术 (li_tech)', type: '文档操作', detail: '上传了 3 个新文档到知识库' },
+            { time: '2024-03-21 14:20', user: '王客服 (wang_staff)', type: '登录', detail: 'IP 192.168.1.50 登录系统' },
+            { time: '2024-03-21 10:00', user: '李技术 (li_tech)', type: '配置变更', detail: '修改了分块策略参数' },
+        ];
+
+        function renderAuditLogs() {
+            const tbody = document.getElementById('audit-log-body');
+            const typeColors = { '登录': 'bg-blue-50 text-blue-600', '文档操作': 'bg-emerald-50 text-emerald-600', '配置变更': 'bg-amber-50 text-amber-600', '权限变更': 'bg-rose-50 text-rose-600' };
+            tbody.innerHTML = auditLogs.map(log => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-3 text-xs text-slate-400 font-mono">${log.time}</td>
+                    <td class="px-6 py-3 text-sm font-medium text-slate-700">${log.user}</td>
+                    <td class="px-6 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${typeColors[log.type] || 'bg-slate-50 text-slate-600'}">${log.type}</span></td>
+                    <td class="px-6 py-3 text-sm text-slate-500">${log.detail}</td>
+                </tr>
+            `).join('');
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            window.location.href = 'admin-login.html';
+        }
+
+        loadUsers();
+        renderAuditLogs();
+    </script>
+</body>
+</html>

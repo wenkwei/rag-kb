@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 240px;
+            background: #fff;
+            border-right: 1px solid #e4e7ed;
+            padding: 20px 0;
+        }
+        .sidebar h2 {
+            padding: 0 20px 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar li {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+        }
+        .sidebar li.active {
+            background-color: #e8f3ff;
+            color: #1677ff;
+            font-weight: 500;
+            border-left: 3px solid #1677ff;
+        }
+        .main {
+            flex: 1;
+            padding: 30px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-item {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .form-item label {
+            width: 100px;
+            font-size: 14px;
+            color: #666;
+        }
+        .form-item input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            outline: none;
+        }
+        .form-item input:focus {
+            border-color: #1677ff;
+        }
+        .btn {
+            background: #1677ff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #4096ff;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-left {
+            font-size: 14px;
+            color: #333;
+        }
+        .setting-desc {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .switch {
+            width: 44px;
+            height: 24px;
+            background: #dcdfe6;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+        }
+        .switch.on {
+            background: #1677ff;
+        }
+        .switch.on::after {
+            left: 23px;
+        }
+        .notify-type {
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>个人中心</h2>
+        <ul>
+            <li class="active">个人资料</li>
+            <li>通知设置</li>
+            <li>安全设置</li>
+            <li>关于系统</li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <h3>个人资料</h3>
+            <div class="form-item">
+                <label>姓名</label>
+                <input type="text" value="张三" placeholder="请输入姓名">
+            </div>
+            <div class="form-item">
+                <label>部门</label>
+                <input type="text" value="产品部" placeholder="请输入部门">
+            </div>
+            <div class="form-item">
+                <label>联系方式</label>
+                <input type="text" value="13800138000" placeholder="请输入手机号">
+            </div>
+            <button class="btn">保存修改</button>
+        </div>
+
+        <div class="card">
+            <h3>通知设置</h3>
+
+            <div class="setting-item">
+                <div class="setting-left">
+                    新知识推送
+                    <div class="setting-desc">知识库更新时推送提醒</div>
+                </div>
+                <div>
+                    <span class="notify-type">邮件 + 站内信</span>
+                    <div class="switch on"></div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div class="setting-left">
+                    系统公告
+                    <div class="setting-desc">接收平台重要通知</div>
+                </div>
+                <div>
+                    <span class="notify-type">站内信</span>
+                    <div class="switch on"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 开关点击切换
+        const switches = document.querySelectorAll('.switch');
+        switches.forEach(sw => {
+            sw.addEventListener('click', () => {
+                sw.classList.toggle('on');
+            });
+        });
+
+        // 保存按钮提示
+        const btn = document.querySelector('.btn');
+        btn.addEventListener('click', () => {
+            alert('个人资料保存成功');
+        });
+    </script>
+</body>
+</html>

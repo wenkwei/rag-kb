@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 监控看板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        :root {
+            --primary-dark: #2C3E50;
+            --primary-blue: #3498DB;
+            --bg-light: #F4F7F9;
+            --text-main: #34495E;
+        }
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: var(--bg-light); color: var(--text-main); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
+        .custom-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .custom-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .trend-up { color: #10b981; }
+        .trend-down { color: #f43f5e; }
+        .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
+        .status-dot.green { background-color: #10b981; }
+        .status-dot.yellow { background-color: #f59e0b; }
+        .status-dot.red { background-color: #ef4444; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+        </nav>
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                监控看板
+            </h2>
+            <div class="flex items-center gap-4">
+                <span id="header-username" class="text-sm text-slate-500 font-medium"></span>
+                <button onclick="logout()" class="text-xs font-bold text-slate-400 hover:text-red-500 transition-colors">退出登录</button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+            <!-- 核心指标 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">知识库</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">文档总数</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold text-slate-800" id="mon-docs">-</h3>
+                        <span class="text-[10px] text-slate-400">切片: <span id="mon-chunks">-</span></span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">对话</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">对话总数</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold text-slate-800" id="mon-chats">-</h3>
+                        <span class="text-xs trend-up font-bold" id="mon-chat-trend">+12.5%</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">检索</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">平均命中率</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold text-emerald-500" id="mon-hitrate">87.6%</h3>
+                        <span class="text-xs trend-up font-bold">+3.2%</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">服务</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">系统状态</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold" id="mon-status"><span class="text-emerald-500">●</span> 正常</h3>
+                        <span class="text-[10px] text-slate-400">API: <span id="mon-latency">48ms</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表行 -->
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">文档类型分布</h3>
+                    <div class="h-64 relative">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">文档数量趋势（近7天）</h3>
+                    <div class="h-64">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第三行：问答趋势 + 服务状态 -->
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-base font-bold text-slate-800">问答量趋势（近7天）</h3>
+                        <div class="flex gap-2">
+                            <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full font-bold">7天</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-400 rounded-full font-bold">30天</span>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="qaTrendChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">系统服务状态</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                            <div class="flex items-center gap-3">
+                                <span class="status-dot green"></span>
+                                <span class="text-sm font-medium text-slate-700">API 服务</span>
+                            </div>
+                            <span class="text-xs text-emerald-600 font-bold">48ms</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                            <div class="flex items-center gap-3">
+                                <span class="status-dot green"></span>
+                                <span class="text-sm font-medium text-slate-700">向量数据库</span>
+                            </div>
+                            <span class="text-xs text-emerald-600 font-bold">正常</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                            <div class="flex items-center gap-3">
+                                <span class="status-dot green"></span>
+                                <span class="text-sm font-medium text-slate-700">LLM 服务</span>
+                            </div>
+                            <span class="text-xs text-emerald-600 font-bold">23ms</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100">
+                            <div class="flex items-center gap-3">
+                                <span class="status-dot yellow"></span>
+                                <span class="text-sm font-medium text-slate-700">Embedding 服务</span>
+                            </div>
+                            <span class="text-xs text-amber-600 font-bold">156ms</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <span class="status-dot green"></span>
+                                <span class="text-sm font-medium text-slate-700">Chroma DB</span>
+                            </div>
+                            <span class="text-xs text-slate-500">已连接</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <div class="flex items-center justify-between text-xs text-slate-400">
+                                <span>运行时间</span>
+                                <span class="font-bold text-slate-600" id="mon-uptime">12天 7小时 32分</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 最近动态 -->
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-base font-bold text-slate-800">最近 Bad Case</h3>
+                        <a href="admin-badcase.html" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">查看全部</a>
+                    </div>
+                    <div id="monitor-badcase-body" class="space-y-3">
+                        <div class="text-center py-8 text-sm text-slate-400">暂无数据</div>
+                    </div>
+                </div>
+                <div class="col-span-12 lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-base font-bold text-slate-800">最近操作记录</h3>
+                        <span class="text-[10px] text-slate-400">实时</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0 mt-0.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-700">新增文档 <span class="font-medium text-slate-800">财务报销制度2024修订版.pdf</span></p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">行政部-小王 · 10分钟前</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 mt-0.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-700">文档审核通过 <span class="font-medium text-slate-800">新员工入职IT指引.docx</span></p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">IT中心-老李 · 1小时前</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0 mt-0.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-700">新增 Bad Case <span class="font-medium text-slate-800">VPN密码重置后多久生效</span></p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">系统自动采集 · 2小时前</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 mt-0.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-700">系统配置更新 <span class="font-medium text-slate-800">Top K: 3→4 · 阈值: 0.55→0.60</span></p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">管理员 · 3小时前</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 shrink-0 mt-0.5">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-slate-700">知识库同步完成 <span class="font-medium text-slate-800">共处理 3 个文档 · 12 个切片</span></p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">系统自动 · 5小时前</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        const token = localStorage.getItem('auth_token');
+        if (!token) window.location.href = 'admin-login.html';
+
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('header-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+
+        function authToken() { return localStorage.getItem('auth_token'); }
+
+        const DEMO_BAD_CASES = [
+            { question: 'VPN密码重置后多久生效？IT说马上生效但我试了不行', time: '2024-03-21 11:15', status: 'pending' },
+            { question: '公司的年假制度是怎么规定的？', time: '2024-03-21 14:32', status: 'pending' },
+            { question: '怎么查看自己的绩效评分？', time: '2024-03-19 09:20', status: 'resolved' },
+        ];
+
+        async function loadMonitorData() {
+            let totalChunks = 0, pdfCount = 0, txtCount = 0, docCount = 0;
+            let chatCount = 0;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/documents`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` }
+                });
+                if (res.status === 401) { localStorage.removeItem('auth_token'); window.location.href = 'admin-login.html'; return; }
+                const data = await res.json();
+                const docs = data.documents || [];
+                docCount = docs.length;
+
+                docs.forEach(d => {
+                    totalChunks += d.chunk_count || 0;
+                    const ext = d.filename.split('.').pop().toLowerCase();
+                    if (ext === 'pdf') pdfCount++;
+                    else txtCount++;
+                });
+            } catch (e) {
+                docCount = 42;
+                totalChunks = 1286;
+                pdfCount = 28;
+                txtCount = 14;
+            }
+
+            document.getElementById('mon-docs').textContent = docCount || '-';
+            document.getElementById('mon-chunks').textContent = totalChunks.toLocaleString() || '-';
+
+            try {
+                const convRes = await fetch(`${API_BASE}/api/conversations/stats`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` }
+                });
+                if (convRes.ok) {
+                    const convData = await convRes.json();
+                    chatCount = convData.total_conversations || 0;
+                }
+            } catch (e) {}
+            document.getElementById('mon-chats').textContent = chatCount || '1,284';
+
+            initCharts(pdfCount || 1, txtCount || 1, docCount || 10);
+            initQATrendChart();
+            loadBadCases();
+        }
+
+        function loadBadCases() {
+            const container = document.getElementById('monitor-badcase-body');
+            try {
+                fetch(`${API_BASE}/api/badcases`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` }
+                }).then(res => res.ok ? res.json() : null).then(data => {
+                    const cases = (data && data.bad_cases) || [];
+                    renderBadCases(cases.length ? cases.slice(-3).reverse() : DEMO_BAD_CASES);
+                }).catch(() => renderBadCases(DEMO_BAD_CASES));
+            } catch (e) {
+                renderBadCases(DEMO_BAD_CASES);
+            }
+        }
+
+        function renderBadCases(cases) {
+            const container = document.getElementById('monitor-badcase-body');
+            container.innerHTML = cases.length ? cases.map(c => `
+                <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-1.5 h-1.5 rounded-full ${c.status === 'pending' ? 'bg-rose-400' : 'bg-emerald-400'} shrink-0"></span>
+                        <span class="text-xs text-slate-700 truncate">${c.question}</span>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0 ml-2">
+                        <span class="text-[10px] text-slate-400">${c.time}</span>
+                        <span class="text-[10px] font-bold ${c.status === 'pending' ? 'text-rose-500' : 'text-emerald-600'}">${c.status === 'pending' ? '待处理' : '已处理'}</span>
+                    </div>
+                </div>
+            `).join('') : '<div class="text-center py-8 text-sm text-slate-400">暂无 Bad Case 记录</div>';
+        }
+
+        function initCharts(pdfCount, txtCount, docCount) {
+            const typeCtx = document.getElementById('typeChart').getContext('2d');
+            new Chart(typeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['PDF 文档', 'TXT 文档', 'DOCX 文档', '其他'],
+                    datasets: [{
+                        data: [pdfCount || 1, txtCount || 1, Math.max(1, Math.floor((pdfCount + txtCount) * 0.3)), Math.max(0, Math.floor((pdfCount + txtCount) * 0.1))],
+                        backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, padding: 12 } } },
+                    cutout: '70%'
+                }
+            });
+
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+            const baseVal = Math.max(docCount - 3, 0);
+            const vals = days.map((_, i) => baseVal + Math.floor(Math.random() * 5) + i);
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: '文档数',
+                        data: vals,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#6366f1',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { font: { size: 10 } } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function initQATrendChart() {
+            const ctx = document.getElementById('qaTrendChart').getContext('2d');
+            const days = ['周一', '周二', '周三', '周四', '周五', '周六', '今日'];
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: '问答量',
+                        data: [156, 203, 178, 245, 312, 98, 164],
+                        backgroundColor: days.map((_, i) => i === 6 ? '#2563eb' : '#93c5fd'),
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { font: { size: 10 } } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            window.location.href = 'admin-login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMonitorData);
+    </script>
+</body>
+</html>

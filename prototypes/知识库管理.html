@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业知识库 - 知识库管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide 图标库 -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 顶部导航栏 -->
+    <header class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center gap-4 text-sm text-slate-600">
+            <div class="flex items-center gap-1 hover:text-blue-600 cursor-pointer transition-colors">
+                <i data-lucide="home" size="16"></i>
+                <span>首页</span>
+            </div>
+            <i data-lucide="chevron-right" size="14" class="text-slate-300"></i>
+            <span class="font-semibold text-slate-800">知识库管理</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <button class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
+                    <span>批量操作</span>
+                    <i data-lucide="chevron-down" size="14"></i>
+                </button>
+            </div>
+            <button class="flex items-center gap-2 px-4 py-1.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm shadow-blue-500/20">
+                <i data-lucide="plus" size="16"></i>
+                <span>新增文档</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 flex flex-col gap-6 max-w-[1600px] mx-auto w-full">
+        
+        <!-- 上传区域 -->
+        <section class="bg-white border-2 border-dashed border-slate-200 rounded-xl p-10 flex flex-col items-center justify-center gap-3 hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-blue-500 group-hover:bg-blue-50 transition-colors">
+                <i data-lucide="upload-cloud" size="28"></i>
+            </div>
+            <div class="text-center">
+                <p class="text-sm font-medium text-slate-700">点击或将文件拖拽至此处上传</p>
+                <p class="text-xs text-slate-400 mt-1 uppercase">支持 PDF, Word, PPT, TXT (最大 50MB)</p>
+            </div>
+        </section>
+
+        <!-- 搜索与筛选 -->
+        <section class="flex items-center justify-between gap-4">
+            <div class="relative flex-1 max-w-xl">
+                <i data-lucide="search" class="absolute left-3 top-2.5 text-slate-400" size="18"></i>
+                <input type="text" placeholder="搜索文档名称/内容..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+            </div>
+            <div class="flex items-center gap-3">
+                <select class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 outline-none hover:border-slate-300">
+                    <option>全部类型</option>
+                    <option>PDF</option>
+                    <option>Word</option>
+                    <option>Excel</option>
+                </select>
+                <select class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 outline-none hover:border-slate-300">
+                    <option>全部状态</option>
+                    <option>已索引</option>
+                    <option>索引中</option>
+                    <option>待处理</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- 文档列表表格 - 占据全宽 -->
+        <section class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex-1 flex flex-col">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
+                        <tr>
+                            <th class="px-6 py-4 w-10">
+                                <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            </th>
+                            <th class="px-4 py-4">文档名称</th>
+                            <th class="px-4 py-4">类型</th>
+                            <th class="px-4 py-4">大小</th>
+                            <th class="px-4 py-4">状态</th>
+                            <th class="px-4 py-4">最后更新</th>
+                            <th class="px-4 py-4 text-right">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <!-- 行 1 -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4">
+                                <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            </td>
+                            <td class="px-4 py-4">
+                                <div class="flex items-center gap-3 font-medium text-slate-900">
+                                    <div class="w-8 h-8 rounded bg-rose-50 flex items-center justify-center text-rose-500">
+                                        <i data-lucide="file-text" size="18"></i>
+                                    </div>
+                                    <span>2024年市场趋势报告.pdf</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-slate-500">PDF</td>
+                            <td class="px-4 py-4 text-slate-500">2.4 MB</td>
+                            <td class="px-4 py-4">
+                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 text-xs font-semibold rounded-md">已索引</span>
+                            </td>
+                            <td class="px-4 py-4 text-slate-500 italic">2024-03-20 14:20</td>
+                            <td class="px-4 py-4 text-right">
+                                <div class="flex items-center justify-end gap-3 text-slate-400">
+                                    <button class="hover:text-blue-600"><i data-lucide="eye" size="16"></i></button>
+                                    <button class="hover:text-blue-600"><i data-lucide="rotate-cw" size="16"></i></button>
+                                    <button class="hover:text-rose-600"><i data-lucide="trash-2" size="16"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- 行 2 -->
+                        <tr class="hover:bg-slate-50 transition-colors bg-blue-50/30">
+                            <td class="px-6 py-4">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            </td>
+                            <td class="px-4 py-4">
+                                <div class="flex items-center gap-3 font-medium text-slate-900">
+                                    <div class="w-8 h-8 rounded bg-blue-50 flex items-center justify-center text-blue-500">
+                                        <i data-lucide="file-blue" size="18"></i>
+                                    </div>
+                                    <span>产品设计准则.docx</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 text-slate-500">Word</td>
+                            <td class="px-4 py-4 text-slate-500">856 KB</td>
+                            <td class="px-4 py-4">
+                                <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-semibold rounded-md flex items-center gap-1 w-fit">
+                                    <span class="w-1 h-1 rounded-full bg-blue-600 animate-pulse"></span>
+                                    索引中...
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 text-slate-500 italic">刚刚</td>
+                            <td class="px-4 py-4 text-right">
+                                <div class="flex items-center justify-end gap-3 text-slate-400">
+                                    <button class="hover:text-blue-600"><i data-lucide="eye" size="16"></i></button>
+                                    <button class="hover:text-blue-600"><i data-lucide="rotate-cw" size="16"></i></button>
+                                    <button class="hover:text-rose-600"><i data-lucide="trash-2" size="16"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 底部页码与状态 -->
+            <div class="mt-auto px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+                <div class="text-sm text-slate-400">
+                    共 <span class="font-medium text-slate-600">128</span> 个文档，当前显示第 1-10 个
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="px-3 py-1.5 text-sm text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50">上一页</button>
+                    <button class="w-8 h-8 flex items-center justify-center text-sm font-bold bg-blue-600 text-white rounded-lg">1</button>
+                    <button class="w-8 h-8 flex items-center justify-center text-sm text-slate-600 hover:bg-slate-50 rounded-lg">2</button>
+                    <button class="w-8 h-8 flex items-center justify-center text-sm text-slate-600 hover:bg-slate-50 rounded-lg">3</button>
+                    <span class="text-slate-300">...</span>
+                    <button class="px-3 py-1.5 text-sm text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50">下一页</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部运行状态 -->
+        <footer class="flex items-center justify-between py-2 px-2 text-[11px] text-slate-400 uppercase tracking-tight">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span>系统运行正常</span>
+                </div>
+                <div>存储空间: <span class="text-slate-500 font-medium">45.2 GB</span> / 500 GB</div>
+            </div>
+            <div>© 2024 内部管理系统 - 知识库引擎 v1.2.4</div>
+        </footer>
+    </main>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档版本管理 - 知识库管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .version-badge {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+        <div class="flex items-center gap-4">
+            <a href="#" class="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            <div>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-xl font-bold text-slate-800">2024年市场趋势报告.pdf</h1>
+                    <span class="version-badge px-2 py-0.5 text-white text-[10px] font-bold rounded-md tracking-wider">V3.4.0 (当前)</span>
+                </div>
+                <nav class="flex text-xs text-slate-400 mt-0.5" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1">
+                        <li>知识库管理</li>
+                        <li><svg class="w-3 h-3 mx-1" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"></path></svg></li>
+                        <li class="font-medium text-slate-500">版本历史</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="px-4 py-2 border border-blue-200 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-100 transition-all flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                对比选定版本
+            </button>
+            <button class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                上传新版本
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 overflow-hidden flex flex-col gap-6">
+        
+        <!-- 版本统计概览 -->
+        <div class="grid grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-400 font-bold uppercase">总版本数</p>
+                <p class="text-2xl font-bold text-slate-800 mt-1">12</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-400 font-bold uppercase">最近更新</p>
+                <p class="text-2xl font-bold text-slate-800 mt-1">2小时前</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-400 font-bold uppercase">主编辑人</p>
+                <p class="text-2xl font-bold text-slate-800 mt-1">张经理</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <p class="text-xs text-slate-400 font-bold uppercase">存储占用</p>
+                <p class="text-2xl font-bold text-slate-800 mt-1">28.4 MB</p>
+            </div>
+        </div>
+
+        <!-- 版本列表 -->
+        <div class="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+            <div class="overflow-auto custom-scrollbar flex-1">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-16 text-center">选择</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">版本号</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">更新时间</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">上传人</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">变更说明</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        <!-- 当前版本 -->
+                        <tr class="bg-blue-50/30 group">
+                            <td class="px-6 py-4 text-center"><input type="checkbox" class="rounded text-blue-600"></td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-bold text-blue-700">V3.4.0</span>
+                                    <span class="px-1.5 py-0.5 bg-blue-100 text-blue-600 text-[10px] rounded uppercase font-bold">Latest</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-600 font-medium">2024-03-22 10:30</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">张</div>
+                                    <span class="text-sm text-slate-700">张经理</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500 italic truncate max-w-[300px]">修正了第三章关于Q2预测的数据图表...</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-3">
+                                    <button class="text-slate-400 hover:text-blue-600 transition-colors" title="预览"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>
+                                    <span class="text-xs text-slate-300 font-bold cursor-not-allowed">回滚</span>
+                                    <button class="text-slate-300 hover:text-rose-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- 历史版本 1 -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 text-center"><input type="checkbox" class="rounded text-blue-600"></td>
+                            <td class="px-6 py-4 text-sm font-semibold text-slate-700">V3.3.5</td>
+                            <td class="px-6 py-4 text-sm text-slate-500">2024-03-21 16:45</td>
+                            <td class="px-6 py-4 text-sm text-slate-700">李技术员</td>
+                            <td class="px-6 py-4 text-sm text-slate-500 truncate max-w-[300px]">补充了附件清单及参考文献...</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-3">
+                                    <button class="text-slate-400 hover:text-blue-600 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>
+                                    <button class="text-xs font-bold text-blue-600 hover:underline">回滚</button>
+                                    <button class="text-slate-400 hover:text-rose-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- 历史版本 2 -->
+                        <tr class="hover:bg-slate-50 transition-colors group">
+                            <td class="px-6 py-4 text-center"><input type="checkbox" class="rounded text-blue-600"></td>
+                            <td class="px-6 py-4 text-sm font-semibold text-slate-700">V3.2.0</td>
+                            <td class="px-6 py-4 text-sm text-slate-500">2024-03-15 09:20</td>
+                            <td class="px-6 py-4 text-sm text-slate-700">王总监</td>
+                            <td class="px-6 py-4 text-sm text-slate-500 truncate max-w-[300px]">初稿完成，提交审核...</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-3">
+                                    <button class="text-slate-400 hover:text-blue-600 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>
+                                    <button class="text-xs font-bold text-blue-600 hover:underline">回滚</button>
+                                    <button class="text-slate-400 hover:text-rose-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 预览模态框 (隐藏状态，仅作演示) -->
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-12 hidden">
+        <div class="bg-white w-full max-w-4xl h-full rounded-2xl flex flex-col shadow-2xl animate-in zoom-in-95 duration-300">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-bold rounded">预览模式</span>
+                    <h3 class="font-bold text-slate-800">版本预览：V3.3.5</h3>
+                </div>
+                <button class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto p-10 bg-slate-50 custom-scrollbar">
+                <div class="bg-white shadow-sm border border-slate-200 min-h-full p-12 prose max-w-none">
+                    <h1 class="text-3xl font-bold mb-6">2024年市场趋势报告</h1>
+                    <p class="text-slate-600 leading-relaxed mb-4">
+                        [此处显示文档历史版本的内容预览...]
+                    </p>
+                    <div class="h-4 bg-slate-100 rounded w-full mb-4"></div>
+                    <div class="h-4 bg-slate-100 rounded w-5/6 mb-4"></div>
+                    <div class="h-4 bg-slate-100 rounded w-4/6 mb-4"></div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-white">
+                <button class="px-6 py-2 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-lg">关闭</button>
+                <button class="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-blue-200">恢复此版本</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

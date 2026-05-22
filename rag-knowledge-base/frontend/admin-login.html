@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 知识库管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .login-bg {
+            background-color: #1e293b;
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .bg-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            height: 1px;
+            width: 100%;
+        }
+        .line-1 { top: 20%; transform: rotate(-5deg); }
+        .line-2 { top: 60%; transform: rotate(3deg); }
+        .line-3 { top: 80%; transform: rotate(-2deg); }
+        .login-card { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .input-group:focus-within label { color: #3b82f6; }
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="login-bg min-h-screen flex items-center justify-center p-6">
+    <div class="bg-line line-1"></div>
+    <div class="bg-line line-2"></div>
+    <div class="bg-line line-3"></div>
+
+    <div class="login-card bg-white w-full max-w-[420px] rounded-2xl overflow-hidden z-10">
+        <div class="pt-10 pb-6 px-10 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-xl mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">知识库管理系统</h1>
+            <p class="text-slate-400 text-sm mt-1 uppercase tracking-widest">Knowledge Base Management</p>
+        </div>
+
+        <div id="error-banner" class="hidden mx-10 mb-2 p-3 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p id="error-text" class="text-xs text-red-700"></p>
+        </div>
+
+        <form id="login-form" class="px-10 pb-10 space-y-5">
+            <div class="input-group">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1 transition-colors">账号</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    </span>
+                    <input type="text" id="username" value="admin" placeholder="管理员账号" class="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-700 bg-slate-50/50" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1 transition-colors">密码</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                    </span>
+                    <input type="password" id="password" value="admin123" placeholder="密码" class="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-700 bg-slate-50/50" required>
+                </div>
+            </div>
+
+            <button type="submit" id="login-btn" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg shadow-lg shadow-slate-200 transition-all active:scale-[0.98] mt-2 flex items-center justify-center gap-2">
+                <span id="btn-text">进入系统</span>
+                <span id="btn-loader" class="hidden"><div class="loader"></div></span>
+            </button>
+
+            <div class="flex items-center justify-center gap-2 pt-2 text-[13px] text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                <span>演示账户: admin / admin123</span>
+            </div>
+        </form>
+
+        <div class="px-10 py-6 bg-slate-50 border-t border-slate-100 text-center">
+            <p class="text-sm text-slate-400 mb-3">返回</p>
+            <a href="login.html" class="inline-flex items-center gap-2 px-6 py-2 border border-slate-200 bg-white rounded-full text-sm text-slate-600 font-semibold hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                用户端登录
+            </a>
+        </div>
+    </div>
+
+    <div class="fixed bottom-6 w-full text-center text-slate-500 text-xs">
+        &copy; 2024 企业内部管理系统
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+
+        if (localStorage.getItem('auth_token')) {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('login-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoader = document.getElementById('btn-loader');
+            const errorBanner = document.getElementById('error-banner');
+            const errorText = document.getElementById('error-text');
+
+            errorBanner.classList.add('hidden');
+            btn.disabled = true;
+            btnText.textContent = '验证中...';
+            btnLoader.classList.remove('hidden');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    errorText.textContent = err.detail || '登录失败';
+                    errorBanner.classList.remove('hidden');
+                    return;
+                }
+
+                const data = await res.json();
+                localStorage.setItem('auth_token', data.token);
+                localStorage.setItem('auth_username', data.username);
+                window.location.href = 'admin-dashboard.html';
+            } catch (e) {
+                // 演示模式：后端不可用时使用默认账号
+                if (username === 'admin' && password === 'admin123') {
+                    localStorage.setItem('auth_token', 'demo_token_' + Date.now());
+                    localStorage.setItem('auth_username', '管理员');
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    errorText.textContent = '无法连接到服务器，演示模式请使用 admin / admin123 登录';
+                    errorBanner.classList.remove('hidden');
+                }
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = '进入系统';
+                btnLoader.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

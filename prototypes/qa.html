@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业知识库 - 智能助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .chat-bubble-system {
+            border: 1px solid #dbeafe;
+            background-color: #ffffff;
+        }
+        .active-chat {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+        }
+        .glass-nav {
+            backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- 顶部导航栏 -->
+    <header class="h-16 glass-nav border-b border-slate-200 px-6 flex items-center justify-between shrink-0 z-20 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            </div>
+            <h1 class="text-xl font-bold text-slate-800 tracking-tight">企业知识库</h1>
+        </div>
+        <div class="flex items-center gap-6">
+            <button class="text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-1.5 font-medium text-sm group">
+                <svg class="w-5 h-5 group-hover:fill-blue-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                我的收藏
+            </button>
+            <button class="relative text-slate-500 hover:text-blue-600 transition-colors p-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                <span class="absolute top-0 right-0 w-4 h-4 bg-red-500 border-2 border-white rounded-full text-[10px] text-white flex items-center justify-center">3</span>
+            </button>
+            <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+                <div class="text-right">
+                    <p class="text-xs font-bold text-slate-800 leading-none">张小明</p>
+                    <p class="text-[10px] text-slate-400 mt-1">产品中心</p>
+                </div>
+                <div class="w-9 h-9 bg-slate-200 rounded-full border-2 border-white shadow-sm overflow-hidden cursor-pointer hover:border-blue-400 transition-all">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User Avatar">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- 左侧边栏：历史对话列表 (260px) -->
+        <aside class="w-[260px] bg-white border-r border-slate-200 flex flex-col shrink-0">
+            <div class="flex-1 overflow-y-auto custom-scrollbar pt-4 px-3">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">对话历史</p>
+                <div class="space-y-1">
+                    <!-- 活跃项 -->
+                    <div class="active-chat p-3 rounded-xl cursor-pointer shadow-sm transition-all">
+                        <p class="text-sm font-bold text-blue-700 truncate">关于2024年市场增长率的咨询</p>
+                        <p class="text-[10px] text-blue-400 mt-1.5 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                            正在对话
+                        </p>
+                    </div>
+                    <!-- 历史项 -->
+                    <div class="p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-all group">
+                        <p class="text-sm font-medium text-slate-600 truncate group-hover:text-slate-900">如何申请年假流程说明</p>
+                        <p class="text-[10px] text-slate-400 mt-1">1小时前</p>
+                    </div>
+                    <div class="p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-all group">
+                        <p class="text-sm font-medium text-slate-600 truncate group-hover:text-slate-900">办公网络连接异常排查指南</p>
+                        <p class="text-[10px] text-slate-400 mt-1">昨天</p>
+                    </div>
+                    <div class="p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-all group">
+                        <p class="text-sm font-medium text-slate-600 truncate group-hover:text-slate-900">新员工报销系统操作指南</p>
+                        <p class="text-[10px] text-slate-400 mt-1">3月20日</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100">
+                <button class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-100 transition-all active:scale-[0.98]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    新建对话
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区：聊天记录 -->
+        <main class="flex-1 flex flex-col bg-slate-50/30">
+            <div class="flex-1 overflow-y-auto px-8 py-6 space-y-8 custom-scrollbar">
+                
+                <!-- 系统欢迎消息 -->
+                <div class="flex items-start gap-4">
+                    <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0 shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    </div>
+                    <div class="max-w-[85%]">
+                        <div class="chat-bubble-system p-4 rounded-2xl rounded-tl-none shadow-sm">
+                            <p class="text-sm text-slate-700 leading-relaxed">
+                                您好！我是企业智能助手。我已经学习了公司所有的政策文档和年度报告，您可以向我提问。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 用户消息 -->
+                <div class="flex items-start justify-end gap-4">
+                    <div class="max-w-[80%]">
+                        <div class="bg-slate-200/80 p-4 rounded-2xl rounded-tr-none text-left">
+                            <p class="text-sm text-slate-800">
+                                帮我查询一下2024年市场报告中关于上海地区的增长数据。
+                            </p>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2 text-right px-1">10:45</p>
+                    </div>
+                    <div class="w-9 h-9 bg-slate-300 rounded-lg overflow-hidden shrink-0 shadow-sm">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User">
+                    </div>
+                </div>
+
+                <!-- 系统详细回答 -->
+                <div class="flex items-start gap-4">
+                    <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0 shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    </div>
+                    <div class="max-w-[85%] space-y-3">
+                        <div class="chat-bubble-system p-5 rounded-2xl rounded-tl-none shadow-sm">
+                            <p class="text-sm text-slate-700 leading-relaxed">
+                                根据最新的市场分析数据，上海地区在2024年第一季度的增长率达到了 <span class="text-blue-600 font-bold underline decoration-blue-200 decoration-2 underline-offset-4">12.5%</span>。
+                                <br><br>
+                                主要增长动力来自：
+                                <ul class="list-disc ml-5 mt-2 space-y-1">
+                                    <li>高新技术产业出口额增长 18.2%</li>
+                                    <li>本地零售消费市场强劲反弹</li>
+                                    <li>金融服务业数字化转型的加速</li>
+                                </ul>
+                            </p>
+                            
+                            <!-- 底部交互栏 -->
+                            <div class="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-100 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="赞同">
+                                        <span class="text-xs">👍</span>
+                                    </button>
+                                    <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-100 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all" title="反对">
+                                        <span class="text-xs">👎</span>
+                                    </button>
+                                </div>
+                                <button onclick="document.getElementById('ref-source').classList.toggle('hidden')" class="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 group">
+                                    查看原文引用
+                                    <svg class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                            </div>
+
+                            <!-- 原文引用 -->
+                            <div id="ref-source" class="hidden mt-4 p-4 bg-blue-50/50 rounded-xl border-l-4 border-blue-400 animate-fadeIn">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <svg class="w-3.5 h-3.5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"></path><path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path></svg>
+                                    <span class="text-[10px] font-bold text-blue-800 uppercase tracking-tighter">引自：2024年度大中华区市场分析报告.pdf</span>
+                                </div>
+                                <p class="text-xs text-slate-600 italic leading-relaxed">
+                                    “...在华东分区的详细拆解中，上海作为首位城市，Q1阶段在智能硬件与集成电路制造领域环比增长幅度超过了15%，支撑了整体12.5%的同比增长指标...”
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 底部输入区 -->
+            <div class="p-6 bg-white border-t border-slate-200 shrink-0">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-end bg-slate-100/80 rounded-2xl border border-slate-200 focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:bg-white focus-within:border-blue-300 transition-all overflow-hidden p-1">
+                        <button class="p-3 text-slate-400 hover:text-blue-600 transition-colors mb-0.5" title="上传参考文件">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                        </button>
+                        <textarea rows="1" placeholder="输入您的问题，如：如何报销出差交通费？" class="flex-1 bg-transparent px-2 py-3.5 text-sm outline-none resize-none placeholder:text-slate-400 min-h-[52px] max-h-40"></textarea>
+                        <button class="m-1.5 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-100 transition-all flex items-center gap-2 active:scale-95">
+                            发送
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 text-center mt-3 tracking-wide">智能回答仅供参考，核心数据请以正式文档为准。</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右侧边栏：标签云与收藏 (280px) -->
+        <aside class="w-[280px] bg-white border-l border-slate-200 flex flex-col shrink-0">
+            <div class="p-6 space-y-10 overflow-y-auto custom-scrollbar">
+                
+                <!-- 热门标签 -->
+                <section>
+                    <div class="flex items-center gap-2 mb-5">
+                        <div class="w-1 h-4 bg-blue-600 rounded-full"></div>
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-widest">热门推荐</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 bg-blue-50 text-blue-600 text-[11px] font-semibold rounded-lg cursor-pointer hover:bg-blue-100 transition-colors border border-blue-100"># 年假申请</span>
+                        <span class="px-3 py-1.5 bg-slate-50 text-slate-600 text-[11px] font-medium rounded-lg cursor-pointer hover:bg-slate-100 transition-colors border border-slate-100"># 报销流程</span>
+                        <span class="px-3 py-1.5 bg-slate-50 text-slate-600 text-[11px] font-medium rounded-lg cursor-pointer hover:bg-slate-100 transition-colors border border-slate-100"># 会议室预定</span>
+                        <span class="px-3 py-1.5 bg-slate-50 text-slate-600 text-[11px] font-medium rounded-lg cursor-pointer hover:bg-slate-100 transition-colors border border-slate-100"># IT支持</span>
+                        <span class="px-3 py-1.5 bg-slate-50 text-slate-600 text-[11px] font-medium rounded-lg cursor-pointer hover:bg-slate-100 transition-colors border border-slate-100"># 考勤制度</span>
+                    </div>
+                </section>
+
+                <!-- 我的收藏列表 -->
+                <section>
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-2">
+                            <div class="w-1 h-4 bg-blue-600 rounded-full"></div>
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-widest">我的收藏</h3>
+                        </div>
+                        <button class="text-blue-600 hover:text-blue-700 text-[10px] font-bold">查看全部</button>
+                    </div>
+                    <div class="space-y-3">
+                        <!-- 收藏项 1 -->
+                        <div class="p-3.5 bg-slate-50/50 rounded-xl hover:bg-white hover:shadow-md hover:border-slate-100 border border-transparent transition-all cursor-pointer group">
+                            <div class="flex items-start justify-between">
+                                <p class="text-xs font-bold text-slate-700 leading-snug group-hover:text-blue-700 transition-colors">2024年度大中华区核心战略...</p>
+                                <svg class="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                            </div>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="px-1.5 py-0.5 bg-red-100 text-red-600 text-[9px] font-bold rounded">PDF</span>
+                                <span class="text-[9px] text-slate-400">更新于 2天前</span>
+                            </div>
+                        </div>
+                        <!-- 收藏项 2 -->
+                        <div class="p-3.5 bg-slate-50/50 rounded-xl hover:bg-white hover:shadow-md hover:border-slate-100 border border-transparent transition-all cursor-pointer group">
+                            <div class="flex items-start justify-between">
+                                <p class="text-xs font-bold text-slate-700 leading-snug group-hover:text-blue-700 transition-colors">员工差旅补助及报销细则</p>
+                                <svg class="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                            </div>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="px-1.5 py-0.5 bg-blue-100 text-blue-600 text-[9px] font-bold rounded">DOC</span>
+                                <span class="text-[9px] text-slate-400">更新于 3月15日</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 帮助中心卡片 -->
+                <section class="mt-auto">
+                    <div class="p-5 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl text-white relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-xs font-bold opacity-80 mb-1">遇到问题？</p>
+                            <p class="text-sm font-bold mb-4">联系企业IT服务台</p>
+                            <button class="w-full py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-xs font-bold transition-all">
+                                提交工单
+                            </button>
+                        </div>
+                        <svg class="absolute -right-4 -bottom-4 w-24 h-24 text-white/5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"></path></svg>
+                    </div>
+                </section>
+
+            </div>
+        </aside>
+
+    </div>
+
+</body>
+</html>

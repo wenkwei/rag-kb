@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>检索测试工具 - 知识库 RAG 评估</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .score-pill {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        .debug-bg {
+            background-color: #1e293b;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- 顶部导航 -->
+    <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0 z-10">
+        <div class="flex items-center gap-4">
+            <h1 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                检索测试实验室
+            </h1>
+            <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase tracking-wider">Evaluation Mode</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-xs text-slate-400">当前知识库：<span class="font-semibold text-slate-600">2024市场研究集</span></div>
+            <button class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        
+        <!-- 左侧：输入与参数 (400px) -->
+        <aside class="w-[400px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto custom-scrollbar">
+            <div class="p-6 space-y-6">
+                <!-- 测试问题输入 -->
+                <div class="space-y-3">
+                    <label class="text-sm font-bold text-slate-700">测试问题</label>
+                    <textarea placeholder="输入测试问题，例如：2024年Q3的市场预期是多少？" 
+                              class="w-full h-32 p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none bg-slate-50"></textarea>
+                </div>
+
+                <!-- 参数设置 (折叠面板效果) -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <span class="text-sm font-bold text-slate-700">检索参数配置</span>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    
+                    <div class="space-y-4 pt-2">
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <label class="text-xs text-slate-500 font-medium">Top K (结果数量)</label>
+                                <span class="text-xs font-bold text-blue-600">5</span>
+                            </div>
+                            <input type="range" min="1" max="20" value="5" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <label class="text-xs text-slate-500 font-medium">相似度阈值 (Threshold)</label>
+                                <span class="text-xs font-bold text-blue-600">0.60</span>
+                            </div>
+                            <input type="range" min="0" max="1" step="0.05" value="0.6" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs text-slate-500 font-medium">检索策略</label>
+                            <div class="grid grid-cols-1 gap-2">
+                                <label class="flex items-center gap-3 p-2 border border-blue-100 bg-blue-50 rounded-lg cursor-pointer">
+                                    <input type="radio" name="strategy" checked class="text-blue-600">
+                                    <span class="text-xs font-bold text-blue-700">混合检索 (Hybrid)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 border border-slate-100 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors">
+                                    <input type="radio" name="strategy" class="text-blue-600">
+                                    <span class="text-xs text-slate-600">纯向量检索 (Vector Only)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2 border border-slate-100 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors">
+                                    <input type="radio" name="strategy" class="text-blue-600">
+                                    <span class="text-xs text-slate-600">纯关键词检索 (BM25)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">当前知识库配置 (只读)</p>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-500">Chunk Size:</span>
+                                <span class="font-medium text-slate-700">512 tokens</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    执行检索测试
+                </button>
+            </div>
+        </aside>
+
+        <!-- 右侧：结果展示区 -->
+        <section class="flex-1 flex flex-col overflow-hidden">
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+                
+                <!-- 1. 检索结果片段 -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        命中片段 (Top 5)
+                        <span class="text-[10px] font-normal text-slate-400">耗时 124ms</span>
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <!-- 片段 1 -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-300 transition-all relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-3 flex gap-2">
+                                <div class="score-pill text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">Score: 0.94</div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.99 7.99 0 0111 4c1.23 0 2.391.277 3.43.774a2 2 0 011.57 1.726V15a2 2 0 01-2.12 1.989 7.978 7.978 0 00-3.31-.764 7.97 7.97 0 00-3.31.764 2 2 0 01-2.12-1.989V6.5a2 2 0 011.57-1.726C6.609 4.277 7.77 4 9 4z"></path></svg>
+                                </div>
+                                <div class="space-y-2 flex-1 pr-16">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold text-slate-700">2024市场研究报告_Final.pdf</span>
+                                        <span class="text-[10px] text-slate-400">#Page 12</span>
+                                    </div>
+                                    <p class="text-sm text-slate-600 leading-relaxed italic border-l-2 border-blue-100 pl-3">
+                                        “...根据Q3季度的前瞻指引，我们预计智能硬件领域的增长率将维持在15%左右，其中由于供应链优化，核心零部件成本有望进一步降低...”
+                                    </p>
+                                    <a href="#" class="text-xs text-blue-600 font-medium hover:underline inline-flex items-center gap-1">
+                                        查看原文详情 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 其他片段简化展示 -->
+                        <div class="bg-white border border-slate-100 rounded-xl p-3 opacity-60">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-500">片段 2: 年度总结.docx (Score: 0.78)</span>
+                                <button class="text-blue-600">展开</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. AI 生成答案 -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        大模型回答预览
+                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded">Gemini-2.5-Flash</span>
+                    </h3>
+                    <div class="bg-white border border-indigo-100 rounded-2xl p-6 shadow-sm border-l-4 border-l-indigo-500">
+                        <div class="prose prose-sm text-slate-700 leading-relaxed">
+                            <p class="mb-3">根据检索到的市场报告，2024年Q3的预期如下：</p>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>增长率：</strong> 智能硬件领域预计维持在 15% 左右。</li>
+                                <li><strong>成本控制：</strong> 核心零部件成本因供应链优化而降低。</li>
+                                <li><strong>主要驱动力：</strong> 主要受数字化转型和本地化部署需求增长推动。</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-8 pt-4 border-t border-slate-50 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-slate-400 font-medium mr-2">评估此回答：</span>
+                                <button class="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg hover:bg-emerald-100 transition-colors border border-emerald-100">正确</button>
+                                <button class="px-3 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-lg hover:bg-amber-100 transition-colors border border-amber-100">部分正确</button>
+                                <button class="px-3 py-1 bg-rose-50 text-rose-600 text-xs font-bold rounded-lg hover:bg-rose-100 transition-colors border border-rose-100">错误</button>
+                            </div>
+                            <button class="px-4 py-1.5 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-900 transition-all">提交反馈</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 底部调试信息 (折叠) -->
+            <footer class="bg-slate-900 text-slate-300 shrink-0 border-t border-slate-800">
+                <button class="w-full px-6 py-2 flex items-center justify-between hover:bg-slate-800 transition-colors">
+                    <div class="flex items-center gap-4 text-[10px] font-bold tracking-widest uppercase">
+                        <span class="text-blue-400">Debug Info</span>
+                        <span>Embedding: Text-Embedding-004</span>
+                        <span>Temperature: 0.1</span>
+                    </div>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                </button>
+                <div class="px-6 py-4 space-y-3 max-h-[200px] overflow-y-auto custom-scrollbar font-mono text-[11px] leading-relaxed border-t border-slate-800 hidden">
+                    <p class="text-emerald-400">// System Prompt</p>
+                    <p class="text-slate-500">"你是一个专业的文档分析助手。请基于以下提供的【Context】来回答用户的问题。如果Context中没有相关内容，请告知用户无法回答，不要编造..."</p>
+                    <p class="text-blue-400 mt-2">// Final Prompt</p>
+                    <p class="text-slate-500">"Context: [片段1的内容...] [片段2的内容...] \n Question: 2024年Q3的市场预期是多少？"</p>
+                </div>
+            </footer>
+        </section>
+
+    </main>
+
+</body>
+</html>

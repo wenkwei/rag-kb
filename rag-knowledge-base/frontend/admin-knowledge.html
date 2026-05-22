@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 知识库管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: #F4F7F9; color: #34495E; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
+        .upload-dragover { border-color: #3b82f6 !important; background-color: #eff6ff !important; }
+        .dropdown-option { padding: 0.5rem 0.75rem; font-size: 0.8125rem; color: #475569; cursor: pointer; transition: all 0.15s; }
+        .dropdown-option:hover { background-color: #f1f5f9; color: #1e40af; }
+        .dropdown-option.active { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
+        .preview-tab { transition: all 0.2s; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        <!-- 顶部导航 -->
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-4">
+                <nav class="flex text-sm text-slate-500" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a href="admin-dashboard.html" class="hover:text-slate-800 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                                仪表盘
+                            </a>
+                        </li>
+                        <li aria-current="page">
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                                <span class="ml-1 font-semibold text-slate-800">知识库管理</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="header-username" class="text-sm text-slate-500"></span>
+                <button onclick="logout()" class="text-sm text-slate-400 hover:text-red-500 transition-colors">退出</button>
+            </div>
+        </header>
+
+        <!-- 内容区 -->
+            <div class="flex-1 flex flex-col min-w-0 min-h-0 bg-white">
+                <!-- 上传区域 -->
+                <div class="px-6 pt-4 pb-2 shrink-0">
+                    <div id="upload-zone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-white hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
+                        <svg class="w-10 h-10 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        <p class="text-sm font-medium text-slate-600">点击或将文件拖拽至此处上传</p>
+                        <p class="text-xs text-slate-400 mt-1">支持 PDF, TXT (单个文件最大 50MB)</p>
+                        <input id="file-input" type="file" accept=".pdf,.txt" class="hidden" multiple>
+                    </div>
+                    <div id="upload-status" class="hidden mt-3"></div>
+                </div>
+
+                <!-- 文档列表标题 -->
+                <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
+                    <h2 class="text-base font-bold text-slate-800">文档列表</h2>
+                    <div class="flex items-center gap-3">
+                        <button id="batch-delete-btn" onclick="batchDelete()" class="hidden px-3 py-1.5 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-lg transition-all shadow-sm items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            <span>批量删除</span>
+                            <span id="selected-count" class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">0</span>
+                        </button>
+                        <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
+                    </div>
+                </div>
+
+                <!-- 筛选栏 -->
+                <div class="px-6 py-3 border-b border-slate-50 flex flex-wrap items-center gap-3 shrink-0">
+                    <div class="relative flex-1 min-w-[300px]">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" id="search-input" placeholder="搜索文档名称 / 内容..." oninput="onFilterChange()" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    </div>
+                    <!-- 类型筛选 -->
+                    <div class="relative ml-auto">
+                        <button onclick="toggleDropdown('type-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
+                            <span id="type-label">全部类型</span>
+                            <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="type-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
+                            <div class="dropdown-option" data-type="" onclick="selectType('')">全部类型</div>
+                            <div class="dropdown-option" data-type="pdf" onclick="selectType('pdf')">PDF</div>
+                            <div class="dropdown-option" data-type="docx" onclick="selectType('docx')">Word</div>
+                            <div class="dropdown-option" data-type="pptx" onclick="selectType('pptx')">PPT</div>
+                            <div class="dropdown-option" data-type="txt" onclick="selectType('txt')">TXT</div>
+                        </div>
+                    </div>
+                    <!-- 状态筛选 -->
+                    <div class="relative">
+                        <button onclick="toggleDropdown('status-dropdown')" class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-slate-300 transition-all min-w-[120px]">
+                            <span id="status-label">全部状态</span>
+                            <svg class="w-3.5 h-3.5 ml-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="status-dropdown" class="dropdown-menu hidden absolute top-full mt-1 left-0 bg-white border border-slate-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1 overflow-hidden">
+                            <div class="dropdown-option" data-status="" onclick="selectStatus('')">全部状态</div>
+                            <div class="dropdown-option" data-status="completed" onclick="selectStatus('completed')">已索引</div>
+                            <div class="dropdown-option" data-status="indexing" onclick="selectStatus('indexing')">索引中</div>
+                            <div class="dropdown-option" data-status="failed" onclick="selectStatus('failed')">索引失败</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文档列表 -->
+                <div class="flex-1 overflow-auto min-h-0 custom-scrollbar">
+                    <table class="w-full text-center border-collapse">
+                        <thead class="bg-slate-50 sticky top-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
+                            <tr class="text-center">
+                                <th class="px-4 py-4 w-10">
+                                    <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                </th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文件大小</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">最后更新</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">状态</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doc-list-body" class="divide-y divide-slate-100">
+                            <tr id="empty-row">
+                                <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 (始终固定在底部) -->
+                <div id="pagination-bar" class="px-6 py-3 border-t border-slate-100 flex items-center justify-center gap-6 shrink-0 bg-white">
+                    <div class="text-xs text-slate-400">
+                        显示第 <span id="page-start" class="font-semibold text-slate-600">0</span>-<span id="page-end" class="font-semibold text-slate-600">0</span> 条，共 <span id="pagination-total" class="font-semibold text-slate-600">0</span> 条
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="goToPage(currentPage - 1)" id="prev-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed" disabled>上一页</button>
+                        <div id="page-numbers" class="flex items-center gap-1"></div>
+                        <button onclick="goToPage(currentPage + 1)" id="next-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- 删除确认弹窗 -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/30 items-center justify-center z-50" style="display:none">
+        <div class="bg-white rounded-2xl p-6 w-96 shadow-xl">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">确认删除</h3>
+            <p class="text-sm text-slate-600 mb-6">确定要删除 <span id="delete-filename" class="font-bold text-slate-800"></span> 吗？此操作不可撤销。</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all">取消</button>
+                <button id="confirm-delete-btn" class="px-4 py-2 text-sm font-bold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-all">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文档预览侧边栏 -->
+    <div id="preview-panel" class="fixed top-0 right-0 h-full w-[600px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col" style="max-width:90vw">
+        <div class="flex items-center justify-between px-6 h-16 border-b border-slate-200 shrink-0">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="p-1.5 rounded-lg bg-blue-50 text-blue-600 shrink-0" id="preview-icon">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                </div>
+                <h3 class="text-base font-bold text-slate-800 truncate" id="preview-title">文档预览</h3>
+            </div>
+            <button onclick="closePreview()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <!-- 文档元信息 -->
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><span class="text-slate-400">文档类型</span><p class="font-semibold text-slate-700" id="preview-type">-</p></div>
+                    <div><span class="text-slate-400">文件大小</span><p class="font-semibold text-slate-700" id="preview-size-label">-</p></div>
+                    <div><span class="text-slate-400">文件大小</span><p class="font-semibold text-slate-700" id="preview-size">-</p></div>
+                    <div><span class="text-slate-400">上传时间</span><p class="font-semibold text-slate-700" id="preview-date">-</p></div>
+                    <div><span class="text-slate-400">索引状态</span><p class="font-semibold" id="preview-status">-</p></div>
+                    <div><span class="text-slate-400">更新时间</span><p class="font-semibold text-slate-700" id="preview-updated">-</p></div>
+                </div>
+            </div>
+            <!-- Tab切换 -->
+            <div class="flex border-b border-slate-200 px-6">
+                <button class="preview-tab active px-4 py-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition-colors" data-tab="content" onclick="switchPreviewTab('content')">文档内容</button>
+                <button class="preview-tab px-4 py-3 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-colors" data-tab="chunks" onclick="switchPreviewTab('chunks')">切片列表</button>
+            </div>
+            <!-- 文档内容 -->
+            <div id="preview-content" class="p-6">
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                    <pre id="preview-body" class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-sans"></pre>
+                </div>
+            </div>
+            <!-- 切片列表 -->
+            <div id="preview-chunks-list" class="p-6 hidden">
+                <div id="preview-chunks-body"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 预览遮罩 -->
+    <div id="preview-overlay" class="fixed inset-0 bg-black/20 z-40 hidden" onclick="closePreview()"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            window.location.href = 'admin-login.html';
+        }
+
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('header-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+
+        function authToken() {
+            return localStorage.getItem('auth_token');
+        }
+
+        let deleteTarget = null;
+
+        // Upload zone
+        const uploadZone = document.getElementById('upload-zone');
+        const fileInput = document.getElementById('file-input');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('upload-dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('upload-dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('upload-dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) uploadFiles(files);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) uploadFiles(fileInput.files);
+        });
+
+        async function uploadFiles(files) {
+            const statusDiv = document.getElementById('upload-status');
+            statusDiv.classList.remove('hidden');
+
+            for (const file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['pdf', 'txt'].includes(ext)) {
+                    statusDiv.innerHTML += `<div class="text-sm text-red-500">❌ ${file.name}: 不支持的文件格式</div>`;
+                    continue;
+                }
+
+                statusDiv.innerHTML += `<div class="text-sm text-slate-600" id="status-${file.name}">⏳ ${file.name}: 上传处理中...</div>`;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    const res = await fetch(`${API_BASE}/api/documents/upload`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${authToken()}` },
+                        body: formData,
+                    });
+
+                    const data = await res.json();
+                    const statusEl = document.getElementById(`status-${file.name}`);
+
+                    if (res.ok) {
+                        statusEl.className = 'text-sm text-emerald-600';
+                        statusEl.textContent = `✅ ${file.name}: 处理完成 (${data.chunk_count} 个切片)`;
+                    } else {
+                        statusEl.className = 'text-sm text-red-500';
+                        statusEl.textContent = `❌ ${file.name}: ${data.detail || '上传失败'}`;
+                    }
+                } catch (e) {
+                    const statusEl = document.getElementById(`status-${file.name}`);
+                    if (statusEl) {
+                        statusEl.className = 'text-sm text-red-500';
+                        statusEl.textContent = `❌ ${file.name}: 网络错误`;
+                    }
+                }
+            }
+
+            setTimeout(loadDocuments, 1000);
+        }
+
+        const DEMO_DOCUMENTS = [
+            { filename: '财务报销制度2024修订版.pdf', type: 'pdf', status: 'completed', size: '2.4 MB', updated: '2024-03-20 14:22' },
+            { filename: '新员工入职IT指引.pdf', type: 'pdf', status: 'completed', size: '1.8 MB', updated: '2024-03-18 11:20' },
+            { filename: '考勤管理制度V3.docx', type: 'docx', status: 'completed', size: '1.2 MB', updated: '2024-03-01 16:45' },
+            { filename: '企业微信常见问题FAQ.txt', type: 'txt', status: 'completed', size: '156 KB', updated: '2024-03-15 10:00' },
+            { filename: '员工福利手册2024版.pdf', type: 'pdf', status: 'completed', size: '3.1 MB', updated: '2024-03-10 09:15' },
+            { filename: '公司年度总结汇报.pptx', type: 'pptx', status: 'indexing', size: '8.5 MB', updated: '2024-03-25 08:00' },
+            { filename: 'VPN远程接入指南.txt', type: 'txt', status: 'completed', size: '98 KB', updated: '2024-02-15 10:30' },
+            { filename: '信息安全管理办法.pdf', type: 'pdf', status: 'completed', size: '2.8 MB', updated: '2024-03-05 14:00' },
+            { filename: '上海分公司报销比例调整公告.txt', type: 'txt', status: 'completed', size: '45 KB', updated: '2024-03-21 14:20' },
+            { filename: '产品路线图规划.pptx', type: 'pptx', status: 'failed', size: '5.2 MB', updated: '2024-03-22 16:00' },
+            { filename: '劳动合同模板.docx', type: 'docx', status: 'completed', size: '680 KB', updated: '2024-02-20 09:00' },
+            { filename: '人事管理制度汇编.docx', type: 'docx', status: 'indexing', size: '2.1 MB', updated: '2024-02-25 14:00' },
+        ];
+
+        let allDocuments = [];
+        let filterType = '';
+        let filterStatus = '';
+        let selectedDocs = new Set();
+        let currentPage = 1;
+        const pageSize = 8;
+
+        // ============ 文档预览 ============
+        const DEMO_PREVIEW = {
+            '财务报销制度2024修订版.pdf': { size: '2.4 MB', date: '2024-03-15 09:30', updated: '2024-03-20 14:22',
+                content: `财务报销制度（2024修订版）
+
+第一章 总则
+
+第一条 为进一步规范公司财务报销行为，合理控制费用支出，提高资金使用效率，根据《中华人民共和国会计法》及相关法律法规，结合公司实际情况，特制定本制度。
+
+第二条 本制度适用于公司全体在职员工（含试用期员工）的各项费用报销管理。
+
+第二章 报销流程
+
+第三条 费用报销实行"预算控制、逐级审批、即时核算"的管理原则。
+
+第四条 报销审批权限：
+（一）单笔金额在2000元以下的，由部门负责人审批；
+（二）单笔金额在2000元至10000元的，需经部门负责人及分管副总裁审批；
+（三）单笔金额在10000元以上的，需经总裁审批。
+
+第三章 差旅费报销标准
+
+第五条 出差住宿标准：
+（一）一线城市（北京、上海、广州、深圳）：不超过600元/天；
+（二）二线城市：不超过400元/天；
+（三）其他城市：不超过300元/天。
+
+第六条 交通补贴标准：
+（一）长途出差：凭票据实报实销，高铁二等座及以下；
+（二）市内交通：每天不超过80元，凭票据报销。
+
+第四章 附则
+
+第七条 本制度自2024年4月1日起施行，原制度同时废止。
+第八条 本制度由财务部负责解释。` },
+
+            '新员工入职IT指引.pdf': { size: '1.8 MB', date: '2024-03-10 14:00', updated: '2024-03-18 11:20',
+                content: `新员工入职IT设备与服务指引
+
+一、入职前准备
+
+人力资源部在确认新员工入职日期后，需提前3个工作日将《新员工入职通知单》发送至IT服务台（itsupport@company.com），IT中心据此提前准备相关设备。
+
+二、IT设备配置标准
+
+1. 笔记本电脑配置：
+   - 研发岗位：联想ThinkPad X1 Carbon (16GB RAM, 512GB SSD)
+   - 非研发岗位：联想ThinkPad T14 (16GB RAM, 256GB SSD)
+
+2. 显示器：统一配置24寸 IPS液晶显示器（Dell U2422H）
+
+3. 其他设备：
+   - 无线鼠标 + 键盘套装
+   - 降噪耳机（研发岗位）
+   - 手机（需要外勤的岗位）
+
+三、系统账号开通
+
+IT中心将统一开通以下系统账号：
+   1. 企业邮箱（姓名拼音@company.com）
+   2. 企业微信
+   3. OA办公系统
+   4. VPN远程接入账号
+   5. 内部知识库系统
+   6. JIRA项目管理（研发岗位）
+   7. Git代码仓库（研发岗位）
+
+四、入职当日流程
+
+   09:00 - 09:30  前往IT服务台领取设备
+   09:30 - 10:00  账号激活与密码设置
+   10:00 - 11:00  系统环境配置
+   11:00 - 11:30   IT安全培训（线上课程）
+   14:00 - 16:00   部门入职引导` },
+
+            '考勤管理制度V3.docx': { size: '1.2 MB', date: '2024-02-20 10:00', updated: '2024-03-01 16:45',
+                content: `考勤管理制度（V3.0）
+
+一、工作时间
+
+公司实行每周五天工作制，标准工作时间为：
+- 上午：09:00 - 12:00
+- 下午：13:30 - 18:00
+
+各部门可根据工作实际需要，经分管领导批准后实行弹性工作制。
+
+二、考勤方式
+
+1. 打卡：员工每日上下班需通过企业微信进行打卡签到。
+2. 考勤周期：每月1日至当月最后一日。
+3. 考勤结果由各部门考勤员于次月3日前汇总提交至人力资源部。
+
+三、迟到与早退
+
+1. 迟到/早退30分钟以内，每次扣除当日工资5%；
+2. 迟到/早退30分钟至2小时，按旷工半天处理；
+3. 月累计迟到/早退超过5次，额外扣除绩效分2分。
+
+四、加班管理
+
+1. 加班需提前填写《加班申请单》，经部门负责人审批后方可计算加班。
+2. 工作日加班按基本工资的150%计算加班费。
+3. 休息日加班安排补休，如无法安排补休则按200%计算加班费。
+4. 法定节假日加班按300%计算加班费。` },
+
+            '企业微信常见问题FAQ.txt': { size: '156 KB', date: '2024-01-05 08:30', updated: '2024-03-15 10:00',
+                content: `企业微信常见问题FAQ
+
+1. 如何登录企业微信？
+   答：使用公司邮箱账号和密码登录。首次登录需通过短信验证码验证。
+
+2. 忘记企业微信密码怎么办？
+   答：在登录页面点击"忘记密码"，通过公司邮箱或绑定的手机号重置密码。也可联系IT服务台（分机：8899）协助重置。
+
+3. 如何加入企业微信群？
+   答：在通讯录中搜索群名称或群主姓名，申请加入；或让群内同事发送群邀请链接。
+
+4. 企业微信可以登录几个设备？
+   答：支持同时登录手机端和电脑端，但同一设备类型只允许登录一个账号。
+
+5. 如何设置审批流程？
+   答：在工作台→审批→模板管理中，选择相应模板设置审批人和抄送人。
+
+6. 文件传输大小限制是多少？
+   答：单文件不超过200MB，支持常见办公文档格式。
+
+7. 如何导出聊天记录？
+   答：目前企业微信不提供聊天记录导出功能，重要信息建议归档保存。
+
+8. 离职后企业微信如何处理？
+   答：离职当天由IT中心注销账号，聊天记录保留30天后自动清除。` },
+
+            '员工福利手册2024版.pdf': { size: '3.1 MB', date: '2024-01-20 13:00', updated: '2024-03-10 09:15',
+                content: `2024年度员工福利手册
+
+一、社会保险与公积金
+
+公司为所有正式员工缴纳五险一金，缴纳基数为员工上年度月平均工资：
+1. 养老保险：单位16%，个人8%
+2. 医疗保险：单位8%，个人2%
+3. 失业保险：单位0.5%，个人0.5%
+4. 工伤保险：单位0.2%（个人不缴纳）
+5. 生育保险：单位0.8%（个人不缴纳）
+6. 住房公积金：单位12%，个人12%
+
+二、补充商业保险
+
+公司为员工购买补充商业保险，包括：
+- 补充医疗保险：报销社保范围内个人自付部分的90%
+- 意外伤害险：保额50万元
+- 重大疾病险：保额30万元
+
+三、年度体检
+
+每年安排一次全面的健康体检，标准为：
+- 35岁以上员工：1500元/人
+- 35岁以下员工：800元/人
+
+四、带薪年假
+
+1. 入职满1年不满10年：5天
+2. 入职满10年不满20年：10天
+3. 入职满20年：15天
+
+五、其他福利
+
+- 节日礼金：春节、端午、中秋各500元
+- 生日礼金：300元生日卡
+- 员工旅游：每年一次，公司承担80%费用
+- 餐补：每天30元` },
+
+            '公司差旅报销标准.pdf': { size: '1.5 MB', date: '2024-02-01 11:00', updated: '2024-02-28 17:30',
+                content: `公司差旅报销标准（2024版）
+
+一、差旅申请
+
+员工出差前需在OA系统中填写《出差申请表》，注明出差事由、地点、时间及预算，经部门负责人审批后方可出行。
+
+二、交通费标准
+
+1. 飞机：单程超过6小时高铁的出差可申请经济舱机票，需提前3天预订。
+2. 高铁/动车：4小时内可乘坐二等座，超过4小时可申请一等座。
+3. 出租车：出差目的地市内交通按天包干，一线城市80元/天，其他城市50元/天。
+
+三、住宿费标准
+
+| 城市等级 | 标准间上限 | 备注 |
+|---------|----------|------|
+| 一线城市 | 600元/晚 | 含早 |
+| 二线城市 | 400元/晚 | 含早 |
+| 其他城市 | 300元/晚 | 含早 |
+
+四、伙食补助
+
+1. 国内出差：一线城市120元/天，其他城市100元/天
+2. 出差不足一天的：
+   - 不足4小时：不发放伙食补助
+   - 4-8小时：发放50%
+   - 8小时以上：全额发放` },
+
+            'VPN远程接入指南.txt': { size: '98 KB', date: '2024-01-10 16:00', updated: '2024-02-15 10:30',
+                content: `VPN远程接入指南
+
+一、概述
+
+公司VPN系统采用SSL VPN技术，支持Windows、macOS、iOS和Android系统，方便员工在外出或居家办公时安全访问公司内部网络资源。
+
+二、安装步骤
+
+Windows系统：
+1. 打开浏览器访问 https://vpn.company.com
+2. 下载对应操作系统版本的VPN客户端
+3. 双击安装包，按默认设置完成安装
+4. 重启计算机
+
+macOS系统：
+1. 从App Store搜索"Company VPN Client"并安装
+2. 或访问 https://vpn.company.com 下载安装包
+3. 将应用拖拽至Applications文件夹
+
+三、登录方式
+
+1. 打开VPN客户端
+2. 服务器地址：vpn.company.com
+3. 用户名：公司邮箱前缀（如：zhangsan）
+4. 密码：公司系统登录密码
+5. 点击"连接"，验证通过后即可访问内网
+
+四、常见问题
+
+1. 连接失败：检查网络连接，尝试切换WiFi/移动网络
+2. 认证失败：确认用户名密码是否正确，联系IT重置
+3. 速度慢：关闭其他占用带宽的应用，尝试切换TCP/UDP协议
+
+五、安全须知
+
+- 不要在公共电脑上安装VPN客户端
+- 使用完毕后及时断开连接
+- 严禁通过VPN下载或传播公司敏感数据` },
+
+            '信息安全管理办法.pdf': { size: '2.8 MB', date: '2024-01-15 09:00', updated: '2024-03-05 14:00',
+                content: `信息安全管理办法
+
+第一章 总则
+
+第一条 为保障公司信息系统安全、稳定运行，保护公司信息资产不受损失，依据《中华人民共和国网络安全法》及相关法律法规，制定本办法。
+
+第二条 本办法适用于公司所有信息系统、网络设备、数据资源的安全管理。
+
+第二章 密码安全
+
+第三条 密码设置规范：
+（一）密码长度不少于8位；
+（二）必须包含大写字母、小写字母、数字和特殊字符中至少三种；
+（三）禁止使用连续字符或重复字符；
+（四）每90天必须更换一次密码；
+（五）禁止将密码记录在便签纸或未加密的电子文档中。
+
+第三章 数据安全
+
+第四条 数据分级管理：
+（一）绝密数据：客户隐私信息、核心源代码、战略规划；
+（二）机密数据：财务报表、合同文档、人事档案；
+（三）内部数据：制度文件、会议纪要、工作报告；
+（四）公开数据：宣传资料、招聘信息。
+
+第五条 不同级别数据采取不同的加密和访问控制措施。
+
+第四章 网络安全
+
+第六条 公司内部网络划分为办公网、生产网和访客网三个区域，实行逻辑隔离。
+第七条 所有接入公司网络的设备必须安装指定的防病毒软件。
+第八条 严禁私自搭建WiFi热点或使用个人路由器接入公司网络。` },
+
+            '上海分公司报销比例调整公告.txt': { size: '45 KB', date: '2024-03-21 14:20', updated: '2024-03-21 14:20',
+                content: `关于调整上海分公司差旅报销标准的通知
+
+各位同事：
+
+经公司管理层研究决定，自2024年4月1日起，上海分公司差旅报销标准作如下调整：
+
+一、住宿标准调整
+
+原标准：400元/天
+调整后：550元/天
+
+二、伙食补助调整
+
+原标准：100元/天
+调整后：130元/天
+
+三、调整原因
+
+鉴于近年来上海市物价水平持续上涨，原报销标准已难以覆盖员工出差实际支出。经财务部调研及管理层审议，决定适当上调上海分公司差旅报销标准。
+
+请各位同事按照新标准执行报销申请，2024年4月1日前的差旅仍按原标准执行。
+
+如有疑问，请联系财务部（分机：8201）。
+
+财务部
+2024年3月21日` },
+
+            '劳动合同模板.docx': { size: '680 KB', date: '2024-01-08 15:00', updated: '2024-02-20 09:00',
+                content: `劳动合同书
+
+甲方（用人单位）：×××科技有限公司
+乙方（员工）：________________
+
+根据《中华人民共和国劳动法》及相关法律法规，甲乙双方本着平等自愿、协商一致的原则，签订本合同。
+
+第一条 合同期限
+
+1. 本合同期限类型为固定期限劳动合同。
+2. 合同期限自____年__月__日起至____年__月__日止。
+3. 试用期：自____年__月__日起至____年__月__日止，试用期为____个月。
+
+第二条 工作内容与地点
+
+1. 乙方同意在甲方__________部门，担任__________岗位工作。
+2. 工作地点：__________。
+3. 甲方可根据工作需要及乙方能力表现，合理调整乙方工作岗位和地点。
+
+第三条 劳动报酬
+
+1. 乙方月工资为人民币__________元（税前）。
+2. 工资发放日为每月15日，遇节假日顺延。
+3. 加班工资按国家规定执行。
+
+第四条 社会保险
+
+甲方依法为乙方缴纳养老保险、医疗保险、失业保险、工伤保险、生育保险及住房公积金。
+
+第五条 解除与终止
+
+双方解除或终止劳动合同，应提前30日书面通知对方。` },
+
+            '产品路线图规划.pptx': { size: '5.2 MB', date: '2024-03-18 10:30', updated: '-', content: '暂无预览内容 - 该文件为PPT演示文稿，正在解析中...' },
+            '人事管理制度汇编.docx': { size: '2.1 MB', date: '2024-02-25 14:00', updated: '-', content: '暂无预览内容 - 该文件正在索引中...' },
+            '公司年度总结汇报.pptx': { size: '8.5 MB', date: '2024-03-22 16:00', updated: '-', content: '暂无预览内容 - 该文件正在索引中...' },
+        };
+
+        function switchPreviewTab(tab) {
+            document.querySelectorAll('.preview-tab').forEach(t => {
+                t.className = 'preview-tab px-4 py-3 text-sm font-bold border-b-2 transition-colors ' +
+                    (t.dataset.tab === tab ? 'text-blue-600 border-blue-600' : 'text-slate-500 border-transparent hover:text-slate-700 font-medium');
+            });
+            document.getElementById('preview-content').classList.toggle('hidden', tab !== 'content');
+            document.getElementById('preview-chunks-list').classList.toggle('hidden', tab !== 'chunks');
+        }
+
+        function openPreview(filename) {
+            const doc = allDocuments.find(d => d.filename === filename);
+            const preview = DEMO_PREVIEW[filename];
+            if (!doc || !preview) return;
+
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = { pdf: 'text-red-500 bg-red-50', docx: 'text-blue-500 bg-blue-50', pptx: 'text-orange-500 bg-orange-50', txt: 'text-slate-500 bg-slate-50' };
+            document.getElementById('preview-icon').className = 'p-1.5 rounded-lg ' + (icons[ext] || icons.txt) + ' shrink-0';
+            document.getElementById('preview-title').textContent = filename;
+            document.getElementById('preview-type').textContent = ({ pdf: 'PDF', docx: 'Word', pptx: 'PPT', txt: 'TXT' })[ext] || ext.toUpperCase();
+            document.getElementById('preview-size-label').textContent = doc.size || '-';
+            document.getElementById('preview-size').textContent = preview.size;
+            document.getElementById('preview-date').textContent = preview.date;
+            document.getElementById('preview-updated').textContent = preview.updated;
+
+            const statusConfig = { completed: { label: '已索引', color: 'text-emerald-600' }, indexing: { label: '索引中', color: 'text-amber-600' }, failed: { label: '索引失败', color: 'text-rose-600' } };
+            const sc = statusConfig[doc.status] || statusConfig.completed;
+            document.getElementById('preview-status').innerHTML = '<span class="' + sc.color + '">' + sc.label + '</span>';
+
+            // Content
+            document.getElementById('preview-body').textContent = preview.content;
+            // Chunks
+            const chunksBody = document.getElementById('preview-chunks-body');
+            const chunkCount = Math.floor(Math.random() * 8) + 5;
+            const chunkItems = [];
+            for (let i = 1; i <= chunkCount; i++) {
+                const score = (0.82 + Math.random() * 0.15).toFixed(3);
+                chunkItems.push(`<div class="p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 transition-all">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-400">切片 #${i}</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${parseFloat(score)>=0.9?'bg-emerald-50 text-emerald-600':'bg-blue-50 text-blue-600'}">${score}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${preview.content.substring(0,80).split('\n').filter(Boolean)[0] || '文档内容片段...'}...</p>
+                </div>`);
+            }
+            chunksBody.innerHTML = chunkItems.join('\n') + `<div class="text-center text-xs text-slate-400 py-2">仅展示前${chunkCount}个切片</div>`;
+
+            switchPreviewTab('content');
+            document.getElementById('preview-panel').classList.remove('translate-x-full');
+            document.getElementById('preview-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            document.getElementById('preview-panel').classList.add('translate-x-full');
+            document.getElementById('preview-overlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function toggleDropdown(id) {
+            const dd = document.getElementById(id);
+            const all = document.querySelectorAll('.dropdown-menu');
+            all.forEach(d => { if (d.id !== id) d.classList.add('hidden'); });
+            dd.classList.toggle('hidden');
+        }
+        function selectType(val) {
+            filterType = val;
+            document.getElementById('type-label').textContent = val ? val.toUpperCase() : '全部类型';
+            document.querySelectorAll('#type-dropdown .dropdown-option').forEach(el => el.classList.remove('active'));
+            document.querySelector(`#type-dropdown .dropdown-option[data-type="${val}"]`)?.classList.add('active');
+            document.getElementById('type-dropdown').classList.add('hidden');
+            applyFilters();
+        }
+        function selectStatus(val) {
+            filterStatus = val;
+            document.getElementById('status-label').textContent = val ? ({completed:'已索引',indexing:'索引中',failed:'索引失败'})[val] || val : '全部状态';
+            document.querySelectorAll('#status-dropdown .dropdown-option').forEach(el => el.classList.remove('active'));
+            document.querySelector(`#status-dropdown .dropdown-option[data-status="${val}"]`)?.classList.add('active');
+            document.getElementById('status-dropdown').classList.add('hidden');
+            applyFilters();
+        }
+        function onFilterChange() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const q = document.getElementById('search-input').value.trim().toLowerCase();
+            let filtered = allDocuments;
+            if (q) filtered = filtered.filter(d => d.filename.toLowerCase().includes(q));
+            if (filterType) filtered = filtered.filter(d => d.type === filterType);
+            if (filterStatus) filtered = filtered.filter(d => d.status === filterStatus);
+            renderDocumentList(filtered);
+        }
+
+        // 点击页面其他区域关闭下拉菜单
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.add('hidden'));
+            }
+        });
+
+        async function loadDocuments() {
+            // 立即显示演示数据
+            allDocuments = DEMO_DOCUMENTS;
+            applyFilters();
+            // 后台尝试从API加载真实数据
+            try {
+                const res = await fetch(`${API_BASE}/api/documents`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                });
+                if (res.status === 401) return;
+                const data = await res.json();
+                const docs = data.documents || [];
+                if (docs.length > 0) {
+                    allDocuments = docs;
+                    applyFilters();
+                }
+            } catch (e) {}
+        }
+
+        function renderDocumentList(docs) {
+            const total = docs.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, total);
+            const pageDocs = docs.slice(start, end);
+
+            const tbody = document.getElementById('doc-list-body');
+            const badge = document.getElementById('doc-count-badge');
+            badge.textContent = `共 ${total} 个文档`;
+
+            if (pageDocs.length === 0) {
+                tbody.innerHTML = `<tr id="empty-row"><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td></tr>`;
+                updatePagination(0, 0, total);
+                return;
+            }
+
+            tbody.innerHTML = pageDocs.map(doc => {
+                const ext = doc.filename.split('.').pop().toLowerCase();
+                const typeConfig = { pdf: { label: 'PDF', color: 'text-red-600 bg-red-50', icon: 'text-red-500 bg-red-50' }, docx: { label: 'Word', color: 'text-blue-600 bg-blue-50', icon: 'text-blue-500 bg-blue-50' }, pptx: { label: 'PPT', color: 'text-orange-600 bg-orange-50', icon: 'text-orange-500 bg-orange-50' }, txt: { label: 'TXT', color: 'text-slate-600 bg-slate-50', icon: 'text-slate-500 bg-slate-50' } };
+                const tc = typeConfig[ext] || typeConfig.txt;
+                const statusConfig = { completed: { label: '已索引', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }, indexing: { label: '索引中', color: 'bg-amber-50 text-amber-600 border-amber-100' }, failed: { label: '索引失败', color: 'bg-rose-50 text-rose-600 border-rose-100' } };
+                const sc = statusConfig[doc.status] || statusConfig.completed;
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors group ${selectedDocs.has(doc.filename) ? 'bg-blue-50/50' : ''}" data-filename="${doc.filename}">
+                        <td class="px-4 py-4 w-10">
+                            <input type="checkbox" onchange="toggleSelectDoc('${doc.filename}')" ${selectedDocs.has(doc.filename) ? 'checked' : ''} class="row-checkbox w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                        </td>
+                        <td class="px-6 py-4 text-left">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 ${tc.icon} rounded-lg">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                                </div>
+                                <span class="text-sm font-semibold text-slate-700 group-hover:text-blue-600">${doc.filename}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-0.5 text-xs font-bold ${tc.color} rounded">${tc.label}</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500">${doc.size || '-'}</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">${doc.updated || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full text-[11px] font-bold border ${sc.color}">${sc.label}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-1">
+                                <button onclick="openPreview('${doc.filename}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all" title="预览">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                                <button onclick="confirmDelete('${doc.filename}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-all" title="删除">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            updatePagination(start + 1, end, total);
+        }
+
+        function updatePagination(start, end, total) {
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            document.getElementById('page-start').textContent = total > 0 ? start : 0;
+            document.getElementById('page-end').textContent = end;
+            document.getElementById('pagination-total').textContent = total;
+
+            document.getElementById('prev-page').disabled = currentPage <= 1;
+            document.getElementById('next-page').disabled = currentPage >= totalPages;
+
+            const nums = document.getElementById('page-numbers');
+            nums.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = 'px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all ' +
+                    (i === currentPage ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100');
+                btn.onclick = () => goToPage(i);
+                nums.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            const total = allDocuments.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            applyFilters();
+        }
+
+        // ============ 批量选择 ============
+        function toggleSelectDoc(filename) {
+            if (selectedDocs.has(filename)) {
+                selectedDocs.delete(filename);
+            } else {
+                selectedDocs.add(filename);
+            }
+            updateBatchDeleteButton();
+            applyFilters();
+            updateSelectAllCheckbox();
+        }
+
+        function toggleSelectAll() {
+            const checked = document.getElementById('select-all-checkbox').checked;
+            const filtered = allDocuments.filter(d => {
+                const matchType = !filterType || d.type === filterType;
+                const matchStatus = !filterStatus || d.status === filterStatus;
+                return matchType && matchStatus;
+            });
+            if (checked) {
+                filtered.forEach(d => selectedDocs.add(d.filename));
+            } else {
+                filtered.forEach(d => selectedDocs.delete(d.filename));
+            }
+            updateBatchDeleteButton();
+            applyFilters();
+            updateSelectAllCheckbox();
+        }
+
+        function updateSelectAllCheckbox() {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('select-all-checkbox').checked = allChecked;
+        }
+
+        function updateBatchDeleteButton() {
+            const btn = document.getElementById('batch-delete-btn');
+            const count = document.getElementById('selected-count');
+            count.textContent = selectedDocs.size;
+            btn.classList.toggle('hidden', selectedDocs.size === 0);
+            btn.classList.toggle('inline-flex', selectedDocs.size > 0);
+        }
+
+        function batchDelete() {
+            const count = selectedDocs.size;
+            if (count === 0) return;
+            if (!confirm(`确定要删除选中的 ${count} 个文档吗？此操作不可撤销。`)) return;
+
+            selectedDocs.forEach(name => {
+                allDocuments = allDocuments.filter(d => d.filename !== name);
+            });
+            selectedDocs.clear();
+            updateBatchDeleteButton();
+            document.getElementById('select-all-checkbox').checked = false;
+            applyFilters();
+        }
+
+        function confirmDelete(filename) {
+            deleteTarget = filename;
+            document.getElementById('delete-filename').textContent = filename;
+            document.getElementById('delete-modal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            deleteTarget = null;
+            document.getElementById('delete-modal').style.display = 'none';
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+            if (!deleteTarget) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/documents/${encodeURIComponent(deleteTarget)}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                });
+                if (res.ok) {
+                    closeDeleteModal();
+                    loadDocuments();
+                } else {
+                    const err = await res.json();
+                    alert(`删除失败: ${err.detail}`);
+                    closeDeleteModal();
+                }
+            } catch (e) {
+                alert('删除失败: 网络错误');
+                closeDeleteModal();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            window.location.href = 'admin-login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDocuments);
+    </script>
+</body>
+</html>

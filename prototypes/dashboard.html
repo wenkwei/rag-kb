@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 后台仪表盘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-dark: #2C3E50;
+            --primary-blue: #3498DB;
+            --bg-light: #F4F7F9;
+            --text-main: #34495E;
+        }
+
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        .sidebar-active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .status-pulse {
+            position: relative;
+        }
+        .status-pulse::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .custom-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .custom-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0 transition-all duration-300">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center px-6 py-3 text-white sidebar-active group">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="#" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="#" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar">
+                </div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate">超级管理员</p>
+                    <p class="text-[10px] text-slate-400">admin@corp.com</p>
+                </div>
+                <button class="text-slate-400 hover:text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <!-- 顶部导航 -->
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+            <h2 class="text-lg font-bold text-slate-800">仪表盘概览</h2>
+            <div class="flex items-center gap-6">
+                <!-- 搜索框 -->
+                <div class="relative hidden md:block">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" placeholder="搜索功能或文档..." class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 w-64 outline-none">
+                </div>
+                <!-- 通知 -->
+                <button class="relative p-2 text-slate-500 hover:bg-slate-50 rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <div class="h-8 w-px bg-slate-200"></div>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-medium text-slate-600">欢迎回来，Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 内容区域 -->
+        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            
+            <!-- 第一行：指标卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- 今日问答量 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full flex items-center">
+                            ↑ 12.5%
+                        </span>
+                    </div>
+                    <p class="text-slate-400 text-sm font-medium">今日问答量</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1">1,284</h3>
+                </div>
+                <!-- 未命中率 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-full flex items-center">
+                            ↑ 2.1%
+                        </span>
+                    </div>
+                    <p class="text-slate-400 text-sm font-medium">未命中率</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1">4.32%</h3>
+                </div>
+                <!-- 待审核文档数 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full flex items-center">
+                            ↓ 5.0%
+                        </span>
+                    </div>
+                    <p class="text-slate-400 text-sm font-medium">待审核文档数</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1">18</h3>
+                </div>
+                <!-- 待处理工单数 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2 bg-rose-50 rounded-lg text-rose-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-full flex items-center">
+                            0.0%
+                        </span>
+                    </div>
+                    <p class="text-slate-400 text-sm font-medium">待处理工单数</p>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1">7</h3>
+                </div>
+            </div>
+
+            <!-- 第二行：系统健康状态与操作日志 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- 系统健康状态 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-base font-bold text-slate-800">系统健康状态</h3>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded font-bold uppercase tracking-wider">实时监控中</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-emerald-500 rounded-full status-pulse text-emerald-500"></div>
+                                <span class="text-sm font-semibold text-slate-700">知识库基础服务</span>
+                            </div>
+                            <span class="text-xs text-slate-400 font-medium">延迟: 24ms</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-emerald-500 rounded-full status-pulse text-emerald-500"></div>
+                                <span class="text-sm font-semibold text-slate-700">向量数据库 (Milvus)</span>
+                            </div>
+                            <span class="text-xs text-slate-400 font-medium">QPS: 120</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-rose-500 rounded-full text-rose-500"></div>
+                                <span class="text-sm font-semibold text-slate-700">大模型 API (Gemini)</span>
+                            </div>
+                            <span class="text-xs text-rose-500 font-bold italic">速率限制警告</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最近操作日志 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-base font-bold text-slate-800">最近操作日志</h3>
+                        <button class="text-xs font-bold text-blue-600 hover:underline">查看历史记录</button>
+                    </div>
+                    <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:w-0.5 before:bg-slate-100">
+                        <div class="relative flex items-center gap-4 pl-10">
+                            <div class="absolute left-3 w-4 h-4 bg-blue-500 rounded-full border-4 border-white"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-slate-700 font-medium"><span class="font-bold">张三</span> 上传了文档 <span class="text-blue-600 italic">“2024产品手册V2.pdf”</span></p>
+                                <p class="text-[10px] text-slate-400 mt-1">10分钟前</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center gap-4 pl-10">
+                            <div class="absolute left-3 w-4 h-4 bg-slate-300 rounded-full border-4 border-white"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-slate-700 font-medium"><span class="font-bold">李四</span> 更新了检索参数 <span class="text-slate-500">TopK: 3 -> 5</span></p>
+                                <p class="text-[10px] text-slate-400 mt-1">45分钟前</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center gap-4 pl-10">
+                            <div class="absolute left-3 w-4 h-4 bg-amber-500 rounded-full border-4 border-white"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-slate-700 font-medium"><span class="font-bold">系统</span> 自动处理了 3 条 Bad Case 记录</p>
+                                <p class="text-[10px] text-slate-400 mt-1">1小时前</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center gap-4 pl-10">
+                            <div class="absolute left-3 w-4 h-4 bg-slate-300 rounded-full border-4 border-white"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-slate-700 font-medium"><span class="font-bold">王五</span> 审核拒绝了文档 <span class="text-slate-500">“内部测试数据.xlsx”</span></p>
+                                <p class="text-[10px] text-slate-400 mt-1">2小时前</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第三行：待审核与高频未命中 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- 待审核文档 -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">待审核文档列表</h3>
+                    <div class="overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="text-xs text-slate-400 border-b border-slate-100">
+                                <tr>
+                                    <th class="pb-3 font-semibold">文档名称</th>
+                                    <th class="pb-3 font-semibold">提交人</th>
+                                    <th class="pb-3 font-semibold">提交时间</th>
+                                    <th class="pb-3 text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <tr>
+                                    <td class="py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 bg-red-50 rounded flex items-center justify-center text-red-600 text-[10px] font-bold">PDF</div>
+                                            <span class="text-sm font-medium text-slate-700">财务报销制度2024修订版</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 text-sm text-slate-600">行政部-小王</td>
+                                    <td class="py-4 text-sm text-slate-400">2024-03-21 09:30</td>
+                                    <td class="py-4 text-right">
+                                        <button class="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-lg hover:bg-blue-700 transition-colors">去审核</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 bg-blue-50 rounded flex items-center justify-center text-blue-600 text-[10px] font-bold">DOC</div>
+                                            <span class="text-sm font-medium text-slate-700">新员工入职IT指引</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 text-sm text-slate-600">IT中心-老李</td>
+                                    <td class="py-4 text-sm text-slate-400">2024-03-21 08:15</td>
+                                    <td class="py-4 text-right">
+                                        <button class="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-lg hover:bg-blue-700 transition-colors">去审核</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 bg-green-50 rounded flex items-center justify-center text-green-600 text-[10px] font-bold">XLS</div>
+                                            <span class="text-sm font-medium text-slate-700">上海分公司客户通讯录</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 text-sm text-slate-600">销售部-陈姐</td>
+                                    <td class="py-4 text-sm text-slate-400">2024-03-20 17:40</td>
+                                    <td class="py-4 text-right">
+                                        <button class="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-lg hover:bg-blue-700 transition-colors">去审核</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 高频未命中问题 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">高频未命中Top 5</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">01</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">如何修改VPN登录密码？</p>
+                            <span class="text-[10px] text-rose-500 font-bold bg-rose-50 px-1.5 py-0.5 rounded">12次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">02</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">公司端午节放假安排</p>
+                            <span class="text-[10px] text-rose-500 font-bold bg-rose-50 px-1.5 py-0.5 rounded">9次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">03</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">上海分公司报销比例调整了吗</p>
+                            <span class="text-[10px] text-amber-500 font-bold bg-amber-50 px-1.5 py-0.5 rounded">7次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">04</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">食堂饭卡充值入口</p>
+                            <span class="text-[10px] text-slate-400 font-bold bg-slate-50 px-1.5 py-0.5 rounded">5次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">05</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">离职手续办理流程</p>
+                            <span class="text-[10px] text-slate-400 font-bold bg-slate-50 px-1.5 py-0.5 rounded">4次</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部：快捷入口 -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="text-base font-bold text-slate-800 mb-6">快捷入口</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <button class="p-4 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all flex flex-col items-center gap-3 group">
+                        <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-600">上传新文档</span>
+                    </button>
+                    <button class="p-4 rounded-xl border border-slate-100 hover:border-rose-200 hover:bg-rose-50/30 transition-all flex flex-col items-center gap-3 group">
+                        <div class="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-600">查看Bad Case</span>
+                    </button>
+                    <button class="p-4 rounded-xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/30 transition-all flex flex-col items-center gap-3 group">
+                        <div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-600">配置检索参数</span>
+                    </button>
+                    <button class="p-4 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-all flex flex-col items-center gap-3 group">
+                        <div class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-600">查看导出报表</span>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
