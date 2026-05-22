@@ -793,7 +793,6 @@ macOS系统：
             if (filterType) filtered = filtered.filter(d => d.type === filterType);
             if (filterStatus) filtered = filtered.filter(d => d.status === filterStatus);
             renderDocumentList(filtered);
-            document.getElementById('select-all-checkbox').checked = false;
         }
 
         // 点击页面其他区域关闭下拉菜单
@@ -884,6 +883,7 @@ macOS系统：
             }
             updateBatchDeleteButton();
             applyFilters();
+            updateSelectAllCheckbox();
         }
 
         function toggleSelectAll() {
@@ -900,6 +900,13 @@ macOS系统：
             }
             updateBatchDeleteButton();
             applyFilters();
+            updateSelectAllCheckbox();
+        }
+
+        function updateSelectAllCheckbox() {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('select-all-checkbox').checked = allChecked;
         }
 
         function updateBatchDeleteButton() {
