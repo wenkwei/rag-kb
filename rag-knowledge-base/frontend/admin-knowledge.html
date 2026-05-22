@@ -191,6 +191,17 @@
                     </tbody>
                 </table>
             </div>
+            <!-- 分页 -->
+            <div id="pagination-bar" class="px-6 py-3 border-t border-slate-100 flex items-center justify-between">
+                <div class="text-xs text-slate-400">
+                    显示第 <span id="page-start" class="font-semibold text-slate-600">0</span>-<span id="page-end" class="font-semibold text-slate-600">0</span> 条，共 <span id="pagination-total" class="font-semibold text-slate-600">0</span> 条
+                </div>
+                <div class="flex items-center gap-1">
+                    <button onclick="goToPage(currentPage - 1)" id="prev-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed" disabled>上一页</button>
+                    <div id="page-numbers" class="flex items-center gap-1"></div>
+                    <button onclick="goToPage(currentPage + 1)" id="next-page" class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed">下一页</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -360,6 +371,8 @@
         let filterType = '';
         let filterStatus = '';
         let selectedDocs = new Set();
+        let currentPage = 1;
+        const pageSize = 8;
 
         // ============ 文档预览 ============
         const DEMO_PREVIEW = {
@@ -822,16 +835,25 @@ macOS系统：
         }
 
         function renderDocumentList(docs) {
+            const total = docs.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, total);
+            const pageDocs = docs.slice(start, end);
+
             const tbody = document.getElementById('doc-list-body');
             const badge = document.getElementById('doc-count-badge');
-            badge.textContent = `共 ${docs.length} 个文档`;
+            badge.textContent = `共 ${total} 个文档`;
 
-            if (docs.length === 0) {
+            if (pageDocs.length === 0) {
                 tbody.innerHTML = `<tr id="empty-row"><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td></tr>`;
+                updatePagination(0, 0, total);
                 return;
             }
 
-            tbody.innerHTML = docs.map(doc => {
+            tbody.innerHTML = pageDocs.map(doc => {
                 const ext = doc.filename.split('.').pop().toLowerCase();
                 const typeConfig = { pdf: { label: 'PDF', color: 'text-red-600 bg-red-50', icon: 'text-red-500 bg-red-50' }, docx: { label: 'Word', color: 'text-blue-600 bg-blue-50', icon: 'text-blue-500 bg-blue-50' }, pptx: { label: 'PPT', color: 'text-orange-600 bg-orange-50', icon: 'text-orange-500 bg-orange-50' }, txt: { label: 'TXT', color: 'text-slate-600 bg-slate-50', icon: 'text-slate-500 bg-slate-50' } };
                 const tc = typeConfig[ext] || typeConfig.txt;
@@ -872,6 +894,36 @@ macOS系统：
                     </tr>
                 `;
             }).join('');
+            updatePagination(start + 1, end, total);
+        }
+
+        function updatePagination(start, end, total) {
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            document.getElementById('page-start').textContent = total > 0 ? start : 0;
+            document.getElementById('page-end').textContent = end;
+            document.getElementById('pagination-total').textContent = total;
+
+            document.getElementById('prev-page').disabled = currentPage <= 1;
+            document.getElementById('next-page').disabled = currentPage >= totalPages;
+
+            const nums = document.getElementById('page-numbers');
+            nums.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = 'px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all ' +
+                    (i === currentPage ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100');
+                btn.onclick = () => goToPage(i);
+                nums.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            const total = allDocuments.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            applyFilters();
         }
 
         // ============ 批量选择 ============
