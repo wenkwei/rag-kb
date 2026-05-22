@@ -120,6 +120,16 @@
                 <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
             </div>
 
+            <!-- 搜索框 -->
+            <div class="px-6 py-3 border-b border-slate-50">
+                <div class="relative max-w-md">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="search-input" placeholder="搜索文档名称 / 内容..." oninput="searchDocuments(this.value)" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                </div>
+            </div>
+
             <!-- 文档列表 -->
             <div class="flex-1 overflow-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
@@ -257,9 +267,18 @@
             { filename: '劳动人事争议处理流程.pdf', chunk_count: 14 },
         ];
 
+        let allDocuments = [];
+
+        function searchDocuments(query) {
+            const q = query.trim().toLowerCase();
+            const filtered = q ? allDocuments.filter(d => d.filename.toLowerCase().includes(q)) : allDocuments;
+            renderDocumentList(filtered);
+        }
+
         async function loadDocuments() {
             // 立即显示演示数据
-            renderDocumentList(DEMO_DOCUMENTS);
+            allDocuments = DEMO_DOCUMENTS;
+            renderDocumentList(allDocuments);
             // 后台尝试从API加载真实数据
             try {
                 const res = await fetch(`${API_BASE}/api/documents`, {
@@ -268,7 +287,10 @@
                 if (res.status === 401) return;
                 const data = await res.json();
                 const docs = data.documents || [];
-                if (docs.length > 0) renderDocumentList(docs);
+                if (docs.length > 0) {
+                    allDocuments = docs;
+                    renderDocumentList(docs);
+                }
             } catch (e) {}
         }
 
