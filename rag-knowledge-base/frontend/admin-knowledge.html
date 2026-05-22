@@ -169,6 +169,7 @@
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文件大小</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">最后更新</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">状态</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">操作</th>
                         </tr>
@@ -331,18 +332,18 @@
         }
 
         const DEMO_DOCUMENTS = [
-            { filename: '财务报销制度2024修订版.pdf', type: 'pdf', status: 'completed', size: '2.4 MB' },
-            { filename: '新员工入职IT指引.pdf', type: 'pdf', status: 'completed', size: '1.8 MB' },
-            { filename: '考勤管理制度V3.docx', type: 'docx', status: 'completed', size: '1.2 MB' },
-            { filename: '企业微信常见问题FAQ.txt', type: 'txt', status: 'completed', size: '156 KB' },
-            { filename: '员工福利手册2024版.pdf', type: 'pdf', status: 'completed', size: '3.1 MB' },
-            { filename: '公司年度总结汇报.pptx', type: 'pptx', status: 'indexing', size: '8.5 MB' },
-            { filename: 'VPN远程接入指南.txt', type: 'txt', status: 'completed', size: '98 KB' },
-            { filename: '信息安全管理办法.pdf', type: 'pdf', status: 'completed', size: '2.8 MB' },
-            { filename: '上海分公司报销比例调整公告.txt', type: 'txt', status: 'completed', size: '45 KB' },
-            { filename: '产品路线图规划.pptx', type: 'pptx', status: 'failed', size: '5.2 MB' },
-            { filename: '劳动合同模板.docx', type: 'docx', status: 'completed', size: '680 KB' },
-            { filename: '人事管理制度汇编.docx', type: 'docx', status: 'indexing', size: '2.1 MB' },
+            { filename: '财务报销制度2024修订版.pdf', type: 'pdf', status: 'completed', size: '2.4 MB', updated: '2024-03-20 14:22' },
+            { filename: '新员工入职IT指引.pdf', type: 'pdf', status: 'completed', size: '1.8 MB', updated: '2024-03-18 11:20' },
+            { filename: '考勤管理制度V3.docx', type: 'docx', status: 'completed', size: '1.2 MB', updated: '2024-03-01 16:45' },
+            { filename: '企业微信常见问题FAQ.txt', type: 'txt', status: 'completed', size: '156 KB', updated: '2024-03-15 10:00' },
+            { filename: '员工福利手册2024版.pdf', type: 'pdf', status: 'completed', size: '3.1 MB', updated: '2024-03-10 09:15' },
+            { filename: '公司年度总结汇报.pptx', type: 'pptx', status: 'indexing', size: '8.5 MB', updated: '2024-03-25 08:00' },
+            { filename: 'VPN远程接入指南.txt', type: 'txt', status: 'completed', size: '98 KB', updated: '2024-02-15 10:30' },
+            { filename: '信息安全管理办法.pdf', type: 'pdf', status: 'completed', size: '2.8 MB', updated: '2024-03-05 14:00' },
+            { filename: '上海分公司报销比例调整公告.txt', type: 'txt', status: 'completed', size: '45 KB', updated: '2024-03-21 14:20' },
+            { filename: '产品路线图规划.pptx', type: 'pptx', status: 'failed', size: '5.2 MB', updated: '2024-03-22 16:00' },
+            { filename: '劳动合同模板.docx', type: 'docx', status: 'completed', size: '680 KB', updated: '2024-02-20 09:00' },
+            { filename: '人事管理制度汇编.docx', type: 'docx', status: 'indexing', size: '2.1 MB', updated: '2024-02-25 14:00' },
         ];
 
         let allDocuments = [];
@@ -815,7 +816,7 @@ macOS系统：
             badge.textContent = `共 ${docs.length} 个文档`;
 
             if (docs.length === 0) {
-                tbody.innerHTML = `<tr id="empty-row"><td colspan="5" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td></tr>`;
+                tbody.innerHTML = `<tr id="empty-row"><td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td></tr>`;
                 return;
             }
 
@@ -840,6 +841,7 @@ macOS系统：
                             <span class="px-2 py-0.5 text-xs font-bold ${tc.color} rounded">${tc.label}</span>
                         </td>
                         <td class="px-6 py-4 text-sm text-slate-500">${doc.size || '-'}</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">${doc.updated || '-'}</td>
                         <td class="px-6 py-4">
                             <span class="px-2 py-1 rounded-full text-[11px] font-bold border ${sc.color}">${sc.label}</span>
                         </td>
