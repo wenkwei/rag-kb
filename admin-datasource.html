@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 数据源管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-datasource.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                <span class="text-sm font-medium">数据源管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-evaluation.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <span class="text-sm font-medium">问答评测</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+        </nav>
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white border-b border-slate-200 px-8 py-3 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-3">
+                <h1 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                    数据源管理
+                </h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="header-username" class="text-sm text-slate-500"></span>
+                <button onclick="logout()" class="text-sm text-slate-400 hover:text-red-500">退出</button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            <div class="max-w-6xl mx-auto space-y-6">
+
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                            </div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">数据源总数</span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-800" id="stat-total">3</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">已同步</span>
+                        </div>
+                        <p class="text-2xl font-bold text-emerald-600" id="stat-synced">2</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">同步中</span>
+                        </div>
+                        <p class="text-2xl font-bold text-amber-600" id="stat-syncing">0</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-rose-50 rounded-lg text-rose-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            </div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">异常</span>
+                        </div>
+                        <p class="text-2xl font-bold text-rose-600" id="stat-error">0</p>
+                    </div>
+                </div>
+
+                <!-- 操作栏 -->
+                <div class="flex items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="relative flex-1 max-w-md">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" id="search-input" oninput="filterSources()" placeholder="搜索数据源名称..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleModal('addSourceModal', true)" class="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-100 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            新增数据源
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 数据源列表 -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">数据源名称</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">类型</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">文档数</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">同步状态</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">上次同步</th>
+                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="source-list-body" class="divide-y divide-slate-50">
+                        </tbody>
+                    </table>
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-500 font-medium" id="source-count-label"></span>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增数据源弹窗 -->
+    <div id="addSourceModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 items-center justify-center p-4 hidden" style="display:none">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800">新增数据源</h3>
+                <button onclick="toggleModal('addSourceModal', false)" class="p-2 hover:bg-slate-50 rounded-full transition-colors">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <form class="p-6 space-y-4" onsubmit="addSource(event)">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase">数据源名称</label>
+                    <input type="text" id="source-name" placeholder="例如：产品文档库" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20" required>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase">数据源类型</label>
+                    <select id="source-type" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none">
+                        <option value="api">API 接口</option>
+                        <option value="upload">文件上传</option>
+                        <option value="web">网页爬取</option>
+                        <option value="database">数据库</option>
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase">连接地址 / 配置</label>
+                    <input type="text" id="source-config" placeholder="例如：https://api.example.com/docs" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+                <div class="flex items-center gap-2 text-sm text-slate-500">
+                    <input type="checkbox" id="auto-sync" checked class="accent-blue-600">
+                    <label for="auto-sync">开启自动同步</label>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="submit" class="flex-1 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-100">确认添加</button>
+                    <button type="button" onclick="toggleModal('addSourceModal', false)" class="flex-1 py-2.5 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-xl">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        const token = localStorage.getItem('auth_token');
+        if (!token) window.location.href = 'admin-login.html';
+
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('header-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+
+        function authToken() { return localStorage.getItem('auth_token'); }
+
+        // ===== 模拟数据 =====
+        let sources = [
+            { id: 's1', name: '产品技术文档库', type: 'api', docs: 156, status: 'synced', lastSync: '2024-03-22 10:30', config: 'https://api.example.com/docs' },
+            { id: 's2', name: '客服知识库', type: 'upload', docs: 89, status: 'synced', lastSync: '2024-03-21 18:00', config: 'CSV 批量导入' },
+            { id: 's3', name: '官网文档爬虫', type: 'web', docs: 234, status: 'error', lastSync: '2024-03-22 08:15', config: 'https://docs.example.com' },
+        ];
+
+        function getStatusInfo(status) {
+            const map = {
+                synced: { label: '已同步', color: 'emerald', dot: 'bg-emerald-500' },
+                syncing: { label: '同步中', color: 'amber', dot: 'bg-amber-500' },
+                error: { label: '异常', color: 'rose', dot: 'bg-rose-500' },
+                pending: { label: '待同步', color: 'slate', dot: 'bg-slate-400' },
+            };
+            return map[status] || map.pending;
+        }
+
+        function renderSources(data) {
+            const list = data || sources;
+            const tbody = document.getElementById('source-list-body');
+            if (!list.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400">暂无数据源</td></tr>';
+                document.getElementById('source-count-label').textContent = '共 0 个数据源';
+                return;
+            }
+            const typeLabels = { api: 'API 接口', upload: '文件上传', web: '网页爬取', database: '数据库' };
+            tbody.innerHTML = list.map(s => {
+                const si = getStatusInfo(s.status);
+                return `<tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-6 py-4 text-sm font-semibold text-slate-700">${s.name}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded uppercase">${typeLabels[s.type] || s.type}</span></td>
+                    <td class="px-6 py-4 text-sm text-slate-600">${s.docs}</td>
+                    <td class="px-6 py-4"><span class="flex items-center gap-1.5 text-xs text-${si.color}-600 font-medium"><span class="w-1.5 h-1.5 rounded-full ${si.dot}"></span> ${si.label}</span></td>
+                    <td class="px-6 py-4 text-sm text-slate-400 font-mono">${s.lastSync}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <button onclick="syncSource('${s.id}')" class="text-slate-400 hover:text-blue-600 p-1.5 rounded hover:bg-blue-50" title="立即同步">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            </button>
+                            <button onclick="deleteSource('${s.id}')" class="text-slate-400 hover:text-rose-600 p-1.5 rounded hover:bg-rose-50" title="删除">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+            document.getElementById('source-count-label').textContent = `共 ${list.length} 个数据源`;
+            // 更新统计
+            document.getElementById('stat-total').textContent = sources.length;
+            document.getElementById('stat-synced').textContent = sources.filter(s => s.status === 'synced').length;
+            document.getElementById('stat-syncing').textContent = sources.filter(s => s.status === 'syncing').length;
+            document.getElementById('stat-error').textContent = sources.filter(s => s.status === 'error').length;
+        }
+
+        function filterSources() {
+            const q = document.getElementById('search-input').value.toLowerCase();
+            const filtered = sources.filter(s => s.name.toLowerCase().includes(q));
+            renderSources(filtered);
+        }
+
+        function toggleModal(id, show) {
+            document.getElementById(id).style.display = show ? 'flex' : 'none';
+        }
+
+        function addSource(e) {
+            e.preventDefault();
+            const name = document.getElementById('source-name').value.trim();
+            const type = document.getElementById('source-type').value;
+            const config = document.getElementById('source-config').value.trim();
+            if (!name) return;
+            sources.unshift({
+                id: 's' + Date.now(),
+                name,
+                type,
+                docs: 0,
+                status: 'pending',
+                lastSync: '-',
+                config: config || '-',
+            });
+            renderSources();
+            toggleModal('addSourceModal', false);
+            e.target.reset();
+        }
+
+        function syncSource(id) {
+            const s = sources.find(x => x.id === id);
+            if (!s) return;
+            s.status = 'syncing';
+            renderSources();
+            setTimeout(() => {
+                s.status = 'synced';
+                s.lastSync = new Date().toLocaleString('zh-CN', { hour12: false });
+                s.docs += Math.floor(Math.random() * 10);
+                renderSources();
+            }, 2000);
+        }
+
+        function deleteSource(id) {
+            if (!confirm('确定要删除该数据源吗？')) return;
+            sources = sources.filter(s => s.id !== id);
+            renderSources();
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            window.location.href = 'admin-login.html';
+        }
+
+        renderSources();
+    </script>
+</body>
+</html>
