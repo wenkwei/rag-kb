@@ -62,6 +62,13 @@ def _load_users() -> list:
     return []
 
 
+def _save_users(users: list):
+    """Save users to ``users.json``."""
+    path = BASE_DIR / "users.json"
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(users, f, ensure_ascii=False, indent=2)
+
+
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -90,6 +97,12 @@ async def login(request: LoginRequest):
     token = secrets.token_hex(32)
     role = matched_user.get("role", "普通用户")
     now = time.time()
+
+    # Update last_login in users.json
+    from datetime import datetime
+    matched_user["last_login"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    _save_users(users)
+
     _tokens[token] = {
         "username": matched_user["username"],
         "role": role,
