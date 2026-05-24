@@ -60,7 +60,7 @@
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span class="text-sm font-medium">系统配置</span>
             </a>
-            <a href="admin-users.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+            <a href="admin-users.html" id="nav-user-management" class="flex items-center px-6 py-3 text-white sidebar-active">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span class="text-sm font-medium">用户管理</span>
             </a>
@@ -70,7 +70,7 @@
                 <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
                 <div class="flex-1 overflow-hidden">
                     <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
-                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                    <p class="text-[10px] text-slate-400" id="sidebar-user-role">超级管理员</p>
                 </div>
                 <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -284,38 +284,7 @@
                             <th class="pb-3 text-center">普通用户</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        <tr>
-                            <td class="py-3 text-sm text-slate-700 font-medium">知识库全局可见性</td>
-                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
-                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
-                            <td class="py-3 text-center">
-                                <select class="text-xs border border-slate-200 rounded px-2 py-1 bg-white outline-none">
-                                    <option selected>仅指定分类</option>
-                                    <option>全部</option>
-                                    <option>禁止</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 text-sm text-slate-700 font-medium">文档上传与版本回滚</td>
-                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
-                            <td class="py-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
-                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 text-sm text-slate-700 font-medium">系统RAG参数调优</td>
-                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
-                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
-                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 text-sm text-slate-700 font-medium">查看监控看板与Bad Case</td>
-                            <td class="py-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
-                            <td class="py-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
-                            <td class="py-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="roleConfigBody" class="divide-y divide-slate-100"></tbody>
                 </table>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
                     <button onclick="toggleModal('roleConfigModal', false)" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all">取消</button>
@@ -334,8 +303,55 @@
         document.getElementById('sidebar-username').textContent = username;
         document.getElementById('header-username').textContent = username;
         document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+        const role = localStorage.getItem('auth_role') || '普通用户';
+        const roleEl = document.getElementById('sidebar-user-role');
+        if (roleEl) roleEl.textContent = role;
+
+        // ===== 角色权限：根据配置控制侧边栏菜单可见性 =====
+        function applyRolePermissions() {
+            const role = localStorage.getItem('auth_role') || '普通用户';
+            const saved = localStorage.getItem('rag_permissions');
+            let perms;
+            if (saved) { try { perms = JSON.parse(saved); } catch(e) {} }
+            if (!perms) return;
+            const roleKey = role === '超级管理员' ? 'admin' : (role === '系统运营' ? 'ops' : 'user');
+            document.querySelectorAll('aside nav a').forEach(link => {
+                const span = link.querySelector('span.text-sm');
+                if (!span) return;
+                const text = span.textContent.trim();
+                const cfg = perms.find(p => p.name === text);
+                if (cfg && !cfg[roleKey]) link.style.display = 'none';
+            });
+        }
+        applyRolePermissions();
 
         function authToken() { return localStorage.getItem('auth_token'); }
+
+        // ===== 角色权限配置状态（匹配侧边栏菜单） =====
+        const DEFAULT_PERMISSIONS = [
+            { name: '仪表盘', admin: true, ops: true, user: true },
+            { name: '知识库管理', admin: true, ops: true, user: true },
+            { name: '数据源管理', admin: true, ops: true, user: false },
+            { name: '检索测试', admin: true, ops: true, user: true },
+            { name: '问答评测', admin: true, ops: true, user: false },
+            { name: 'Bad Case', admin: true, ops: true, user: false },
+            { name: '监控看板', admin: true, ops: true, user: false },
+            { name: '系统配置', admin: true, ops: true, user: false },
+            { name: '用户管理', admin: true, ops: false, user: false },
+        ];
+
+        function loadPermissions() {
+            const saved = localStorage.getItem('rag_permissions');
+            if (saved) { try { return JSON.parse(saved); } catch(e) {} }
+            return DEFAULT_PERMISSIONS.map(p => ({...p}));
+        }
+        function savePermissions(perms) {
+            localStorage.setItem('rag_permissions', JSON.stringify(perms));
+        }
+        // 首次使用时初始化默认权限到 localStorage
+        if (!localStorage.getItem('rag_permissions')) {
+            savePermissions(DEFAULT_PERMISSIONS.map(p => ({...p})));
+        }
 
         // ===== 标签切换 =====
         function switchTab(tabId) {
@@ -361,76 +377,43 @@
         }
 
         function saveRoleConfig() {
-            // 从弹窗读取配置状态
-            const rows = document.querySelectorAll('#roleConfigModal tbody tr');
-            rows.forEach((row, ri) => {
-                const perm = Object.keys(roleConfig)[ri];
-                if (!perm) return;
+            const perms = loadPermissions();
+            const rows = document.querySelectorAll('#roleConfigBody tr');
+            rows.forEach((row, i) => {
+                if (!perms[i]) return;
                 const cells = row.querySelectorAll('td');
-                // 管理员 (disabled checkbox)
-                roleConfig[perm].admin = cells[1].querySelector('input').checked;
-                // 运营人员
-                const opsChk = cells[2].querySelector('input');
-                if (opsChk) roleConfig[perm].ops = opsChk.checked;
-                // 普通用户
-                const userChk = cells[3].querySelector('input');
-                const userSel = cells[3].querySelector('select');
-                if (userSel) roleConfig[perm].user = userSel.value;
-                else if (userChk) roleConfig[perm].user = userChk.checked;
+                perms[i].ops = cells[2].querySelector('input').checked;
+                perms[i].user = cells[3].querySelector('input').checked;
             });
+            savePermissions(perms);
             renderRoleOverview();
             toggleModal('roleConfigModal', false);
         }
-
         // ===== 用户数据（从 API 加载） =====
         const colors = { '超级管理员': 'indigo', '系统运营': 'blue', '普通用户': 'slate' };
         let allUsers = [];
 
-        // ===== 角色权限配置状态 =====
-        const roleConfig = {
-            '知识库全局可见性': { admin: true, ops: true, user: '仅指定分类' },
-            '文档上传与版本回滚': { admin: true, ops: true, user: false },
-            '系统RAG参数调优': { admin: true, ops: false, user: false },
-            '查看监控看板与Bad Case': { admin: true, ops: true, user: false },
-        };
-
         function renderRoleOverview() {
             const tbody = document.getElementById('role-overview-body');
-            tbody.innerHTML = Object.entries(roleConfig).map(([perm, cfg]) => {
-                const fmt = (val, label) => val ? `<span class="text-emerald-500">● ${label}</span>` : `<span class="text-rose-400">✕ 禁止</span>`;
-                const adminCell = fmt(cfg.admin, '全部');
-                const opsCell = fmt(cfg.ops, '允许');
-                let userCell;
-                if (typeof cfg.user === 'string') {
-                    const colors = { '全部': 'text-emerald-500', '仅指定分类': 'text-amber-500', '禁止': 'text-rose-400' };
-                    userCell = `<span class="${colors[cfg.user] || 'text-amber-500'}">○ ${cfg.user}</span>`;
-                } else {
-                    userCell = fmt(cfg.user, '允许');
-                }
-                return `<tr><td class="py-3">${perm}</td><td class="py-3 text-center">${adminCell}</td><td class="py-3 text-center">${opsCell}</td><td class="py-3 text-center">${userCell}</td></tr>`;
+            const perms = loadPermissions();
+            tbody.innerHTML = perms.map(p => {
+                const fmt = (val) => val ? '<span class="text-emerald-500">● 允许</span>' : '<span class="text-rose-400">✕ 禁止</span>';
+                return '<tr><td class="py-3">' + p.name + '</td><td class="py-3 text-center">' + fmt(p.admin) + '</td><td class="py-3 text-center">' + fmt(p.ops) + '</td><td class="py-3 text-center">' + fmt(p.user) + '</td></tr>';
             }).join('');
         }
 
-        // 打开配置弹窗时同步当前状态到弹窗内
+        // 打开配置弹窗时动态生成行
         function openRoleConfig() {
-            const rows = document.querySelectorAll('#roleConfigModal tbody tr');
-            Object.keys(roleConfig).forEach((perm, ri) => {
-                const row = rows[ri];
-                if (!row) return;
-                const cfg = roleConfig[perm];
-                const cells = row.querySelectorAll('td');
-                // 管理员 (disabled)
-                const adminChk = cells[1].querySelector('input');
-                if (adminChk) adminChk.checked = cfg.admin;
-                // 运营人员
-                const opsChk = cells[2].querySelector('input');
-                if (opsChk) opsChk.checked = cfg.ops;
-                // 普通用户
-                const userChk = cells[3].querySelector('input');
-                const userSel = cells[3].querySelector('select');
-                if (userSel) userSel.value = cfg.user;
-                else if (userChk) userChk.checked = cfg.user;
-            });
+            const tbody = document.getElementById('roleConfigBody');
+            const perms = loadPermissions();
+            tbody.innerHTML = perms.map((p) => {
+                return '<tr>'
+                    + '<td class="py-3 text-sm text-slate-700 font-medium">' + p.name + '</td>'
+                    + '<td class="py-3 text-center"><input type="checkbox" ' + (p.admin ? 'checked' : '') + ' disabled class="accent-indigo-600"></td>'
+                    + '<td class="py-3 text-center"><input type="checkbox" ' + (p.ops ? 'checked' : '') + ' class="accent-indigo-600"></td>'
+                    + '<td class="py-3 text-center"><input type="checkbox" ' + (p.user ? 'checked' : '') + ' class="accent-indigo-600"></td>'
+                    + '</tr>';
+            }).join('');
             toggleModal('roleConfigModal', true);
         }
 
@@ -596,30 +579,45 @@
         }
 
         // ===== 审计日志 =====
-        const auditLogs = [
-            { time: '2024-03-22 10:20', user: '陈经理 (chen_admin)', type: '登录', detail: 'IP 192.168.1.100 登录系统' },
-            { time: '2024-03-22 09:15', user: '陈经理 (chen_admin)', type: '权限变更', detail: '修改了普通用户角色权限配置' },
-            { time: '2024-03-21 18:35', user: '李技术 (li_tech)', type: '文档操作', detail: '上传了 3 个新文档到知识库' },
-            { time: '2024-03-21 14:20', user: '王客服 (wang_staff)', type: '登录', detail: 'IP 192.168.1.50 登录系统' },
-            { time: '2024-03-21 10:00', user: '李技术 (li_tech)', type: '配置变更', detail: '修改了分块策略参数' },
-        ];
+        const actionLabelMap = {
+            '登录': '登录', '创建用户': '权限变更', '更新用户': '权限变更', '删除用户': '权限变更',
+        };
+        const typeColors = {
+            '登录': 'bg-blue-50 text-blue-600',
+            '文档操作': 'bg-emerald-50 text-emerald-600',
+            '配置变更': 'bg-amber-50 text-amber-600',
+            '权限变更': 'bg-rose-50 text-rose-600',
+        };
 
-        function renderAuditLogs() {
+        async function renderAuditLogs() {
             const tbody = document.getElementById('audit-log-body');
-            const typeColors = { '登录': 'bg-blue-50 text-blue-600', '文档操作': 'bg-emerald-50 text-emerald-600', '配置变更': 'bg-amber-50 text-amber-600', '权限变更': 'bg-rose-50 text-rose-600' };
-            tbody.innerHTML = auditLogs.map(log => `
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-3 text-xs text-slate-400 font-mono">${log.time}</td>
-                    <td class="px-6 py-3 text-sm font-medium text-slate-700">${log.user}</td>
-                    <td class="px-6 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${typeColors[log.type] || 'bg-slate-50 text-slate-600'}">${log.type}</span></td>
-                    <td class="px-6 py-3 text-sm text-slate-500">${log.detail}</td>
-                </tr>
-            `).join('');
+            const token = localStorage.getItem('auth_token');
+            if (!token) return;
+            try {
+                const resp = await fetch(`${API_BASE}/api/audit/logs?limit=100`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!resp.ok) throw new Error('Failed to fetch audit logs');
+                const data = await resp.json();
+                tbody.innerHTML = data.logs.map(log => {
+                    const label = actionLabelMap[log.action] || log.action;
+                    const color = typeColors[label] || 'bg-slate-50 text-slate-600';
+                    return `<tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-3 text-xs text-slate-400 font-mono">${log.time}</td>
+                        <td class="px-6 py-3 text-sm font-medium text-slate-700">${log.user}</td>
+                        <td class="px-6 py-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded ${color}">${label}</span></td>
+                        <td class="px-6 py-3 text-sm text-slate-500">${log.detail}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-sm text-red-400">加载审计日志失败</td></tr>`;
+            }
         }
 
         function logout() {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('auth_username');
+            localStorage.removeItem('auth_role');
             window.location.href = 'admin-login.html';
         }
 

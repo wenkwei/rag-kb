@@ -64,7 +64,7 @@
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span class="text-sm font-medium">系统配置</span>
             </a>
-            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+            <a href="admin-users.html" id="nav-user-management" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span class="text-sm font-medium">用户管理</span>
             </a>
@@ -75,7 +75,7 @@
                 <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
                 <div class="flex-1 overflow-hidden">
                     <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
-                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                    <p class="text-[10px] text-slate-400" id="sidebar-user-role">超级管理员</p>
                 </div>
                 <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -105,10 +105,10 @@
                 <div id="upload-zone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-white hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
                     <svg class="w-10 h-10 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                     <p class="text-sm font-medium text-slate-600">点击或将文件拖拽至此处上传</p>
-                    <p class="text-xs text-slate-400 mt-1">支持 PDF, TXT (单个文件最大 50MB)</p>
-                    <input id="file-input" type="file" accept=".pdf,.txt" class="hidden" multiple>
+                    <p class="text-xs text-slate-400 mt-1">支持 PDF, TXT, DOCX, MD (单个文件最大 50MB)</p>
+                    <input id="file-input" type="file" accept=".pdf,.txt,.docx,.md" class="hidden" multiple>
                 </div>
-                <div id="upload-status" class="hidden mt-3"></div>
+                <div id="upload-status" class="hidden mt-3 space-y-2"></div>
             </div>
 
             <!-- 文档列表标题 -->
@@ -179,7 +179,7 @@
                     </thead>
                     <tbody id="doc-list-body" class="divide-y divide-slate-100">
                         <tr id="empty-row">
-                            <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td>
+                            <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF / TXT / DOCX / MD 文件</td>
                         </tr>
                     </tbody>
                 </table>
@@ -229,7 +229,7 @@
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div><span class="text-slate-400">文档类型</span><p class="font-semibold text-slate-700" id="preview-type">-</p></div>
                     <div><span class="text-slate-400">文件大小</span><p class="font-semibold text-slate-700" id="preview-size-label">-</p></div>
-                    <div><span class="text-slate-400">文件大小</span><p class="font-semibold text-slate-700" id="preview-size">-</p></div>
+                    <div><span class="text-slate-400">切片数</span><p class="font-semibold text-slate-700" id="preview-size">-</p></div>
                     <div><span class="text-slate-400">上传时间</span><p class="font-semibold text-slate-700" id="preview-date">-</p></div>
                     <div><span class="text-slate-400">索引状态</span><p class="font-semibold" id="preview-status">-</p></div>
                     <div><span class="text-slate-400">更新时间</span><p class="font-semibold text-slate-700" id="preview-updated">-</p></div>
@@ -239,16 +239,19 @@
             <div class="flex border-b border-slate-200 px-6">
                 <button class="preview-tab active px-4 py-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition-colors" data-tab="content" onclick="switchPreviewTab('content')">文档内容</button>
                 <button class="preview-tab px-4 py-3 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-colors" data-tab="chunks" onclick="switchPreviewTab('chunks')">切片列表</button>
+                <button class="preview-tab px-4 py-3 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-colors" data-tab="process" onclick="switchPreviewTab('process')">处理详情</button>
             </div>
             <!-- 文档内容 -->
             <div id="preview-content" class="p-6">
-                <div class="bg-slate-50 rounded-xl p-5 border border-slate-100">
-                    <pre id="preview-body" class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-sans"></pre>
-                </div>
+                <div id="preview-body" class="space-y-4"></div>
             </div>
             <!-- 切片列表 -->
             <div id="preview-chunks-list" class="p-6 hidden">
                 <div id="preview-chunks-body"></div>
+            </div>
+            <!-- 处理详情 -->
+            <div id="preview-process" class="p-6 hidden">
+                <div id="preview-process-body" class="space-y-3"></div>
             </div>
         </div>
     </div>
@@ -267,6 +270,36 @@
         document.getElementById('sidebar-username').textContent = username;
         document.getElementById('header-username').textContent = username;
         document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+        const role = localStorage.getItem('auth_role') || '普通用户';
+        const roleEl = document.getElementById('sidebar-user-role');
+        if (roleEl) roleEl.textContent = role;
+        // 根据权限配置控制侧边栏菜单可见性
+        (function() {
+            var DEFAULT_PERMS = [
+                { name: '仪表盘', admin: true, ops: true, user: true },
+                { name: '知识库管理', admin: true, ops: true, user: true },
+                { name: '数据源管理', admin: true, ops: true, user: false },
+                { name: '检索测试', admin: true, ops: true, user: true },
+                { name: '问答评测', admin: true, ops: true, user: false },
+                { name: 'Bad Case', admin: true, ops: true, user: false },
+                { name: '监控看板', admin: true, ops: true, user: false },
+                { name: '系统配置', admin: true, ops: true, user: false },
+                { name: '用户管理', admin: true, ops: false, user: false },
+            ];
+            var saved = localStorage.getItem('rag_permissions');
+            var perms;
+            if (saved) { try { perms = JSON.parse(saved); } catch(e) {} }
+            if (!perms) { perms = DEFAULT_PERMS; }
+            var role = localStorage.getItem('auth_role') || '普通用户';
+            var roleKey = role === '超级管理员' ? 'admin' : (role === '系统运营' ? 'ops' : 'user');
+            document.querySelectorAll('aside nav a').forEach(function(link) {
+                var span = link.querySelector('span.text-sm');
+                if (!span) return;
+                var text = span.textContent.trim();
+                var cfg = perms.find(function(p) { return p.name === text; });
+                if (cfg && !cfg[roleKey]) link.style.display = 'none';
+            });
+        })();
 
         function authToken() {
             return localStorage.getItem('auth_token');
@@ -306,14 +339,82 @@
 
             for (const file of files) {
                 const ext = file.name.split('.').pop().toLowerCase();
-                if (!['pdf', 'txt'].includes(ext)) {
-                    statusDiv.innerHTML += `<div class="text-sm text-red-500">❌ ${file.name}: 不支持的文件格式</div>`;
+                if (!['pdf', 'txt', 'docx', 'md'].includes(ext)) {
+                    statusDiv.innerHTML += `<div class="p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600">❌ ${file.name}: 不支持的文件格式</div>`;
                     continue;
                 }
 
-                statusDiv.innerHTML += `<div class="text-sm text-slate-600" id="status-${file.name}">⏳ ${file.name}: 上传处理中...</div>`;
+                const fileSize = file.size;
+                const fileId = file.name.replace(/[^a-zA-Z0-9]/g, '_');
+
+                // Step container
+                const container = document.createElement('div');
+                container.className = 'bg-white border border-slate-200 rounded-xl overflow-hidden';
+                container.innerHTML = `
+                    <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-100">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-slate-700 truncate">${file.name}</p>
+                            <p class="text-xs text-slate-400">${(fileSize / 1024).toFixed(1)} KB</p>
+                        </div>
+                        <div id="file-status-${fileId}" class="text-xs font-medium text-blue-600">处理中...</div>
+                    </div>
+                    <div class="px-4 py-3 space-y-2" id="steps-${fileId}">
+                        <div class="step-item flex items-center gap-3" id="step-extract-${fileId}">
+                            <span id="step-icon-extract-${fileId}" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center shrink-0">
+                                <svg class="w-3 h-3 hidden" id="step-check-extract-${fileId}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </span>
+                            <span class="text-xs text-slate-500" id="step-label-extract-${fileId}">解析文本</span>
+                            <span class="text-xs text-slate-400 ml-auto" id="step-detail-extract-${fileId}"></span>
+                        </div>
+                        <div class="step-item flex items-center gap-3" id="step-chunk-${fileId}">
+                            <span id="step-icon-chunk-${fileId}" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center shrink-0">
+                                <svg class="w-3 h-3 hidden" id="step-check-chunk-${fileId}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </span>
+                            <span class="text-xs text-slate-500" id="step-label-chunk-${fileId}">文本切片</span>
+                            <span class="text-xs text-slate-400 ml-auto" id="step-detail-chunk-${fileId}"></span>
+                        </div>
+                        <div class="step-item flex items-center gap-3" id="step-embed-${fileId}">
+                            <span id="step-icon-embed-${fileId}" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center shrink-0">
+                                <svg class="w-3 h-3 hidden" id="step-check-embed-${fileId}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </span>
+                            <span class="text-xs text-slate-500" id="step-label-embed-${fileId}">向量入库</span>
+                            <span class="text-xs text-slate-400 ml-auto" id="step-detail-embed-${fileId}"></span>
+                        </div>
+                    </div>
+                `;
+                statusDiv.appendChild(container);
+
+                // Helper: update step state
+                function setStep(step, state, detail) {
+                    const icon = document.getElementById(`step-icon-${step}-${fileId}`);
+                    const check = document.getElementById(`step-check-${step}-${fileId}`);
+                    const label = document.getElementById(`step-label-${step}-${fileId}`);
+                    const detailEl = document.getElementById(`step-detail-${step}-${fileId}`);
+
+                    if (state === 'active') {
+                        icon.className = 'w-5 h-5 rounded-full border-2 border-blue-500 border-t-transparent animate-spin flex items-center justify-center shrink-0';
+                        label.className = 'text-xs font-medium text-blue-600';
+                    } else if (state === 'done') {
+                        icon.className = 'w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0';
+                        check.classList.remove('hidden');
+                        check.setAttribute('stroke', 'white');
+                        label.className = 'text-xs font-medium text-emerald-600';
+                    } else if (state === 'error') {
+                        icon.className = 'w-5 h-5 rounded-full bg-red-500 flex items-center justify-center shrink-0';
+                        icon.innerHTML = '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                        label.className = 'text-xs font-medium text-red-600';
+                    }
+                    if (detail) detailEl.textContent = detail;
+                }
 
                 try {
+                    // Step 1: Extract
+                    setStep('extract', 'active');
+                    await sleep(300); // brief visual pause
+
                     const formData = new FormData();
                     formData.append('file', file);
 
@@ -324,26 +425,35 @@
                     });
 
                     const data = await res.json();
-                    const statusEl = document.getElementById(`status-${file.name}`);
 
                     if (res.ok) {
-                        statusEl.className = 'text-sm text-emerald-600';
-                        statusEl.textContent = `✅ ${file.name}: 处理完成 (${data.chunk_count} 个切片)`;
+                        // Step 1 done
+                        setStep('extract', 'done', `${(data.text_length || 0).toLocaleString()} 字符`);
+
+                        // Step 2 done
+                        setStep('chunk', 'done', `${data.chunk_count} 个切片`);
+
+                        // Step 3 done
+                        setStep('embed', 'done', '已存入向量库');
+
+                        document.getElementById(`file-status-${fileId}`).className = 'text-xs font-medium text-emerald-600';
+                        document.getElementById(`file-status-${fileId}`).textContent = '处理完成';
                     } else {
-                        statusEl.className = 'text-sm text-red-500';
-                        statusEl.textContent = `❌ ${file.name}: ${data.detail || '上传失败'}`;
+                        setStep('extract', 'error', data.detail || '解析失败');
+                        document.getElementById(`file-status-${fileId}`).className = 'text-xs font-medium text-red-600';
+                        document.getElementById(`file-status-${fileId}`).textContent = '处理失败';
                     }
                 } catch (e) {
-                    const statusEl = document.getElementById(`status-${file.name}`);
-                    if (statusEl) {
-                        statusEl.className = 'text-sm text-red-500';
-                        statusEl.textContent = `❌ ${file.name}: 网络错误`;
-                    }
+                    setStep('extract', 'error', '网络错误');
+                    document.getElementById(`file-status-${fileId}`).className = 'text-xs font-medium text-red-600';
+                    document.getElementById(`file-status-${fileId}`).textContent = '处理失败';
                 }
             }
 
             setTimeout(loadDocuments, 1000);
         }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
         const DEMO_DOCUMENTS = [
             { filename: '财务报销制度2024修订版.pdf', type: 'pdf', status: 'completed', size: '2.4 MB', updated: '2024-03-20 14:22' },
@@ -715,49 +825,157 @@ macOS系统：
             });
             document.getElementById('preview-content').classList.toggle('hidden', tab !== 'content');
             document.getElementById('preview-chunks-list').classList.toggle('hidden', tab !== 'chunks');
+            document.getElementById('preview-process').classList.toggle('hidden', tab !== 'process');
         }
 
         function openPreview(filename) {
             const doc = allDocuments.find(d => d.filename === filename);
+            if (!doc) return;
             const preview = DEMO_PREVIEW[filename];
-            if (!doc || !preview) return;
 
             const ext = filename.split('.').pop().toLowerCase();
             const icons = { pdf: 'text-red-500 bg-red-50', docx: 'text-blue-500 bg-blue-50', pptx: 'text-orange-500 bg-orange-50', txt: 'text-slate-500 bg-slate-50' };
             document.getElementById('preview-icon').className = 'p-1.5 rounded-lg ' + (icons[ext] || icons.txt) + ' shrink-0';
             document.getElementById('preview-title').textContent = filename;
-            document.getElementById('preview-type').textContent = ({ pdf: 'PDF', docx: 'Word', pptx: 'PPT', txt: 'TXT' })[ext] || ext.toUpperCase();
+            document.getElementById('preview-type').textContent = ({ pdf: 'PDF', docx: 'Word', md: 'MD', pptx: 'PPT', txt: 'TXT' })[ext] || ext.toUpperCase();
             document.getElementById('preview-size-label').textContent = doc.size || '-';
-            document.getElementById('preview-size').textContent = preview.size;
-            document.getElementById('preview-date').textContent = preview.date;
-            document.getElementById('preview-updated').textContent = preview.updated;
+            document.getElementById('preview-size').textContent = doc.chunk_count != null ? `${doc.chunk_count} 个` : '-';
+            document.getElementById('preview-date').textContent = doc.updated || '-';
+            document.getElementById('preview-updated').textContent = doc.updated || '-';
 
             const statusConfig = { completed: { label: '已索引', color: 'text-emerald-600' }, indexing: { label: '索引中', color: 'text-amber-600' }, failed: { label: '索引失败', color: 'text-rose-600' } };
             const sc = statusConfig[doc.status] || statusConfig.completed;
             document.getElementById('preview-status').innerHTML = '<span class="' + sc.color + '">' + sc.label + '</span>';
 
-            // Content
-            document.getElementById('preview-body').textContent = preview.content;
-            // Chunks
-            const chunksBody = document.getElementById('preview-chunks-body');
-            const chunkCount = Math.floor(Math.random() * 8) + 5;
-            const chunkItems = [];
-            for (let i = 1; i <= chunkCount; i++) {
-                const score = (0.82 + Math.random() * 0.15).toFixed(3);
-                chunkItems.push(`<div class="p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 transition-all">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold text-slate-400">切片 #${i}</span>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${parseFloat(score)>=0.9?'bg-emerald-50 text-emerald-600':'bg-blue-50 text-blue-600'}">${score}</span>
-                    </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">${preview.content.substring(0,80).split('\n').filter(Boolean)[0] || '文档内容片段...'}...</p>
-                </div>`);
-            }
-            chunksBody.innerHTML = chunkItems.join('\n') + `<div class="text-center text-xs text-slate-400 py-2">仅展示前${chunkCount}个切片</div>`;
-
+            // Show preview panel immediately with loading state
+            document.getElementById('preview-body').innerHTML = '<div class="text-center text-sm text-slate-400 py-8">加载中...</div>';
+            document.getElementById('preview-chunks-body').innerHTML = '<div class="text-center text-sm text-slate-400 py-8">加载切片中...</div>';
+            document.getElementById('preview-process-body').innerHTML = '<div class="text-center text-sm text-slate-400 py-8">加载中...</div>';
             switchPreviewTab('content');
             document.getElementById('preview-panel').classList.remove('translate-x-full');
             document.getElementById('preview-overlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+
+            // Fetch chunks for content display (organized by chunks)
+            fetch(`${API_BASE}/api/documents/${encodeURIComponent(filename)}/chunks`, {
+                headers: { 'Authorization': `Bearer ${authToken()}` },
+            })
+            .then(res => res.json())
+            .then(data => {
+                const chunks = data.chunks || [];
+                renderContentByChunks(chunks);
+                renderChunkList(chunks);
+                // Augment doc with text_length from chunks for process details
+                doc.text_length = chunks.reduce((sum, c) => sum + (c.content || '').length, 0);
+                // Fetch config and render process details
+                fetch(`${API_BASE}/api/config`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                })
+                .then(res => res.json())
+                .then(config => renderProcessDetails(doc, config))
+                .catch(() => renderProcessDetails(doc, null));
+            })
+            .catch(() => {
+                // Fallback: fetch raw content if chunks fail
+                fetch(`${API_BASE}/api/documents/${encodeURIComponent(filename)}/content`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('preview-body').innerHTML = '<div class="bg-white rounded-xl p-5 border border-slate-100"><pre class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-sans">' + escapeHtml(data.content || '（空内容）') + '</pre></div>';
+                })
+                .catch(() => {
+                    document.getElementById('preview-body').innerHTML = '<div class="text-center text-sm text-red-400 py-8">无法加载文档内容</div>';
+                });
+                document.getElementById('preview-chunks-body').innerHTML = '<div class="text-center text-sm text-red-400 py-8">无法加载切片数据</div>';
+                renderProcessDetails(doc, null);
+            });
+
+        }
+
+        function renderContentByChunks(chunks) {
+            const container = document.getElementById('preview-body');
+            if (!chunks.length) {
+                container.innerHTML = '<div class="text-center text-sm text-slate-400 py-8">暂无内容</div>';
+                return;
+            }
+
+            // Build full document text from all chunks in order
+            const fullText = chunks
+                .sort((a, b) => (a.chunk_index ?? 0) - (b.chunk_index ?? 0))
+                .map(c => c.content || '')
+                .join('\n\n');
+
+            container.innerHTML = `
+                <div class="bg-white rounded-xl border border-slate-100">
+                    <div class="px-5 py-4">
+                        <pre class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-sans">${escapeHtml(fullText)}</pre>
+                    </div>
+                </div>
+                <div class="text-center text-xs text-slate-400">
+                    ${chunks.length} 个切片 · 共 ${fullText.length} 字符
+                </div>
+            `;
+        }
+
+        function renderChunkList(chunks) {
+            const chunksBody = document.getElementById('preview-chunks-body');
+            if (!chunks.length) {
+                chunksBody.innerHTML = '<div class="text-center text-sm text-slate-400 py-8">暂无切片数据</div>';
+                return;
+            }
+
+            chunksBody.innerHTML = chunks.map((chunk, i) => {
+                const text = chunk.content || '';
+                const charCount = text.length;
+                const preview = text.length > 200 ? text.substring(0, 200) + '...' : text;
+                return `
+                    <div class="p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-100 transition-all mb-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">#${chunk.chunk_index ?? i + 1}</span>
+                                <span class="text-[11px] text-slate-400">${charCount} 字符</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">${escapeHtml(preview)}</p>
+                    </div>
+                `;
+            }).join('');
+
+            if (chunks.length > 1) {
+                chunksBody.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">共 ${chunks.length} 个切片</div>`;
+            }
+        }
+
+        function renderProcessDetails(doc, config) {
+            const container = document.getElementById('preview-process-body');
+            const ext = doc.filename.split('.').pop().toLowerCase();
+
+            const items = [
+                { label: '文件名', value: doc.filename },
+                { label: '文件类型', value: ({ pdf: 'PDF', txt: 'TXT' })[ext] || ext.toUpperCase() },
+                { label: '文件大小', value: doc.size || '-' },
+                { label: '上传时间', value: doc.updated || '-' },
+                { label: '解析字符数', value: doc.text_length ? `${doc.text_length.toLocaleString()} 字符` : '-' },
+                { label: '切片总数', value: doc.chunk_count != null ? `${doc.chunk_count} 个` : '-' },
+                { label: '切片大小', value: config ? `${config.chunk_size || '-'} 字符` : '-' },
+                { label: '切片重叠', value: config ? `${config.chunk_overlap || '-'} 字符` : '-' },
+                { label: '向量模型', value: config ? (config.embedding_model || '-') : '-' },
+                { label: '处理状态', value: '已完成', highlight: true },
+            ];
+
+            container.innerHTML = items.map(item => `
+                <div class="flex items-center justify-between px-4 py-3 bg-white rounded-xl border border-slate-100">
+                    <span class="text-sm text-slate-500">${item.label}</span>
+                    <span class="text-sm font-semibold ${item.highlight ? 'text-emerald-600' : 'text-slate-700'}">${item.value}</span>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function closePreview() {
@@ -817,13 +1035,17 @@ macOS系统：
                 const res = await fetch(`${API_BASE}/api/documents`, {
                     headers: { 'Authorization': `Bearer ${authToken()}` },
                 });
-                if (res.status === 401) return;
+                if (res.status === 401) {
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('auth_username');
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
                 const data = await res.json();
                 const docs = data.documents || [];
-                if (docs.length > 0) {
-                    allDocuments = docs;
-                    applyFilters();
-                }
+                // API 调用成功时，用真实数据替换演示数据（即使是空列表）
+                allDocuments = docs;
+                applyFilters();
             } catch (e) {}
         }
 
@@ -841,7 +1063,7 @@ macOS系统：
             badge.textContent = `共 ${total} 个文档`;
 
             if (pageDocs.length === 0) {
-                tbody.innerHTML = `<tr id="empty-row"><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF 或 TXT 文件</td></tr>`;
+                tbody.innerHTML = `<tr id="empty-row"><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF / TXT / DOCX / MD 文件</td></tr>`;
                 updatePagination(0, 0, total);
                 return;
             }
@@ -875,10 +1097,8 @@ macOS系统：
                             <span class="px-2 py-1 rounded-full text-[11px] font-bold border ${sc.color}">${sc.label}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="flex items-center gap-1">
-                                <button onclick="openPreview('${doc.filename}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all" title="预览">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openPreview('${doc.filename}')" class="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-all">查看</button>
                                 <button onclick="confirmDelete('${doc.filename}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-all" title="删除">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
@@ -1011,6 +1231,7 @@ macOS系统：
         function logout() {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('auth_username');
+            localStorage.removeItem('auth_role');
             window.location.href = 'admin-login.html';
         }
 

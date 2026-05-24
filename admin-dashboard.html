@@ -52,6 +52,38 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
+
+        /* Drawer overlay */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .drawer-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer-panel {
+            position: fixed;
+            top: 0;
+            right: -480px;
+            width: 460px;
+            height: 100%;
+            background: white;
+            z-index: 50;
+            box-shadow: -8px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .drawer-panel.open {
+            right: 0;
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -99,7 +131,7 @@
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span class="text-sm font-medium">系统配置</span>
             </a>
-            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+            <a href="admin-users.html" id="nav-user-management" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span class="text-sm font-medium">用户管理</span>
             </a>
@@ -110,7 +142,7 @@
                 <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
                 <div class="flex-1 overflow-hidden">
                     <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
-                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                    <p class="text-[10px] text-slate-400" id="sidebar-user-role">超级管理员</p>
                 </div>
                 <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -126,7 +158,7 @@
         <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
             <h2 class="text-lg font-bold text-slate-800">仪表盘概览</h2>
             <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-slate-600">欢迎回来，Admin</span>
+                <span class="text-sm font-medium text-slate-600">欢迎回来，<span id="greeting-username">Admin</span></span>
             </div>
         </header>
 
@@ -136,7 +168,7 @@
             <!-- 第一行：指标卡片 -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- 今日问答量 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('今日问答量')">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
@@ -149,7 +181,7 @@
                     </div>
                 </div>
                 <!-- 自主解决率 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('自主解决率')">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
@@ -162,7 +194,7 @@
                     </div>
                 </div>
                 <!-- 异常兜底回复数 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('异常兜底回复数')">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -175,7 +207,7 @@
                     </div>
                 </div>
                 <!-- 待处理问题数 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('待处理问题数')">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="p-2 bg-rose-50 rounded-lg text-rose-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
@@ -351,6 +383,18 @@
         </main>
     </div>
 
+    <!-- Drawer overlay + panel -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer-panel" id="drawerPanel">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+            <h3 class="text-base font-bold text-slate-800" id="drawerTitle">指标说明</h3>
+            <button onclick="closeDrawer()" class="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto px-6 py-5" id="drawerBody"></div>
+    </div>
+
     <script>
         // Auth check
         const token = localStorage.getItem('auth_token');
@@ -358,14 +402,178 @@
             window.location.href = 'admin-login.html';
         }
 
-        // Display username
+        // Display username & role
         const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('greeting-username').textContent = username;
         document.getElementById('sidebar-username').textContent = username;
         document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+        const role = localStorage.getItem('auth_role') || '普通用户';
+        const roleEl = document.getElementById('sidebar-user-role');
+        if (roleEl) roleEl.textContent = role;
+        // 根据权限配置控制侧边栏菜单可见性
+        (function() {
+            var DEFAULT_PERMS = [
+                { name: '仪表盘', admin: true, ops: true, user: true },
+                { name: '知识库管理', admin: true, ops: true, user: true },
+                { name: '数据源管理', admin: true, ops: true, user: false },
+                { name: '检索测试', admin: true, ops: true, user: true },
+                { name: '问答评测', admin: true, ops: true, user: false },
+                { name: 'Bad Case', admin: true, ops: true, user: false },
+                { name: '监控看板', admin: true, ops: true, user: false },
+                { name: '系统配置', admin: true, ops: true, user: false },
+                { name: '用户管理', admin: true, ops: false, user: false },
+            ];
+            var saved = localStorage.getItem('rag_permissions');
+            var perms;
+            if (saved) { try { perms = JSON.parse(saved); } catch(e) {} }
+            if (!perms) { perms = DEFAULT_PERMS; }
+            var role = localStorage.getItem('auth_role') || '普通用户';
+            var roleKey = role === '超级管理员' ? 'admin' : (role === '系统运营' ? 'ops' : 'user');
+            document.querySelectorAll('aside nav a').forEach(function(link) {
+                var span = link.querySelector('span.text-sm');
+                if (!span) return;
+                var text = span.textContent.trim();
+                var cfg = perms.find(function(p) { return p.name === text; });
+                if (cfg && !cfg[roleKey]) link.style.display = 'none';
+            });
+        })();
+
+        // ── Prototype annotations for core data cards ──
+        const PROTOTYPES = {
+            '今日问答量': {
+                icon: '💬',
+                subtitle: '统计当日用户向知识库发起问答的总次数',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: '记录每日用户通过对话界面提交的所有有效问答请求总数。数据来源于 /api/chat 接口的请求日志，按天聚合统计。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「今日问答量」，数值以千分位逗号分隔显示（如 1,284），无小数位。数据为空时显示「0」。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时，系统自动从后端获取当日问答数据，卡片数字从 0 动画过渡到目标值。顶部标签「对话」标识卡片分类。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: '后端接口超时或返回错误 → 卡片显示「--」（占位符），右上角不显示刷新提示。前端控制台输出错误日志，不影响其他卡片数据加载。'
+                    }
+                ]
+            },
+            '自主解决率': {
+                icon: '🛡️',
+                subtitle: '用户提问中，知识库独立给出有效回答的比例',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: '当日所有有效问答中，系统通过检索知识库 + LLM 生成直接给出有效回答的比例。排除触发兜底回复的轮次。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「自主解决率」，数值以百分比格式显示（如 83%），含百分号，无小数位。数据为空时显示「--」。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时自动获取当日数据。数值越高越好，>90% 数值颜色为绿色（text-emerald-500），<80% 为橙色警示色。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: '分母（总问答数）为 0 时 → 显示「--」避免除以零。分子或分母任一数据缺失时同样显示「--」，不展示误导性数据。'
+                    }
+                ]
+            },
+            '异常兜底回复数': {
+                icon: '⚠️',
+                subtitle: '系统无法回答而触发兜底回复的次数',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: '当日用户提问中，系统检索后未在知识库中找到相关匹配内容，触发兜底回复策略的次数。反映知识库的知识空白区。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「异常兜底回复数」，数值以纯数字显示（如 18），无千分位。数据为空时显示「0」。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时自动获取当日数据。数值越低越好，<10 次显示绿色，10-30 次显示橙色，>30 次显示红色警示。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: '后端数据接口异常 → 卡片显示「--」。兜底数据与问答总量存在联动关系，若问答总量异常偏高/偏低，需标记该日数据不可信。'
+                    }
+                ]
+            },
+            '待处理问题数': {
+                icon: '📋',
+                subtitle: '被标记为 Bad Case 且尚未处理的问题数量',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: 'Bad Case 模块中已被记录但尚未确认修复的问题总数。统计状态为「待确认」或「处理中」的记录。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「待处理问题数」，数值以纯数字显示（如 7）。数据为空时显示「0」。建议每周至少处理一批，避免积压。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时自动获取最新数据。点击卡片打开抽屉可查看详细问题列表。数值变化趋势反映知识库运维健康状况。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: 'Bad Case 数据表不存在或查询超时 → 卡片显示「--」。若持续为 0 且确定有兜底数据，说明 Bad Case 记录链路异常，需检查写入逻辑。'
+                    }
+                ]
+            }
+        };
+
+        function openDrawer(cardTitle) {
+            const p = PROTOTYPES[cardTitle];
+            if (!p) return;
+
+            document.getElementById('drawerTitle').textContent = cardTitle;
+            document.getElementById('drawerTitle').dataset.icon = p.icon;
+
+            let html = `
+                <div class="flex items-center gap-3 mb-6 pb-5 border-b border-slate-100">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl">${p.icon}</div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">${cardTitle}</p>
+                        <p class="text-xs text-slate-400 mt-0.5">${p.subtitle}</p>
+                    </div>
+                </div>
+            `;
+            for (const f of p.fields) {
+                html += `
+                    <div class="mb-5">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-1 h-4 rounded-full bg-blue-500 shrink-0"></span>
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">${f.label}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed">${f.value}</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('drawerBody').innerHTML = html;
+            document.getElementById('drawerOverlay').classList.add('open');
+            document.getElementById('drawerPanel').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            document.getElementById('drawerOverlay').classList.remove('open');
+            document.getElementById('drawerPanel').classList.remove('open');
+            document.body.style.overflow = '';
+        }
 
         function logout() {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('auth_username');
+            localStorage.removeItem('auth_role');
             window.location.href = 'admin-login.html';
         }
 

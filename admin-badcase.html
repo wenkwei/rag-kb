@@ -25,6 +25,7 @@
         #detail-panel { transition: opacity 0.2s ease; }
         #detail-panel > div:last-child { animation: slideIn 0.25s ease-out; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -71,7 +72,7 @@
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span class="text-sm font-medium">系统配置</span>
             </a>
-            <a href="admin-users.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+            <a href="admin-users.html" id="nav-user-management" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span class="text-sm font-medium">用户管理</span>
             </a>
@@ -81,7 +82,7 @@
                 <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
                 <div class="flex-1 overflow-hidden">
                     <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
-                    <p class="text-[10px] text-slate-400">超级管理员</p>
+                    <p class="text-[10px] text-slate-400" id="sidebar-user-role">超级管理员</p>
                 </div>
                 <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -122,6 +123,15 @@
                     <p class="text-sm text-slate-400 font-medium">处理率</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-1" id="stat-rate">0%</h3>
                 </div>
+            </div>
+
+            <!-- 分类分析 -->
+            <div id="category-stats" class="hidden mb-8">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <h3 class="text-sm font-bold text-slate-700">分类统计</h3>
+                </div>
+                <div id="category-cards" class="grid grid-cols-4 gap-4"></div>
             </div>
 
             <!-- 筛选栏 -->
@@ -173,6 +183,102 @@
             </div>
         </main>
 
+        <!-- 处理弹窗 -->
+        <div id="process-modal" class="fixed inset-0 z-50 hidden">
+            <div class="absolute inset-0 bg-black/30" onclick="closeProcessModal()"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        处理 Bad Case
+                    </h3>
+                    <button onclick="closeProcessModal()" class="p-1 hover:bg-slate-100 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div class="p-6 space-y-5 max-h-[65vh] overflow-y-auto custom-scrollbar">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-600">根因分析</label>
+                        <select id="process-root-cause" class="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                            <option value="">请选择根因...</option>
+                            <option value="知识库缺失文档">知识库缺失文档</option>
+                            <option value="检索召回不足">检索召回不足</option>
+                            <option value="答案生成错误">答案生成错误</option>
+                            <option value="数据格式问题">数据格式问题</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-600">处理备注</label>
+                        <textarea id="process-note" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none" placeholder="记录处理方式、补充了哪些知识..."></textarea>
+                    </div>
+
+                    <!-- 验证修复 -->
+                    <div class="border-t border-slate-100 pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <h4 class="text-sm font-bold text-slate-700">验证修复</h4>
+                            </div>
+                            <button onclick="runVerification()" id="verify-btn" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                运行验证
+                            </button>
+                        </div>
+                        <div id="verify-result" class="hidden space-y-3">
+                            <!-- 新回答 -->
+                            <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h5 class="text-xs font-bold text-emerald-600">当前系统回答</h5>
+                                    <div class="flex items-center gap-3">
+                                        <span id="verify-faithfulness" class="text-[10px] font-bold px-2 py-0.5 rounded bg-white"></span>
+                                        <span id="verify-correctness" class="text-[10px] font-bold px-2 py-0.5 rounded bg-white"></span>
+                                    </div>
+                                </div>
+                                <p id="verify-answer" class="text-sm text-slate-700 leading-relaxed"></p>
+                            </div>
+                            <!-- 检索来源 -->
+                            <div id="verify-sources" class="space-y-1"></div>
+                            <!-- 对比提示 -->
+                            <div id="verify-compare" class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700 flex items-start gap-2 hidden">
+                                <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span><strong>旧回答：</strong><span id="verify-old-answer"></span></span>
+                            </div>
+                        </div>
+                        <div id="verify-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-xs text-red-600"></div>
+                    </div>
+
+                    <div class="space-y-3 bg-slate-50 rounded-xl p-4">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="process-add-testset" checked class="mt-0.5 w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
+                            <div>
+                                <span class="text-sm font-medium text-slate-700">将此问题加入评测测试集</span>
+                                <p class="text-xs text-slate-400 mt-0.5">处理后自动添加到问答评测的测试集中，防止回归</p>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" id="process-need-supplement" class="mt-0.5 w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
+                            <div>
+                                <span class="text-sm font-medium text-slate-700">需要补充知识库文档</span>
+                                <p class="text-xs text-slate-400 mt-0.5">勾选后提示前往知识库管理上传相关文档</p>
+                            </div>
+                        </label>
+                        <div id="supplement-hint" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700 flex items-start gap-2">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>请前往 <a href="admin-knowledge.html" class="font-bold underline hover:text-amber-800">知识库管理</a> 上传相关文档补充知识</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                    <button onclick="closeProcessModal()" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors">取消</button>
+                    <button onclick="confirmProcess()" id="process-confirm-btn" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        确认处理
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- 详情侧面板 -->
         <div id="detail-panel" class="fixed inset-0 z-50 hidden">
             <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeDetail()"></div>
@@ -201,6 +307,36 @@
         document.getElementById('sidebar-username').textContent = username;
         document.getElementById('header-username').textContent = username;
         document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+        const role = localStorage.getItem('auth_role') || '普通用户';
+        const roleEl = document.getElementById('sidebar-user-role');
+        if (roleEl) roleEl.textContent = role;
+        // 根据权限配置控制侧边栏菜单可见性
+        (function() {
+            var DEFAULT_PERMS = [
+                { name: '仪表盘', admin: true, ops: true, user: true },
+                { name: '知识库管理', admin: true, ops: true, user: true },
+                { name: '数据源管理', admin: true, ops: true, user: false },
+                { name: '检索测试', admin: true, ops: true, user: true },
+                { name: '问答评测', admin: true, ops: true, user: false },
+                { name: 'Bad Case', admin: true, ops: true, user: false },
+                { name: '监控看板', admin: true, ops: true, user: false },
+                { name: '系统配置', admin: true, ops: true, user: false },
+                { name: '用户管理', admin: true, ops: false, user: false },
+            ];
+            var saved = localStorage.getItem('rag_permissions');
+            var perms;
+            if (saved) { try { perms = JSON.parse(saved); } catch(e) {} }
+            if (!perms) { perms = DEFAULT_PERMS; }
+            var role = localStorage.getItem('auth_role') || '普通用户';
+            var roleKey = role === '超级管理员' ? 'admin' : (role === '系统运营' ? 'ops' : 'user');
+            document.querySelectorAll('aside nav a').forEach(function(link) {
+                var span = link.querySelector('span.text-sm');
+                if (!span) return;
+                var text = span.textContent.trim();
+                var cfg = perms.find(function(p) { return p.name === text; });
+                if (cfg && !cfg[roleKey]) link.style.display = 'none';
+            });
+        })();
 
         function authToken() { return localStorage.getItem('auth_token'); }
 
@@ -329,9 +465,9 @@
                 document.getElementById('stat-resolved').textContent = stats.resolved || 0;
                 document.getElementById('stat-today').textContent = stats.today || 0;
                 document.getElementById('stat-rate').textContent = (stats.resolution_rate || 0) + '%';
-                document.getElementById('stat-categories').textContent = stats.categories || '-';
 
                 renderTable();
+                loadCategoryStats();
             } catch (e) {
                 // 后端不可用时加载 demo 数据
                 loadDemoData();
@@ -347,9 +483,6 @@
             document.getElementById('stat-resolved').textContent = resolved;
             document.getElementById('stat-today').textContent = allBadCases.filter(c => c.time && c.time.startsWith('2024-03-21')).length;
             document.getElementById('stat-rate').textContent = rate + '%';
-
-            const cats = [...new Set(allBadCases.map(c => c.category))];
-            document.getElementById('stat-categories').textContent = cats.join(' / ');
         }
 
         function filterCases() {
@@ -383,7 +516,7 @@
                 }[c.category] || 'bg-slate-50 text-slate-600';
 
                 return `
-                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="toggleDetail('${c.id}')">
+                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="openDetailPanel('${c.id}')">
                         <td class="px-2 py-4 text-center">
                             <svg class="w-4 h-4 text-slate-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </td>
@@ -396,86 +529,23 @@
                         </td>
                         <td class="px-4 py-4 text-xs text-slate-500">${c.time || '-'}</td>
                         <td class="px-4 py-4 text-center">
-                            <span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase ${c.status === 'pending' ? 'status-pill-pending' : 'status-pill-resolved'}">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold ${c.status === 'pending' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}">
                                 ${c.status === 'pending' ? '待处理' : '已处理'}
                             </span>
                         </td>
                         <td class="px-4 py-4 text-right">
-                            ${c.status === 'pending'
-                                ? `<button onclick="event.stopPropagation();markResolved('${c.id}')" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold">标记处理</button>`
-                                : `<span class="text-xs text-slate-300">已处理</span>`
-                            }
-                        </td>
-                    </tr>
-                    <!-- 展开详情行 -->
-                    <tr id="detail-${c.id}" class="hidden bg-slate-50/50">
-                        <td colspan="6" class="px-8 py-4 border-b border-slate-100">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-3">
-                                    <div class="bg-red-50 rounded-xl p-4 border border-red-100">
-                                        <h4 class="text-[10px] font-bold text-red-500 uppercase mb-2 flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                            系统回答（错误）
-                                        </h4>
-                                        <p class="text-xs text-slate-600 leading-relaxed">${c.wrong_answer || '（无记录）'}</p>
-                                    </div>
-                                    <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                        <h4 class="text-[10px] font-bold text-emerald-600 uppercase mb-2 flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                            期望正确回答
-                                        </h4>
-                                        <p class="text-xs text-slate-600 leading-relaxed">${c.expected_answer || '（待补充）'}</p>
-                                    </div>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="bg-white rounded-xl p-4 border border-slate-200">
-                                        <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-3 flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                            相关命中文档
-                                        </h4>
-                                        ${(c.sources || []).length
-                                            ? c.sources.map(s => `
-                                                <div class="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
-                                                    <div class="flex items-center gap-2 min-w-0">
-                                                        <span class="w-1.5 h-1.5 rounded-full ${s.score >= 0.6 ? 'bg-emerald-400' : s.score >= 0.4 ? 'bg-amber-400' : 'bg-red-400'} shrink-0"></span>
-                                                        <span class="text-xs text-slate-600 truncate">${s.name}</span>
-                                                    </div>
-                                                    <span class="text-[10px] font-mono text-slate-400 shrink-0 ml-2">Chunk ${s.chunk} | ${s.score.toFixed(2)}</span>
-                                                </div>
-                                            `).join('')
-                                            : '<p class="text-xs text-slate-400">无相关文档</p>'
-                                        }
-                                    </div>
-                                    <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                        <h4 class="text-[10px] font-bold text-amber-600 uppercase mb-2 flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
-                                            用户反馈
-                                        </h4>
-                                        <p class="text-xs text-slate-600 italic">"${c.feedback || '（未提供反馈）'}"</p>
-                                    </div>
-                                    <div class="flex gap-2 pt-1">
-                                        <button onclick="event.stopPropagation();openDetailPanel('${c.id}')" class="flex-1 px-3 py-2 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-lg hover:bg-slate-50 transition-colors text-center">
-                                            查看完整详情
-                                        </button>
-                                        ${c.status === 'pending'
-                                            ? `<button onclick="event.stopPropagation();markResolved('${c.id}')" class="flex-1 px-3 py-2 bg-emerald-600 text-white text-[10px] font-bold rounded-lg hover:bg-emerald-700 transition-colors text-center">标记已处理</button>`
-                                            : ''
-                                        }
-                                    </div>
-                                </div>
+                            <div class="flex items-center justify-end gap-2">
+                                ${c.status === 'pending'
+                                    ? `<button onclick="event.stopPropagation();openProcessModal('${c.id}')" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold">处理</button>`
+                                    : `<button onclick="event.stopPropagation();openDetailPanel('${c.id}')" class="text-blue-500 hover:text-blue-700 text-xs font-bold">查看</button>`
+                                }
+                                <span class="text-slate-200">|</span>
+                                <button onclick="event.stopPropagation();deleteBadcase('${c.id}')" class="text-red-400 hover:text-red-600 text-xs font-bold">删除</button>
                             </div>
                         </td>
                     </tr>
                 `;
             }).join('');
-        }
-
-        function toggleDetail(caseId) {
-            const row = document.getElementById('detail-' + caseId);
-            const isHidden = row.classList.contains('hidden');
-            // 收起其他展开的行
-            document.querySelectorAll('[id^="detail-"]').forEach(r => r.classList.add('hidden'));
-            if (isHidden) row.classList.remove('hidden');
         }
 
         function openDetailPanel(caseId) {
@@ -490,24 +560,26 @@
             }[c.category] || 'bg-slate-50 text-slate-600';
 
             document.getElementById('detail-content').innerHTML = `
-                <div class="space-y-2">
+                <div class="space-y-2 pb-4 border-b border-slate-100">
                     <div class="flex items-center gap-2">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${catColor}">${c.category || '未分类'}</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.status === 'pending' ? 'status-pill-pending' : 'status-pill-resolved'}">${c.status === 'pending' ? '待处理' : '已处理'}</span>
+                        <span class="px-3 py-1 rounded text-[11px] font-bold ${catColor}">${c.category || '未分类'}</span>
+                        <span class="px-3 py-1 rounded text-[11px] font-bold ${c.status === 'pending' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}">${c.status === 'pending' ? '待处理' : '已处理'}</span>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-800">${c.question}</h4>
+                    <h4 class="text-lg font-bold text-slate-800 mt-2">${c.question}</h4>
                     <p class="text-xs text-slate-400">${c.time || ''}</p>
+                    ${c.root_cause ? `<p class="text-xs text-slate-500 mt-1">根因：${c.root_cause}</p>` : ''}
+                    ${c.note ? `<p class="text-xs text-slate-500">备注：${c.note}</p>` : ''}
                 </div>
 
-                <div class="bg-red-50 rounded-xl p-5 border border-red-100">
+                <div class="bg-red-50/50 rounded-xl p-5 border border-red-100">
                     <h5 class="text-xs font-bold text-red-500 flex items-center gap-2 mb-3">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        系统回答（错误答案）
+                        系统回答
                     </h5>
-                    <p class="text-sm text-slate-700 leading-relaxed">${c.wrong_answer || '（无记录）'}</p>
+                    <p class="text-sm text-slate-700 leading-relaxed">${c.wrong_answer || c.actual_answer || '（无记录）'}</p>
                 </div>
 
-                <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
+                <div class="bg-emerald-50/50 rounded-xl p-5 border border-emerald-100">
                     <h5 class="text-xs font-bold text-emerald-600 flex items-center gap-2 mb-3">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         期望正确回答
@@ -515,38 +587,39 @@
                     <p class="text-sm text-slate-700 leading-relaxed">${c.expected_answer || '（待补充）'}</p>
                 </div>
 
-                <div class="bg-white rounded-xl p-5 border border-slate-200">
-                    <h5 class="text-xs font-bold text-slate-500 flex items-center gap-2 mb-3">
+                <div class="bg-blue-50/50 rounded-xl p-5 border border-blue-100">
+                    <h5 class="text-xs font-bold text-blue-600 flex items-center gap-2 mb-3">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         检索命中文档
                     </h5>
                     <div class="space-y-2">
                         ${(c.sources || []).map(s => `
-                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                            <div class="flex items-center justify-between p-3 bg-white/80 rounded-lg">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <span class="w-2 h-2 rounded-full ${s.score >= 0.6 ? 'bg-emerald-400' : s.score >= 0.4 ? 'bg-amber-400' : 'bg-red-400'} shrink-0"></span>
+                                    <span class="w-2 h-2 rounded-full ${s.score >= 0.6 ? 'bg-emerald-500' : s.score >= 0.3 ? 'bg-amber-500' : 'bg-red-500'} shrink-0"></span>
                                     <span class="text-sm text-slate-700 truncate">${s.name}</span>
                                 </div>
-                                <span class="text-xs font-mono text-slate-400 shrink-0 ml-2">Chunk ${s.chunk} | 相似度 ${(s.score * 100).toFixed(0)}%</span>
+                                <span class="text-xs font-mono text-slate-400 shrink-0 ml-2">Chunk ${s.chunk} · ${(s.score * 100).toFixed(0)}%</span>
                             </div>
                         `).join('')}
                     </div>
                 </div>
 
-                <div class="bg-amber-50 rounded-xl p-5 border border-amber-100">
+                <div class="bg-amber-50/50 rounded-xl p-5 border border-amber-100">
                     <h5 class="text-xs font-bold text-amber-600 flex items-center gap-2 mb-3">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
                         用户反馈
                     </h5>
-                    <p class="text-sm text-slate-700 italic">"${c.feedback || '（未提供反馈）'}"</p>
+                    <p class="text-sm text-slate-700">${c.feedback || '（未提供反馈）'}</p>
                 </div>
 
                 <div class="flex gap-3 pt-2">
                     ${c.status === 'pending'
-                        ? `<button onclick="markResolved('${c.id}');closeDetail()" class="flex-1 py-3 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-colors">标记为已处理</button>`
+                        ? `<button onclick="closeDetail();setTimeout(()=>openProcessModal('${c.id}'),200)" class="flex-1 py-3 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-colors">处理此 Bad Case</button>`
                         : ''
                     }
-                    <button onclick="closeDetail()" class="flex-1 py-3 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-50 transition-colors">关闭</button>
+                    <button onclick="closeDetail();setTimeout(()=>deleteBadcase('${c.id}'),200)" class="py-3 px-4 bg-white border border-slate-200 text-red-500 text-xs font-bold rounded-xl hover:bg-red-50 transition-colors">删除</button>
+                    <button onclick="closeDetail()" class="py-3 px-6 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-50 transition-colors">关闭</button>
                 </div>
             `;
             document.getElementById('detail-panel').classList.remove('hidden');
@@ -556,26 +629,269 @@
             document.getElementById('detail-panel').classList.add('hidden');
         }
 
-        async function markResolved(caseId) {
+        // ── 处理弹窗 ──
+        let processingCaseId = null;
+        let processingCase = null;
+
+        function openProcessModal(caseId) {
+            processingCaseId = caseId;
+            processingCase = allBadCases.find(c => c.id === caseId) || null;
+            document.getElementById('process-root-cause').value = '';
+            document.getElementById('process-note').value = '';
+            document.getElementById('process-add-testset').checked = true;
+            document.getElementById('process-need-supplement').checked = false;
+            document.getElementById('supplement-hint').classList.add('hidden');
+            document.getElementById('verify-result').classList.add('hidden');
+            document.getElementById('verify-error').classList.add('hidden');
+            document.getElementById('verify-btn').disabled = false;
+            document.getElementById('verify-btn').innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 运行验证';
+            document.getElementById('process-modal').classList.remove('hidden');
+        }
+
+        async function runVerification() {
+            if (!processingCase) return;
+            const btn = document.getElementById('verify-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loader" style="border:2px solid #bfdbfe;border-top:2px solid #fff;border-radius:50%;width:12px;height:12px;animation:spin 1s linear infinite;display:inline-block;margin-right:6px"></div> 验证中...';
+
+            document.getElementById('verify-error').classList.add('hidden');
+            document.getElementById('verify-result').classList.add('hidden');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/badcases/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken()}` },
+                    body: JSON.stringify({
+                        question: processingCase.question,
+                        expected_answer: processingCase.expected_answer || '',
+                    }),
+                });
+                if (res.status === 401) { localStorage.removeItem('auth_token'); window.location.href = 'admin-login.html'; return; }
+                if (!res.ok) { throw new Error('验证请求失败'); }
+
+                const data = await res.json();
+
+                // 显示验证结果
+                document.getElementById('verify-result').classList.remove('hidden');
+
+                // Faithfulness 标签
+                const fEl = document.getElementById('verify-faithfulness');
+                const fv = data.faithfulness || 0;
+                fEl.textContent = '忠实度 ' + (fv * 100).toFixed(0) + '%';
+                fEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-white ' + (fv >= 0.7 ? 'text-emerald-600' : fv >= 0.4 ? 'text-amber-600' : 'text-rose-600');
+
+                // Correctness 标签
+                const cEl = document.getElementById('verify-correctness');
+                const cv = data.correctness || 0;
+                cEl.textContent = '正确性 ' + (cv * 100).toFixed(0) + '%';
+                cEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-white ' + (cv >= 0.7 ? 'text-emerald-600' : cv >= 0.4 ? 'text-amber-600' : 'text-rose-600');
+
+                // 回答内容
+                document.getElementById('verify-answer').textContent = data.llm_answer || '（无回答）';
+
+                // 检索来源
+                const sourcesEl = document.getElementById('verify-sources');
+                if (data.sources && data.sources.length) {
+                    sourcesEl.innerHTML = '<p class="text-[10px] text-slate-400 mb-1">检索来源：</p>' +
+                        data.sources.map(s =>
+                            `<span class="inline-block text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded mr-1 mb-1">${s.filename} Chunk ${s.chunk_index} (${(s.score * 100).toFixed(0)}%)</span>`
+                        ).join('');
+                } else {
+                    sourcesEl.innerHTML = '<p class="text-[10px] text-slate-400">未检索到相关文档</p>';
+                }
+
+                // 新旧对比
+                const compareEl = document.getElementById('verify-compare');
+                const oldAnswer = processingCase.wrong_answer || processingCase.actual_answer || '';
+                if (oldAnswer) {
+                    compareEl.classList.remove('hidden');
+                    document.getElementById('verify-old-answer').textContent = oldAnswer;
+                } else {
+                    compareEl.classList.add('hidden');
+                }
+            } catch (e) {
+                document.getElementById('verify-error').classList.remove('hidden');
+                document.getElementById('verify-error').textContent = '验证失败：' + e.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 重新验证';
+            }
+        }
+
+        function closeProcessModal() {
+            document.getElementById('process-modal').classList.add('hidden');
+            processingCaseId = null;
+        }
+
+        // 补充知识库复选框联动
+        document.addEventListener('DOMContentLoaded', function() {
+            const cb = document.getElementById('process-need-supplement');
+            if (cb) {
+                cb.addEventListener('change', function() {
+                    document.getElementById('supplement-hint').classList.toggle('hidden', !this.checked);
+                });
+            }
+        });
+
+        async function confirmProcess() {
+            const caseId = processingCaseId;
+            if (!caseId) return;
+
+            const rootCause = document.getElementById('process-root-cause').value;
+            const note = document.getElementById('process-note').value.trim();
+            const addToTestSet = document.getElementById('process-add-testset').checked;
+            const needSupplement = document.getElementById('process-need-supplement').checked;
+
+            if (!rootCause) { alert('请选择根因分类'); return; }
+
+            const btn = document.getElementById('process-confirm-btn');
+            btn.disabled = true;
+            btn.innerHTML = '处理中...';
+
+            let success = false;
+
             // 先尝试后端
-            if (caseId && !caseId.startsWith('demo-')) {
+            if (!caseId.startsWith('demo-')) {
                 try {
                     const res = await fetch(`${API_BASE}/api/badcases/${caseId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken()}` },
-                        body: JSON.stringify({ status: 'resolved' }),
+                        body: JSON.stringify({
+                            status: 'resolved',
+                            root_cause: rootCause,
+                            note: note,
+                            add_to_test_set: addToTestSet,
+                        }),
                     });
-                    if (res.ok) { loadBadCases(); return; }
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.added_to_test_set) {
+                            console.log('已加入评测测试集');
+                        }
+                        success = true;
+                    }
                 } catch (e) {}
             }
-            // 后端不可用或 demo 数据，本地处理
+
+            if (!success) {
+                // Demo 模式或后端失败，本地处理
+                const idx = allBadCases.findIndex(c => c.id === caseId);
+                if (idx !== -1) {
+                    allBadCases[idx].status = 'resolved';
+                    allBadCases[idx].root_cause = rootCause;
+                    allBadCases[idx].note = note;
+                    updateStats();
+                    renderTable();
+                }
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 确认处理';
+            closeProcessModal();
+
+            if (needSupplement) {
+                // 显示提示跳转到知识库管理
+                setTimeout(() => {
+                    if (confirm('请在知识库管理中上传相关文档补充知识。立即前往？')) {
+                        window.location.href = 'admin-knowledge.html';
+                    }
+                }, 300);
+            }
+
+            if (success) {
+                await loadBadCases();
+            } else {
+                closeDetail();
+            }
+        }
+
+        // ── 删除 Bad Case ──
+        async function deleteBadcase(caseId) {
+            if (!confirm('确定要删除该 Bad Case 吗？')) return;
+
+            if (!caseId.startsWith('demo-')) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/badcases/${caseId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${authToken()}` },
+                    });
+                    if (res.ok) {
+                        await loadBadCases();
+                        closeDetail();
+                        return;
+                    }
+                } catch (e) {}
+            }
+
+            // Demo 模式或后端失败，本地删除
             const idx = allBadCases.findIndex(c => c.id === caseId);
             if (idx !== -1) {
-                allBadCases[idx].status = 'resolved';
+                allBadCases.splice(idx, 1);
                 updateStats();
                 renderTable();
+                closeDetail();
             }
-            closeDetail();
+        }
+
+        // ── 分类统计 ──
+        async function loadCategoryStats() {
+            try {
+                const res = await fetch(`${API_BASE}/api/badcases/stats/categories`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                renderCategoryStats(data.categories || []);
+            } catch (e) {
+                // 忽略，demo模式
+            }
+        }
+
+        function renderCategoryStats(categories) {
+            const container = document.getElementById('category-cards');
+            const section = document.getElementById('category-stats');
+            if (!categories.length) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+
+            const catColors = {
+                '检索遗漏': 'bg-amber-50 border-amber-200 text-amber-700',
+                '答案错误': 'bg-red-50 border-red-200 text-red-700',
+                '逻辑混淆': 'bg-purple-50 border-purple-200 text-purple-700',
+                '格式异常': 'bg-blue-50 border-blue-200 text-blue-700',
+            };
+            const dotColors = {
+                '检索遗漏': 'bg-amber-500',
+                '答案错误': 'bg-red-500',
+                '逻辑混淆': 'bg-purple-500',
+                '格式异常': 'bg-blue-500',
+            };
+
+            container.innerHTML = categories.map(c => {
+                const color = catColors[c.category] || 'bg-slate-50 border-slate-200 text-slate-700';
+                const dot = dotColors[c.category] || 'bg-slate-500';
+                const barWidth = c.total ? Math.round(c.resolved / c.total * 100) : 0;
+                return `
+                    <div class="rounded-xl p-4 border ${color}">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-2.5 h-2.5 rounded-full ${dot}"></span>
+                            <span class="text-xs font-bold">${c.category}</span>
+                        </div>
+                        <div class="flex items-end gap-3">
+                            <span class="text-2xl font-bold">${c.total}</span>
+                            <span class="text-xs text-slate-400 mb-1">${c.resolved} 已处理</span>
+                        </div>
+                        <div class="mt-2 flex items-center gap-2">
+                            <div class="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full bg-emerald-500" style="width:${barWidth}%"></div>
+                            </div>
+                            <span class="text-xs font-bold text-slate-500 w-10 text-right">${c.rate}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function exportCases() {
@@ -596,6 +912,7 @@
         function logout() {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('auth_username');
+            localStorage.removeItem('auth_role');
             window.location.href = 'admin-login.html';
         }
 
