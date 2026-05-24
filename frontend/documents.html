@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 文档管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .upload-dragover { border-color: #3b82f6 !important; background-color: #eff6ff !important; }
+
+        /* Drawer */
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+        .drawer-panel { position: fixed; top: 0; right: -520px; width: 500px; height: 100%; background: #f8fafc; z-index: 50; box-shadow: -4px 0 20px rgba(0,0,0,0.1); transition: right 0.3s ease; display: flex; flex-direction: column; }
+        .drawer-panel.open { right: 0; }
+
+        /* Chunk card */
+        .chunk-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; transition: box-shadow 0.2s; }
+        .chunk-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .chunk-content { font-size: 13px; line-height: 1.7; color: #334155; white-space: pre-wrap; word-break: break-word; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- 顶部导航 -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 pr-4 border-r border-slate-200">
+                <a href="admin-datasource.html" class="text-slate-400 hover:text-blue-600 transition-colors text-xs font-medium">数据源管理</a>
+                <a href="admin-evaluation.html" class="text-slate-400 hover:text-blue-600 transition-colors text-xs font-medium">问答评测</a>
+                <a href="admin-badcase.html" class="text-slate-400 hover:text-blue-600 transition-colors text-xs font-medium">Bad Case</a>
+            </div>
+            <nav class="flex text-sm text-slate-500" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="index.html" class="hover:text-slate-800 flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                            问答首页
+                        </a>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                            <span class="ml-1 font-semibold text-slate-800">知识库管理</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-slate-400">
+            <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                系统运行正常
+            </span>
+            <span class="mx-2 text-slate-200">|</span>
+            <span id="header-username" class="text-slate-500"></span>
+            <button onclick="logout()" class="text-slate-400 hover:text-red-500 transition-colors ml-1">退出</button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        <div class="flex-1 flex flex-col min-w-0 bg-white">
+            <!-- 上传区域 -->
+            <div class="px-6 pt-4 pb-2">
+                <div id="upload-zone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-white hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group">
+                    <svg class="w-10 h-10 text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                    <p class="text-sm font-medium text-slate-600">点击或将文件拖拽至此处上传</p>
+                    <p class="text-xs text-slate-400 mt-1">支持 PDF, TXT, DOCX, MD (单个文件最大 50MB)</p>
+                    <input id="file-input" type="file" accept=".pdf,.txt,.docx,.md" class="hidden" multiple>
+                </div>
+                <!-- 上传进度提示 -->
+                <div id="upload-status" class="hidden mt-3"></div>
+            </div>
+
+            <!-- 文档列表标题 -->
+            <div class="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
+                <h2 class="text-base font-bold text-slate-800">文档列表</h2>
+                <span id="doc-count-badge" class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-full">共 0 个文档</span>
+            </div>
+
+            <!-- 文档列表 -->
+            <div class="flex-1 overflow-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 sticky top-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">文档名称</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">类型</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">切片数</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">状态</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="doc-list-body" class="divide-y divide-slate-100">
+                        <tr id="empty-row">
+                            <td colspan="5" class="px-6 py-12 text-center text-sm text-slate-400">
+                                暂无文档，请上传 PDF 或 TXT 文件
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- 删除确认弹窗 -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 w-96 shadow-xl">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">确认删除</h3>
+            <p class="text-sm text-slate-600 mb-6">确定要删除 <span id="delete-filename" class="font-bold text-slate-800"></span> 吗？此操作不可撤销。</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeDeleteModal()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all">取消</button>
+                <button id="confirm-delete-btn" class="px-4 py-2 text-sm font-bold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-all">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文档详情抽屉 -->
+    <div id="detail-overlay" class="drawer-overlay" onclick="closeDetailDrawer()"></div>
+    <div id="detail-drawer" class="drawer-panel">
+        <!-- Drawer Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white shrink-0">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg shrink-0">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                    <h3 id="detail-title" class="text-base font-bold text-slate-800 truncate"></h3>
+                    <p id="detail-subtitle" class="text-xs text-slate-400 mt-0.5"></p>
+                </div>
+            </div>
+            <button onclick="closeDetailDrawer()" class="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <!-- Drawer Content -->
+        <div id="detail-content" class="flex-1 overflow-y-auto custom-scrollbar p-6">
+            <div class="flex items-center justify-center py-12 text-slate-400">
+                <svg class="w-6 h-6 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                <span class="text-sm">加载中...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth check
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            window.location.href = 'admin-login.html';
+        }
+
+        function authToken() {
+            return localStorage.getItem('auth_token');
+        }
+
+        const API_BASE = 'http://localhost:8002';
+        let deleteTarget = null;
+
+        // Upload zone handlers
+        const uploadZone = document.getElementById('upload-zone');
+        const fileInput = document.getElementById('file-input');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('upload-dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('upload-dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('upload-dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) uploadFiles(files);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) uploadFiles(fileInput.files);
+        });
+
+        async function uploadFiles(files) {
+            const statusDiv = document.getElementById('upload-status');
+            statusDiv.classList.remove('hidden');
+
+            for (const file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['pdf', 'txt', 'docx', 'md'].includes(ext)) {
+                    statusDiv.innerHTML += `<div class="text-sm text-red-500">❌ ${file.name}: 不支持的文件格式</div>`;
+                    continue;
+                }
+
+                statusDiv.innerHTML += `<div class="text-sm text-slate-600" id="status-${file.name}">⏳ ${file.name}: 上传处理中...</div>`;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    const res = await fetch(`${API_BASE}/api/documents/upload`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${authToken()}` },
+                        body: formData,
+                    });
+
+                    const data = await res.json();
+                    const statusEl = document.getElementById(`status-${file.name}`);
+
+                    if (res.ok) {
+                        statusEl.className = 'text-sm text-emerald-600';
+                        statusEl.textContent = `✅ ${file.name}: 处理完成 (${data.chunk_count} 个切片)`;
+                    } else {
+                        statusEl.className = 'text-sm text-red-500';
+                        statusEl.textContent = `❌ ${file.name}: ${data.detail || '上传失败'}`;
+                    }
+                } catch (e) {
+                    const statusEl = document.getElementById(`status-${file.name}`);
+                    if (statusEl) {
+                        statusEl.className = 'text-sm text-red-500';
+                        statusEl.textContent = `❌ ${file.name}: 网络错误`;
+                    }
+                }
+            }
+
+            // Refresh document list
+            setTimeout(loadDocuments, 1000);
+        }
+
+        async function loadDocuments() {
+            try {
+                const res = await fetch(`${API_BASE}/api/documents`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                });
+                if (res.status === 401) {
+                    localStorage.removeItem('auth_token');
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+                const data = await res.json();
+                const docs = data.documents || [];
+                renderDocumentList(docs);
+            } catch (e) {
+                // Backend may not be running
+            }
+        }
+
+        function renderDocumentList(docs) {
+            const tbody = document.getElementById('doc-list-body');
+            const badge = document.getElementById('doc-count-badge');
+            badge.textContent = `共 ${docs.length} 个文档`;
+
+            if (docs.length === 0) {
+                tbody.innerHTML = `<tr id="empty-row"><td colspan="5" class="px-6 py-12 text-center text-sm text-slate-400">暂无文档，请上传 PDF / TXT / DOCX / MD 文件</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = docs.map((doc, rowIdx) => {
+                const ext = doc.filename.split('.').pop().toLowerCase();
+                const extColorMap = { 'pdf': 'text-red-500 bg-red-50', 'txt': 'text-blue-500 bg-blue-50', 'docx': 'text-purple-500 bg-purple-50', 'md': 'text-teal-500 bg-teal-50' };
+                const iconColor = extColorMap[ext] || 'text-slate-500 bg-slate-50';
+                const typeLabel = ext.toUpperCase();
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors group cursor-pointer" data-filename="${escapeAttr(doc.filename)}">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 ${iconColor} rounded-lg">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                                </div>
+                                <span class="text-sm font-semibold text-slate-700 group-hover:text-blue-600">${escapeHtml(doc.filename)}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-0.5 text-xs font-bold ${isPdf ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'} rounded">${typeLabel}</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500">${doc.chunk_count} 个切片</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold border border-emerald-100">已索引</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-1.5">
+                                <button class="btn-view p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all" title="查看详情" data-filename="${escapeAttr(doc.filename)}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                                <button onclick="event.stopPropagation(); confirmDelete('${doc.filename.replace(/'/g, "\\'")}')" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-all" title="删除">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function confirmDelete(filename) {
+            deleteTarget = filename;
+            document.getElementById('delete-filename').textContent = filename;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            deleteTarget = null;
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+            if (!deleteTarget) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/documents/${encodeURIComponent(deleteTarget)}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                });
+                if (res.ok) {
+                    closeDeleteModal();
+                    loadDocuments();
+                } else {
+                    const err = await res.json();
+                    alert(`删除失败: ${err.detail}`);
+                    closeDeleteModal();
+                }
+            } catch (e) {
+                alert('删除失败: 网络错误');
+                closeDeleteModal();
+            }
+        });
+
+        // Display username
+        document.getElementById('header-username').textContent = localStorage.getItem('auth_username') || '用户';
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            window.location.href = 'admin-login.html';
+        }
+
+        // Load documents on page load
+        document.addEventListener('DOMContentLoaded', loadDocuments);
+
+        // ===== Event delegation for document detail view =====
+        document.getElementById('doc-list-body').addEventListener('click', (e) => {
+            const viewBtn = e.target.closest('.btn-view');
+            const row = e.target.closest('tr[data-filename]');
+            if (viewBtn) {
+                e.stopPropagation();
+                openDetailDrawer(viewBtn.dataset.filename);
+            } else if (row) {
+                openDetailDrawer(row.dataset.filename);
+            }
+        });
+
+        function escapeAttr(text) {
+            return String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // ===== 文档详情抽屉 =====
+        async function openDetailDrawer(filename) {
+            console.log('openDetailDrawer called:', filename);
+            const drawer = document.getElementById('detail-drawer');
+            const overlay = document.getElementById('detail-overlay');
+            if (!drawer || !overlay) {
+                console.error('Drawer elements not found!');
+                return;
+            }
+            document.getElementById('detail-title').textContent = filename;
+            document.getElementById('detail-subtitle').textContent = '加载中...';
+            document.getElementById('detail-content').innerHTML = `
+                <div class="flex items-center justify-center py-12 text-slate-400">
+                    <svg class="w-6 h-6 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    <span class="text-sm">加载中...</span>
+                </div>
+            `;
+            drawer.classList.add('open');
+            overlay.classList.add('open');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/documents/${encodeURIComponent(filename)}/chunks`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` },
+                });
+                if (!res.ok) throw new Error((await res.json()).detail || '加载失败');
+                const data = await res.json();
+                renderChunks(data);
+            } catch (e) {
+                document.getElementById('detail-content').innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-12 text-slate-400">
+                        <svg class="w-10 h-10 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="text-sm">${e.message}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function renderChunks(data) {
+            const container = document.getElementById('detail-content');
+            document.getElementById('detail-subtitle').textContent = `共 ${data.total_chunks} 个切片`;
+
+            container.innerHTML = data.chunks.map((chunk, idx) => `
+                <div class="chunk-card mb-3">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">第 ${idx + 1} 片</span>
+                        <span class="text-xs text-slate-400">#${chunk.chunk_index}</span>
+                    </div>
+                    <div class="chunk-content">${escapeHtml(chunk.content)}</div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function closeDetailDrawer() {
+            document.getElementById('detail-drawer').classList.remove('open');
+            document.getElementById('detail-overlay').classList.remove('open');
+        }
+
+        // Close drawer on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeDetailDrawer();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "chunk_size": 500,
+  "chunk_overlap": 50,
+  "embedding_model": "BAAI/bge-large-zh-v1.5",
+  "openai_key_configured": false,
+  "top_k": 5,
+  "temperature": 0.0,
+  "threshold": 0.0,
+  "retrieval_strategy": "hybrid",
+  "vector_weight": 0.7,
+  "keyword_weight": 0.3,
+  "llm_provider": "siliconflow",
+  "llm_model": "Qwen/Qwen2.5-14B-Instruct",
+  "api_base": "https://api.siliconflow.cn/v1",
+  "api_key": "sk-dcagqiymsfxibjlnqyhauiaeutvuimtztrxmtyfbjzewltjo",
+  "max_tokens": 2048,
+  "system_prompt": "你是一个专业的企业知识库助手，请基于检索到的文档内容回答用户问题。",
+  "rerank_enabled": false,
+  "rerank_model": "BAAI/bge-reranker-v2-m3",
+  "rerank_top_k": 3
+}

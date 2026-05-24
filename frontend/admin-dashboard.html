@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 后台仪表盘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-dark: #2C3E50;
+            --primary-blue: #3498DB;
+            --bg-light: #F4F7F9;
+            --text-main: #34495E;
+        }
+
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+        }
+
+        .sidebar-active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .status-pulse {
+            position: relative;
+        }
+        .status-pulse::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .custom-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .custom-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Drawer overlay */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .drawer-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer-panel {
+            position: fixed;
+            top: 0;
+            right: -480px;
+            width: 460px;
+            height: 100%;
+            background: white;
+            z-index: 50;
+            box-shadow: -8px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .drawer-panel.open {
+            right: 0;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0 transition-all duration-300">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 text-white sidebar-active group">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-datasource.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                <span class="text-sm font-medium">数据源管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-evaluation.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <span class="text-sm font-medium">问答评测</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" id="nav-user-management" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+                    </nav>
+
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400" id="sidebar-user-role">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <!-- 顶部导航 -->
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+            <h2 class="text-lg font-bold text-slate-800">仪表盘概览</h2>
+            <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-slate-600">欢迎回来，<span id="greeting-username">Admin</span></span>
+            </div>
+        </header>
+
+        <!-- 内容区域 -->
+        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            
+            <!-- 第一行：指标卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- 今日问答量 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('今日问答量')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">对话</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">今日问答量</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold text-slate-800">1,284</h3>
+                    </div>
+                </div>
+                <!-- 自主解决率 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('自主解决率')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">质量</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">自主解决率</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold text-emerald-500">83%</h3>
+                    </div>
+                </div>
+                <!-- 异常兜底回复数 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('异常兜底回复数')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">异常</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">异常兜底回复数</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold text-slate-800">18</h3>
+                    </div>
+                </div>
+                <!-- 待处理问题数 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 custom-card cursor-pointer" onclick="openDrawer('待处理问题数')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-rose-50 rounded-lg text-rose-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                        </div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">工单</span>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium mb-1">待处理问题数</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-bold text-slate-800">7</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第二行：系统健康状态与操作日志 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- 系统健康状态 -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-base font-bold text-slate-800">问答趋势图（近7天/30天）</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <!-- 趋势图 -->
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold text-slate-500" id="trendLabel">近7天问答量趋势</span>
+                                <div class="flex gap-2">
+                                    <button onclick="switchPeriod(7)" class="period-btn text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors" id="period7">7天</button>
+                                    <button onclick="switchPeriod(30)" class="period-btn text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors" id="period30">30天</button>
+                                </div>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="qaTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 高频未命中Top 5 -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">高频未命中Top 5</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">01</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">如何修改VPN登录密码？</p>
+                            <span class="text-[10px] text-rose-500 font-bold bg-rose-50 px-1.5 py-0.5 rounded">12次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">02</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">公司端午节放假安排</p>
+                            <span class="text-[10px] text-rose-500 font-bold bg-rose-50 px-1.5 py-0.5 rounded">9次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">03</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">上海分公司报销比例调整了吗</p>
+                            <span class="text-[10px] text-amber-500 font-bold bg-amber-50 px-1.5 py-0.5 rounded">7次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">04</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">食堂饭卡充值入口</p>
+                            <span class="text-[10px] text-slate-400 font-bold bg-slate-50 px-1.5 py-0.5 rounded">5次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">05</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">离职手续办理流程</p>
+                            <span class="text-[10px] text-slate-400 font-bold bg-slate-50 px-1.5 py-0.5 rounded">4次</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第三行：热门已命中问答TOP5 + 知识库动态 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- 热门已命中问答TOP5 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">热门已命中问答Top 5</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">01</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">企业微信无法登录怎么办？</p>
+                            <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">86次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">02</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">如何申请年假和调休？</p>
+                            <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">74次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">03</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">公司邮箱密码重置流程</p>
+                            <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">58次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">04</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">差旅报销标准及流程</p>
+                            <span class="text-[10px] text-emerald-500 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">42次</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer group">
+                            <span class="text-xs font-bold text-slate-400 w-6">05</span>
+                            <p class="flex-1 text-xs text-slate-700 truncate px-2 group-hover:text-blue-600 transition-colors font-medium">IT设备申领流程</p>
+                            <span class="text-[10px] text-slate-400 font-bold bg-slate-50 px-1.5 py-0.5 rounded">36次</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 知识库动态（最近更新） -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-base font-bold text-slate-800 mb-6">知识库动态（最近更新）</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-2 h-2 mt-2 rounded-full bg-blue-500 shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-700 truncate">财务报销制度2024修订版</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <span class="text-[10px] text-slate-400">行政部-小王</span>
+                                    <span class="text-[10px] text-slate-300">·</span>
+                                    <span class="text-[10px] text-slate-400">2小时前更新</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-bold shrink-0">新增</span>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-2 h-2 mt-2 rounded-full bg-emerald-500 shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-700 truncate">新员工入职IT指引</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <span class="text-[10px] text-slate-400">IT中心-老李</span>
+                                    <span class="text-[10px] text-slate-300">·</span>
+                                    <span class="text-[10px] text-slate-400">4小时前更新</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full font-bold shrink-0">更新</span>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-2 h-2 mt-2 rounded-full bg-amber-500 shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-700 truncate">上海分公司报销比例调整公告</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <span class="text-[10px] text-slate-400">财务部-张姐</span>
+                                    <span class="text-[10px] text-slate-300">·</span>
+                                    <span class="text-[10px] text-slate-400">2024-03-21 14:20</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 bg-amber-50 text-amber-600 rounded-full font-bold shrink-0">更新</span>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-2 h-2 mt-2 rounded-full bg-purple-500 shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-700 truncate">企业微信常见问题FAQ</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <span class="text-[10px] text-slate-400">IT中心-老李</span>
+                                    <span class="text-[10px] text-slate-300">·</span>
+                                    <span class="text-[10px] text-slate-400">2024-03-20 17:40</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full font-bold shrink-0">新增</span>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                            <div class="w-2 h-2 mt-2 rounded-full bg-slate-500 shrink-0"></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-700 truncate">员工福利手册2024版</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <span class="text-[10px] text-slate-400">行政部-小王</span>
+                                    <span class="text-[10px] text-slate-300">·</span>
+                                    <span class="text-[10px] text-slate-400">2024-03-19 11:00</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full font-bold shrink-0">更新</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Drawer overlay + panel -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer-panel" id="drawerPanel">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+            <h3 class="text-base font-bold text-slate-800" id="drawerTitle">指标说明</h3>
+            <button onclick="closeDrawer()" class="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto px-6 py-5" id="drawerBody"></div>
+    </div>
+
+    <script>
+        // Auth check
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            window.location.href = 'admin-login.html';
+        }
+
+        // Display username & role
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('greeting-username').textContent = username;
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+        const role = localStorage.getItem('auth_role') || '普通用户';
+        const roleEl = document.getElementById('sidebar-user-role');
+        if (roleEl) roleEl.textContent = role;
+        // 根据权限配置控制侧边栏菜单可见性
+        (function() {
+            var DEFAULT_PERMS = [
+                { name: '仪表盘', admin: true, ops: true, user: true },
+                { name: '知识库管理', admin: true, ops: true, user: true },
+                { name: '数据源管理', admin: true, ops: true, user: false },
+                { name: '检索测试', admin: true, ops: true, user: true },
+                { name: '问答评测', admin: true, ops: true, user: false },
+                { name: 'Bad Case', admin: true, ops: true, user: false },
+                { name: '监控看板', admin: true, ops: true, user: false },
+                { name: '系统配置', admin: true, ops: true, user: false },
+                { name: '用户管理', admin: true, ops: false, user: false },
+            ];
+            var saved = localStorage.getItem('rag_permissions');
+            var perms;
+            if (saved) { try { perms = JSON.parse(saved); } catch(e) {} }
+            if (!perms) { perms = DEFAULT_PERMS; }
+            var role = localStorage.getItem('auth_role') || '普通用户';
+            var roleKey = role === '超级管理员' ? 'admin' : (role === '系统运营' ? 'ops' : 'user');
+            document.querySelectorAll('aside nav a').forEach(function(link) {
+                var span = link.querySelector('span.text-sm');
+                if (!span) return;
+                var text = span.textContent.trim();
+                var cfg = perms.find(function(p) { return p.name === text; });
+                if (cfg && !cfg[roleKey]) link.style.display = 'none';
+            });
+        })();
+
+        // ── Prototype annotations for core data cards ──
+        const PROTOTYPES = {
+            '今日问答量': {
+                icon: '💬',
+                subtitle: '统计当日用户向知识库发起问答的总次数',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: '记录每日用户通过对话界面提交的所有有效问答请求总数。数据来源于 /api/chat 接口的请求日志，按天聚合统计。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「今日问答量」，数值以千分位逗号分隔显示（如 1,284），无小数位。数据为空时显示「0」。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时，系统自动从后端获取当日问答数据，卡片数字从 0 动画过渡到目标值。顶部标签「对话」标识卡片分类。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: '后端接口超时或返回错误 → 卡片显示「--」（占位符），右上角不显示刷新提示。前端控制台输出错误日志，不影响其他卡片数据加载。'
+                    }
+                ]
+            },
+            '自主解决率': {
+                icon: '🛡️',
+                subtitle: '用户提问中，知识库独立给出有效回答的比例',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: '当日所有有效问答中，系统通过检索知识库 + LLM 生成直接给出有效回答的比例。排除触发兜底回复的轮次。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「自主解决率」，数值以百分比格式显示（如 83%），含百分号，无小数位。数据为空时显示「--」。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时自动获取当日数据。数值越高越好，>90% 数值颜色为绿色（text-emerald-500），<80% 为橙色警示色。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: '分母（总问答数）为 0 时 → 显示「--」避免除以零。分子或分母任一数据缺失时同样显示「--」，不展示误导性数据。'
+                    }
+                ]
+            },
+            '异常兜底回复数': {
+                icon: '⚠️',
+                subtitle: '系统无法回答而触发兜底回复的次数',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: '当日用户提问中，系统检索后未在知识库中找到相关匹配内容，触发兜底回复策略的次数。反映知识库的知识空白区。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「异常兜底回复数」，数值以纯数字显示（如 18），无千分位。数据为空时显示「0」。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时自动获取当日数据。数值越低越好，<10 次显示绿色，10-30 次显示橙色，>30 次显示红色警示。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: '后端数据接口异常 → 卡片显示「--」。兜底数据与问答总量存在联动关系，若问答总量异常偏高/偏低，需标记该日数据不可信。'
+                    }
+                ]
+            },
+            '待处理问题数': {
+                icon: '📋',
+                subtitle: '被标记为 Bad Case 且尚未处理的问题数量',
+                fields: [
+                    {
+                        label: '数据定义',
+                        value: 'Bad Case 模块中已被记录但尚未确认修复的问题总数。统计状态为「待确认」或「处理中」的记录。'
+                    },
+                    {
+                        label: '默认显示文字',
+                        value: '卡片标题：「待处理问题数」，数值以纯数字显示（如 7）。数据为空时显示「0」。建议每周至少处理一批，避免积压。'
+                    },
+                    {
+                        label: '动态操作正常情况',
+                        value: '页面加载时自动获取最新数据。点击卡片打开抽屉可查看详细问题列表。数值变化趋势反映知识库运维健康状况。'
+                    },
+                    {
+                        label: '动态操作异常情况',
+                        value: 'Bad Case 数据表不存在或查询超时 → 卡片显示「--」。若持续为 0 且确定有兜底数据，说明 Bad Case 记录链路异常，需检查写入逻辑。'
+                    }
+                ]
+            }
+        };
+
+        function openDrawer(cardTitle) {
+            const p = PROTOTYPES[cardTitle];
+            if (!p) return;
+
+            document.getElementById('drawerTitle').textContent = cardTitle;
+            document.getElementById('drawerTitle').dataset.icon = p.icon;
+
+            let html = `
+                <div class="flex items-center gap-3 mb-6 pb-5 border-b border-slate-100">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl">${p.icon}</div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">${cardTitle}</p>
+                        <p class="text-xs text-slate-400 mt-0.5">${p.subtitle}</p>
+                    </div>
+                </div>
+            `;
+            for (const f of p.fields) {
+                html += `
+                    <div class="mb-5">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-1 h-4 rounded-full bg-blue-500 shrink-0"></span>
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">${f.label}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed">${f.value}</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('drawerBody').innerHTML = html;
+            document.getElementById('drawerOverlay').classList.add('open');
+            document.getElementById('drawerPanel').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            document.getElementById('drawerOverlay').classList.remove('open');
+            document.getElementById('drawerPanel').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            localStorage.removeItem('auth_role');
+            window.location.href = 'admin-login.html';
+        }
+
+        // 问答趋势折线图
+        let qaChart = null;
+        const trendData = {
+            7: {
+                labels: ['周一', '周二', '周三', '周四', '周五', '周六', '今日'],
+                data: [40, 55, 45, 70, 65, 80, 90]
+            },
+            30: {
+                labels: ['3/23', '3/24', '3/25', '3/26', '3/27', '3/28', '3/29', '3/30', '3/31', '4/1', '4/2', '4/3', '4/4', '4/5', '4/6', '4/7', '4/8', '4/9', '4/10', '4/11', '4/12', '4/13', '4/14', '4/15', '4/16', '4/17', '4/18', '4/19', '4/20', '今日'],
+                data: [35, 42, 38, 50, 45, 55, 48, 52, 58, 62, 50, 45, 40, 55, 60, 58, 65, 70, 62, 68, 55, 50, 65, 72, 68, 75, 70, 78, 82, 90]
+            }
+        };
+
+        function switchPeriod(days) {
+            document.querySelectorAll('.period-btn').forEach(b => {
+                b.className = 'period-btn text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors bg-slate-100 text-slate-400';
+            });
+            const btn = document.getElementById('period' + days);
+            btn.className = 'period-btn text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors bg-blue-100 text-blue-600';
+
+            document.getElementById('trendLabel').textContent = '近' + days + '天问答量趋势';
+
+            const d = trendData[days];
+            qaChart.data.labels = d.labels;
+            qaChart.data.datasets[0].data = d.data;
+            qaChart.update();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('qaTrendChart').getContext('2d');
+            qaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trendData[7].labels,
+                    datasets: [{
+                        label: '问答量',
+                        data: trendData[7].data,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#6366f1',
+                        pointRadius: 4,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            border: { display: false },
+                            ticks: { font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+            // 默认选中7天
+            document.getElementById('period7').className = 'period-btn text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors bg-blue-100 text-blue-600';
+        });
+    </script>
+
+</body>
+</html>

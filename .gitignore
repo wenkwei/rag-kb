@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Runtime
+*.log
+.env
+
+# Data (to be re-created after deploy)
+tokens.json
+bad_cases.json
+evaluation_results.json
+evaluation_test_set.json
+audit_logs.json
+
+# Uploads & DB
+uploads/
+chroma_db/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session
+.claude/

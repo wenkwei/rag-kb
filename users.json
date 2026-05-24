@@ -1,0 +1,72 @@
+[
+  {
+    "id": "u1",
+    "username": "chen_admin",
+    "display_name": "陈经理",
+    "role": "超级管理员",
+    "department": "管理层",
+    "status": "正常",
+    "last_login": "2024-03-22 10:15",
+    "password": "admin123"
+  },
+  {
+    "id": "u2",
+    "username": "li_tech",
+    "display_name": "李技术",
+    "role": "系统运营",
+    "department": "IT技术部",
+    "status": "正常",
+    "last_login": "2024-03-21 18:30",
+    "password": "123456"
+  },
+  {
+    "id": "u7b78068d",
+    "username": "张三",
+    "display_name": "张三",
+    "password": "123",
+    "role": "普通用户",
+    "department": "IT技术部",
+    "status": "正常",
+    "last_login": "-"
+  },
+  {
+    "id": "u982813c4",
+    "username": "李四",
+    "display_name": "李四",
+    "password": "123",
+    "role": "普通用户",
+    "department": "客户服务部",
+    "status": "正常",
+    "last_login": "-"
+  },
+  {
+    "id": "u7b9e4b68",
+    "username": "王五",
+    "display_name": "王五",
+    "password": "123",
+    "role": "普通用户",
+    "department": "客户服务部",
+    "status": "正常",
+    "last_login": "-"
+  },
+  {
+    "id": "uaa328863",
+    "username": "王燕",
+    "display_name": "王燕",
+    "password": "123",
+    "role": "普通用户",
+    "department": "IT技术部",
+    "status": "正常",
+    "last_login": "-"
+  },
+  {
+    "id": "uaeb47663",
+    "username": "晓晓",
+    "display_name": "晓晓",
+    "password": "123",
+    "role": "系统运营",
+    "department": "客户服务部",
+    "status": "正常",
+    "last_login": "-"
+  }
+]

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理系统 - 系统配置</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', 'Microsoft YaHei', sans-serif; background-color: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .sidebar-active { background-color: rgba(255,255,255,0.1); border-left: 4px solid #3498DB; }
+        .config-section { background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: box-shadow 0.2s; }
+        .config-section:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; background: #e2e8f0; border-radius: 3px; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #6366f1; cursor: pointer; box-shadow: 0 2px 6px rgba(99,102,241,0.3); transition: transform 0.15s; }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #6366f1; cursor: pointer; border: none; box-shadow: 0 2px 6px rgba(99,102,241,0.3); }
+        input[type="number"] { -moz-appearance: textfield; }
+        input[type="number"]::-webkit-inner-spin-button { opacity: 1; }
+        .config-input { transition: border-color 0.2s, box-shadow 0.2s; }
+        .config-input:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 侧边栏 -->
+    <aside class="w-64 bg-[#2C3E50] text-slate-300 flex flex-col shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <span class="text-white font-bold tracking-tight">知识库管理系统</span>
+        </div>
+        <nav class="flex-1 py-6 space-y-1 overflow-y-auto">
+            <a href="admin-dashboard.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-sm font-medium">仪表盘</span>
+            </a>
+            <a href="admin-knowledge.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                <span class="text-sm font-medium">知识库管理</span>
+            </a>
+            <a href="admin-datasource.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                <span class="text-sm font-medium">数据源管理</span>
+            </a>
+            <a href="admin-search-test.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-sm font-medium">检索测试</span>
+            </a>
+            <a href="admin-evaluation.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <span class="text-sm font-medium">问答评测</span>
+            </a>
+            <a href="admin-badcase.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="text-sm font-medium">Bad Case</span>
+            </a>
+            <a href="admin-monitor.html" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-sm font-medium">监控看板</span>
+            </a>
+            <div class="pt-4 pb-2 px-6 text-[10px] font-bold text-slate-500 uppercase">系统设置</div>
+            <a href="admin-settings.html" class="flex items-center px-6 py-3 text-white sidebar-active">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-sm font-medium">系统配置</span>
+            </a>
+            <a href="admin-users.html" id="nav-user-management" class="flex items-center px-6 py-3 hover:bg-slate-700/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="text-sm font-medium">用户管理</span>
+            </a>
+                    </nav>
+        <div class="p-6 border-t border-slate-700">
+            <div class="flex items-center p-3 bg-slate-800 rounded-xl">
+                <div class="w-8 h-8 rounded-full bg-blue-500 overflow-hidden mr-3 flex items-center justify-center text-white text-xs font-bold" id="avatar-text">A</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate" id="sidebar-username">管理员</p>
+                    <p class="text-[10px] text-slate-400" id="sidebar-user-role">超级管理员</p>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-1 ml-2 shrink-0" title="退出登录">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shrink-0 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800">RAG 核心参数配置</h1>
+                    <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Engine Configuration & Tuning</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-slate-400">当前用户：</span>
+                <span id="header-username" class="text-sm font-medium text-slate-600"></span>
+                <span class="text-slate-200">|</span>
+                <button onclick="logout()" class="text-sm text-slate-400 hover:text-red-500 transition-colors">退出</button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            <div class="max-w-4xl mx-auto space-y-6 pb-24">
+
+                <!-- 文档分块策略 -->
+                <section class="config-section">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-800">文档分块策略</h2>
+                                <p class="text-xs text-slate-400">Chunking Strategy — 控制文档切片方式</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-10">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-semibold text-slate-700">分块大小</label>
+                                <span class="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg" id="val-chunk-size">500</span>
+                            </div>
+                            <input type="range" min="200" max="1000" value="500" step="10" class="w-full" oninput="document.getElementById('val-chunk-size').innerText = this.value">
+                            <div class="flex justify-between text-xs text-slate-400">
+                                <span>200</span>
+                                <span>Chunk Size</span>
+                                <span>1000</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">单个文本分块包含的最大 Token 数量。较大的分块保留更多上下文，但可能降低检索精度。</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-semibold text-slate-700">重叠大小</label>
+                                <span class="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg" id="val-overlap">50</span>
+                            </div>
+                            <input type="range" min="0" max="200" value="50" step="5" class="w-full" oninput="document.getElementById('val-overlap').innerText = this.value">
+                            <div class="flex justify-between text-xs text-slate-400">
+                                <span>0</span>
+                                <span>Overlap</span>
+                                <span>200</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">相邻分块之间的重复 Token 数，用于保持语义连续性，防止关键信息被切散。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 向量化与检索 -->
+                <div class="grid grid-cols-2 gap-6">
+                    <section class="config-section">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-800">向量化配置</h2>
+                                <p class="text-xs text-slate-400">Embedding Settings</p>
+                            </div>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Embedding 模型</label>
+                                <select id="embedding-model" class="config-input w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                                    <option value="text-embedding-3-small">OpenAI text-embedding-3-small</option>
+                                    <option value="text-embedding-3-large">OpenAI text-embedding-3-large</option>
+                                    <option value="text-embedding-ada-002">OpenAI text-embedding-ada-002</option>
+                                    <option value="BAAI/bge-large-zh-v1.5">BAAI/bge-large-zh-v1.5</option>
+                                    <option value="BAAI/bge-large-en-v1.5">BAAI/bge-large-en-v1.5</option>
+                                    <option value="BAAI/bge-m3">BAAI/bge-m3</option>
+                                </select>
+                                <p class="text-xs text-slate-400">用于文本向量化的模型，需与 API Base 对应</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">OpenAI 密钥状态</label>
+                                <div class="flex items-center gap-2 p-3 rounded-lg border" id="key-status">
+                                    <span class="w-2 h-2 rounded-full" id="key-dot"></span>
+                                    <span class="text-xs font-medium" id="key-text">检测中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="config-section">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-800">检索参数</h2>
+                                <p class="text-xs text-slate-400">Retrieval Settings</p>
+                            </div>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Top K</label>
+                                <div class="relative">
+                                    <input type="number" id="config-topk" min="1" max="20" value="4" class="config-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                                </div>
+                                <p class="text-xs text-slate-400">检索返回的候选文档片段数量</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">相似度阈值</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="range" id="config-threshold" min="0" max="1" step="0.05" value="0" class="flex-1" oninput="document.getElementById('val-threshold').innerText = this.value">
+                                    <span class="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg min-w-[36px] text-center" id="val-threshold">0</span>
+                                </div>
+                                <p class="text-xs text-slate-400">低于此分数的文档将被过滤，0 表示不过滤</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 检索策略与重排序 -->
+                <section class="config-section">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-800">检索策略与重排序</h2>
+                                <p class="text-xs text-slate-400">Retrieval Strategy & Rerank — 控制检索方式和精排逻辑</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-10">
+                        <div class="space-y-5">
+                            <div class="space-y-3">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">检索策略</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" onclick="document.getElementById('strategy-hybrid').checked=true;toggleStrategy()">
+                                        <input type="radio" name="retrieval_strategy" value="hybrid" id="strategy-hybrid" class="w-4 h-4 text-indigo-600" onchange="toggleStrategy()">
+                                        <div>
+                                            <span class="text-sm font-medium text-slate-700">混合检索</span>
+                                            <p class="text-xs text-slate-400">向量检索 + 关键词检索融合</p>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" onclick="document.getElementById('strategy-vector').checked=true;toggleStrategy()">
+                                        <input type="radio" name="retrieval_strategy" value="vector" id="strategy-vector" class="w-4 h-4 text-indigo-600" onchange="toggleStrategy()">
+                                        <div>
+                                            <span class="text-sm font-medium text-slate-700">纯向量检索</span>
+                                            <p class="text-xs text-slate-400">仅使用语义向量相似度检索</p>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" onclick="document.getElementById('strategy-keyword').checked=true;toggleStrategy()">
+                                        <input type="radio" name="retrieval_strategy" value="keyword" id="strategy-keyword" class="w-4 h-4 text-indigo-600" onchange="toggleStrategy()">
+                                        <div>
+                                            <span class="text-sm font-medium text-slate-700">关键词检索</span>
+                                            <p class="text-xs text-slate-400">仅使用 BM25 关键词匹配</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="hybrid-weights" class="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <p class="text-xs font-bold text-slate-500">混合权重配比</p>
+                                <div class="space-y-3">
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-slate-600">向量权重</span>
+                                            <span class="font-mono font-bold text-indigo-600" id="val-vector-weight">0.7</span>
+                                        </div>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.7" class="w-full" oninput="syncWeights(this)">
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-slate-600">关键词权重</span>
+                                            <span class="font-mono font-bold text-indigo-600" id="val-keyword-weight">0.3</span>
+                                        </div>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.3" class="w-full" oninput="syncWeights(this)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Rerank 重排序</label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="rerank-enabled" class="sr-only peer" onchange="toggleRerank()">
+                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    </label>
+                                </div>
+                                <p class="text-xs text-slate-400">对检索结果进行精细化重排，提升 Top K 命中率</p>
+                            </div>
+                            <div id="rerank-config" class="space-y-4 opacity-50 pointer-events-none">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Rerank 模型</label>
+                                    <select id="rerank-model" class="config-input w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                                        <option value="BAAI/bge-reranker-v2-m3">BAAI/bge-reranker-v2-m3</option>
+                                        <option value="BAAI/bge-reranker-v2-gemma">BAAI/bge-reranker-v2-gemma</option>
+                                        <option value="cross-encoder/ms-marco-MiniLM-L6-v2">cross-encoder/ms-marco-MiniLM-L6-v2</option>
+                                        <option value="避免">不需要 Rerank 模型</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Rerank Top K</label>
+                                    <input type="number" id="rerank-topk" min="1" max="10" value="3" class="config-input w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                                    <p class="text-xs text-slate-400">重排后取前 N 个结果返回</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 生成模型配置 -->
+                <section class="config-section">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M5 3v2m4 8h6m-6 4h6m2-12H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2z"></path></svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-slate-800">生成模型配置</h2>
+                                <p class="text-xs text-slate-400">LLM Settings — 控制回答生成的大语言模型</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-10 gap-y-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">模型供应商</label>
+                            <select id="llm-provider" onchange="onProviderChange()" class="config-input w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                                <option value="openai">OpenAI</option>
+                                <option value="anthropic">Anthropic (Claude)</option>
+                                <option value="deepseek">DeepSeek</option>
+                                <option value="qwen">通义千问 (Qwen)</option>
+                                <option value="siliconflow">硅基流动 (SiliconFlow)</option>
+                                <option value="custom">自定义 (兼容 OpenAI 协议)</option>
+                            </select>
+                            <p class="text-xs text-slate-400">选择 LLM 供应商，不同供应商需配置对应的 API Key</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">模型名称</label>
+                            <select id="llm-model" class="config-input w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                                <!-- 动态填充 -->
+                            </select>
+                            <p class="text-xs text-slate-400" id="model-desc">选择具体的模型版本</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">API Base URL</label>
+                            <input type="text" id="api-base" placeholder="https://api.openai.com/v1" class="config-input w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                            <p class="text-xs text-slate-400">API 请求地址，自定义供应商时需修改</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">API Key</label>
+                            <div class="relative">
+                                <input type="password" id="api-key" placeholder="sk-..." class="config-input w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none pr-10">
+                                <button type="button" onclick="toggleKeyVisibility()" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="eye-icon"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                            </div>
+                            <p class="text-xs text-slate-400">留空则使用环境变量中的密钥</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Max Tokens</label>
+                            <input type="number" id="max-tokens" min="64" max="16384" step="64" value="2048" class="config-input w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none">
+                            <p class="text-xs text-slate-400">单次生成的最大 Token 数</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Temperature</label>
+                            <div class="flex items-center gap-3">
+                                <input type="range" id="config-temp2" min="0" max="2" step="0.1" value="0" class="flex-1" oninput="document.getElementById('val-temp2').innerText = this.value">
+                                <span class="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg min-w-[36px] text-center" id="val-temp2">0</span>
+                            </div>
+                            <p class="text-xs text-slate-400">生成随机性，0 为确定输出，值越高越有创造力</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-slate-100">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">System Prompt</label>
+                            <textarea id="system-prompt" rows="3" class="config-input w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 outline-none resize-none" placeholder="设置 AI 助手的角色和行为...">你是一个专业的企业知识库助手，请基于检索到的文档内容回答用户问题。</textarea>
+                            <p class="text-xs text-slate-400">设定 AI 助手的角色和行为方式，影响回答风格和质量</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 保存栏 -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-amber-50 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <span class="text-xs text-slate-500">配置保存在后端环境变量中，修改保存后需重启服务生效</span>
+                    </div>
+                    <button onclick="saveConfig()" class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-100 active:scale-[0.98] flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        保存配置
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        const token = localStorage.getItem('auth_token');
+        if (!token) window.location.href = 'admin-login.html';
+
+        const username = localStorage.getItem('auth_username') || '管理员';
+        document.getElementById('sidebar-username').textContent = username;
+        document.getElementById('header-username').textContent = username;
+        document.getElementById('avatar-text').textContent = username.charAt(0).toUpperCase();
+        const role = localStorage.getItem('auth_role') || '普通用户';
+        const roleEl = document.getElementById('sidebar-user-role');
+        if (roleEl) roleEl.textContent = role;
+        // 根据权限配置控制侧边栏菜单可见性
+        (function() {
+            var DEFAULT_PERMS = [
+                { name: '仪表盘', admin: true, ops: true, user: true },
+                { name: '知识库管理', admin: true, ops: true, user: true },
+                { name: '数据源管理', admin: true, ops: true, user: false },
+                { name: '检索测试', admin: true, ops: true, user: true },
+                { name: '问答评测', admin: true, ops: true, user: false },
+                { name: 'Bad Case', admin: true, ops: true, user: false },
+                { name: '监控看板', admin: true, ops: true, user: false },
+                { name: '系统配置', admin: true, ops: true, user: false },
+                { name: '用户管理', admin: true, ops: false, user: false },
+            ];
+            var saved = localStorage.getItem('rag_permissions');
+            var perms;
+            if (saved) { try { perms = JSON.parse(saved); } catch(e) {} }
+            if (!perms) { perms = DEFAULT_PERMS; }
+            var role = localStorage.getItem('auth_role') || '普通用户';
+            var roleKey = role === '超级管理员' ? 'admin' : (role === '系统运营' ? 'ops' : 'user');
+            document.querySelectorAll('aside nav a').forEach(function(link) {
+                var span = link.querySelector('span.text-sm');
+                if (!span) return;
+                var text = span.textContent.trim();
+                var cfg = perms.find(function(p) { return p.name === text; });
+                if (cfg && !cfg[roleKey]) link.style.display = 'none';
+            });
+        })();
+
+        function authToken() { return localStorage.getItem('auth_token'); }
+
+        // ── 模型列表 ──
+        const MODEL_MAP = {
+            openai: {
+                name: 'OpenAI',
+                base: 'https://api.openai.com/v1',
+                embedding: 'text-embedding-3-small',
+                models: [
+                    { value: 'gpt-4o', label: 'GPT-4o', desc: '最强大的 GPT 模型，适合复杂推理' },
+                    { value: 'gpt-4o-mini', label: 'GPT-4o-mini', desc: '轻量快速，性价比最高' },
+                    { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', desc: '旧版旗舰模型' },
+                ],
+            },
+            anthropic: {
+                name: 'Anthropic',
+                base: 'https://api.anthropic.com/v1',
+                embedding: 'text-embedding-3-small',
+                models: [
+                    { value: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4', desc: '最新旗舰，性能最强' },
+                    { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet', desc: '上一代旗舰模型' },
+                    { value: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku', desc: '轻量快速模型' },
+                ],
+            },
+            deepseek: {
+                name: 'DeepSeek',
+                base: 'https://api.deepseek.com/v1',
+                embedding: 'text-embedding-3-small',
+                models: [
+                    { value: 'deepseek-chat', label: 'DeepSeek-V3', desc: '通用对话模型' },
+                    { value: 'deepseek-reasoner', label: 'DeepSeek-R1', desc: '推理增强模型' },
+                ],
+            },
+            qwen: {
+                name: '通义千问',
+                base: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+                embedding: 'text-embedding-3-small',
+                models: [
+                    { value: 'qwen-plus', label: 'Qwen-Plus', desc: '增强版，平衡质量与速度' },
+                    { value: 'qwen-max', label: 'Qwen-Max', desc: '最强版本' },
+                    { value: 'qwen-turbo', label: 'Qwen-Turbo', desc: '快速轻量版' },
+                ],
+            },
+            siliconflow: {
+                name: '硅基流动',
+                base: 'https://api.siliconflow.cn/v1',
+                embedding: 'BAAI/bge-m3',
+                models: [
+                    { value: 'Qwen/Qwen2.5-7B-Instruct', label: 'Qwen2.5-7B', desc: '轻量快速，适合简单问答' },
+                    { value: 'Qwen/Qwen2.5-14B-Instruct', label: 'Qwen2.5-14B', desc: '平衡质量与速度' },
+                    { value: 'Qwen/Qwen2.5-72B-Instruct', label: 'Qwen2.5-72B', desc: '最强版本，适合复杂推理' },
+                    { value: 'deepseek-ai/DeepSeek-V2.5', label: 'DeepSeek-V2.5', desc: 'DeepSeek 最新版' },
+                    { value: 'deepseek-ai/DeepSeek-Chat', label: 'DeepSeek-Chat', desc: '通用对话模型' },
+                    { value: 'Pro/Llama-3.3-70B-Instruct', label: 'Llama-3.3-70B', desc: 'Meta 旗舰开源模型' },
+                    { value: 'THUDM/glm-4-9b-chat', label: 'GLM-4-9B', desc: '智谱 ChatGLM 系列' },
+                ],
+            },
+            custom: {
+                name: '自定义',
+                base: '',
+                embedding: 'text-embedding-3-small',
+                models: [
+                    { value: 'custom-model', label: '自定义模型', desc: '兼容 OpenAI 协议的任意模型' },
+                ],
+            },
+        };
+
+        function onProviderChange() {
+            const provider = document.getElementById('llm-provider').value;
+            const info = MODEL_MAP[provider] || MODEL_MAP.openai;
+            const modelSelect = document.getElementById('llm-model');
+            const baseInput = document.getElementById('api-base');
+
+            // Update models dropdown
+            modelSelect.innerHTML = info.models.map(m =>
+                `<option value="${m.value}" data-desc="${m.desc}">${m.label}</option>`
+            ).join('');
+
+            // Update API base
+            if (!baseInput.dataset.userModified) {
+                baseInput.value = info.base;
+            }
+
+            // Auto-set embedding model for this provider
+            const embSelect = document.getElementById('embedding-model');
+            if (info.embedding) {
+                // Check if the recommended embedding model exists in the dropdown
+                let found = false;
+                for (const opt of embSelect.options) {
+                    if (opt.value === info.embedding) { found = true; break; }
+                }
+                if (found) embSelect.value = info.embedding;
+            }
+
+            // Update model description
+            updateModelDesc();
+
+            // Update temperature display
+            document.getElementById('config-temp2').value = document.getElementById('config-temp').value || 0;
+            document.getElementById('val-temp2').textContent = document.getElementById('config-temp2').value;
+        }
+
+        function updateModelDesc() {
+            const select = document.getElementById('llm-model');
+            const option = select.options[select.selectedIndex];
+            document.getElementById('model-desc').textContent = option ? option.dataset.desc : '';
+        }
+
+        function toggleKeyVisibility() {
+            const input = document.getElementById('api-key');
+            const icon = document.getElementById('eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+            }
+        }
+
+        function toggleStrategy() {
+            const val = document.querySelector('input[name="retrieval_strategy"]:checked');
+            const hybridWeights = document.getElementById('hybrid-weights');
+            hybridWeights.style.opacity = val && val.value === 'hybrid' ? '1' : '0.4';
+        }
+
+        function syncWeights(changed) {
+            const total = 1.0;
+            const vectorSlider = document.querySelector('#hybrid-weights input[type="range"]:first-child');
+            const keywordSlider = document.querySelector('#hybrid-weights input[type="range"]:last-child');
+
+            if (changed === vectorSlider || !changed) {
+                keywordSlider.value = Math.round((total - parseFloat(vectorSlider.value)) * 10) / 10;
+                if (keywordSlider.value < 0) keywordSlider.value = 0;
+            } else {
+                vectorSlider.value = Math.round((total - parseFloat(keywordSlider.value)) * 10) / 10;
+                if (vectorSlider.value < 0) vectorSlider.value = 0;
+            }
+            document.getElementById('val-vector-weight').textContent = parseFloat(vectorSlider.value).toFixed(1);
+            document.getElementById('val-keyword-weight').textContent = parseFloat(keywordSlider.value).toFixed(1);
+        }
+
+        function toggleRerank() {
+            const enabled = document.getElementById('rerank-enabled').checked;
+            const config = document.getElementById('rerank-config');
+            config.style.opacity = enabled ? '1' : '0.4';
+            config.style.pointerEvents = enabled ? 'auto' : 'none';
+        }
+
+        // ── 加载配置 ──
+        async function loadConfig() {
+            try {
+                const res = await fetch(`${API_BASE}/api/config`, {
+                    headers: { 'Authorization': `Bearer ${authToken()}` }
+                });
+                if (res.status === 401) { localStorage.removeItem('auth_token'); window.location.href = 'admin-login.html'; return; }
+                const cfg = await res.json();
+
+                // 分块
+                document.getElementById('val-chunk-size').textContent = cfg.chunk_size || 500;
+                document.querySelector('input[type="range"][min="200"]').value = cfg.chunk_size || 500;
+                document.getElementById('val-overlap').textContent = cfg.chunk_overlap || 50;
+                document.querySelector('input[type="range"][min="0"]').value = cfg.chunk_overlap || 50;
+
+                // Embedding
+                document.getElementById('embedding-model').value = cfg.embedding_model || 'text-embedding-3-small';
+
+                // 检索
+                document.getElementById('config-topk').value = cfg.top_k || 4;
+                const threshold = cfg.threshold || 0;
+                document.getElementById('config-threshold').value = threshold;
+                document.getElementById('val-threshold').textContent = threshold;
+
+                // 检索策略
+                const strategy = cfg.retrieval_strategy || 'hybrid';
+                const radio = document.querySelector(`input[name="retrieval_strategy"][value="${strategy}"]`);
+                if (radio) radio.checked = true;
+                toggleStrategy();
+                if (cfg.vector_weight !== undefined) {
+                    const sliders = document.querySelectorAll('#hybrid-weights input[type="range"]');
+                    sliders[0].value = cfg.vector_weight;
+                    sliders[1].value = cfg.keyword_weight || (1 - cfg.vector_weight);
+                    document.getElementById('val-vector-weight').textContent = parseFloat(cfg.vector_weight).toFixed(1);
+                    document.getElementById('val-keyword-weight').textContent = parseFloat(sliders[1].value).toFixed(1);
+                }
+
+                // Rerank
+                document.getElementById('rerank-enabled').checked = cfg.rerank_enabled || false;
+                if (cfg.rerank_model) document.getElementById('rerank-model').value = cfg.rerank_model;
+                document.getElementById('rerank-topk').value = cfg.rerank_top_k || 3;
+                toggleRerank();
+
+                // 生成模型
+                if (cfg.llm_provider) {
+                    document.getElementById('llm-provider').value = cfg.llm_provider;
+                }
+                onProviderChange();
+                if (cfg.llm_model) {
+                    document.getElementById('llm-model').value = cfg.llm_model;
+                    updateModelDesc();
+                }
+                if (cfg.api_base) {
+                    document.getElementById('api-base').value = cfg.api_base;
+                }
+                if (cfg.api_key) {
+                    document.getElementById('api-key').value = cfg.api_key;
+                    document.getElementById('api-key').placeholder = '输入新密钥覆盖现有配置';
+                }
+                document.getElementById('max-tokens').value = cfg.max_tokens || 2048;
+                const temp = cfg.temperature || 0;
+                document.getElementById('config-temp2').value = temp;
+                document.getElementById('val-temp2').textContent = temp;
+                if (cfg.system_prompt) {
+                    document.getElementById('system-prompt').value = cfg.system_prompt;
+                }
+
+                // OpenAI 密钥状态
+                const keyStatus = document.getElementById('key-status');
+                const keyDot = document.getElementById('key-dot');
+                const keyText = document.getElementById('key-text');
+                if (cfg.openai_key_configured) {
+                    keyStatus.className = 'flex items-center gap-2 p-3 rounded-lg border bg-emerald-50 border-emerald-100';
+                    keyDot.className = 'w-2 h-2 bg-emerald-500 rounded-full';
+                    keyText.className = 'text-xs text-emerald-700 font-medium';
+                    keyText.textContent = '已配置';
+                } else {
+                    keyStatus.className = 'flex items-center gap-2 p-3 rounded-lg border bg-rose-50 border-rose-100';
+                    keyDot.className = 'w-2 h-2 bg-rose-500 rounded-full';
+                    keyText.className = 'text-xs text-rose-700 font-medium';
+                    keyText.textContent = '未配置';
+                }
+            } catch (e) {
+                console.error('Failed to load config:', e);
+            }
+        }
+
+        // ── 保存配置 ──
+        async function saveConfig() {
+            const strategy = document.querySelector('input[name="retrieval_strategy"]:checked');
+            const vectorSlider = document.querySelectorAll('#hybrid-weights input[type="range"]');
+
+            const data = {
+                chunk_size: parseInt(document.querySelector('input[type="range"][min="200"]').value),
+                chunk_overlap: parseInt(document.querySelector('input[type="range"][min="0"]').value),
+                embedding_model: document.getElementById('embedding-model').value,
+                top_k: parseInt(document.getElementById('config-topk').value),
+                temperature: parseFloat(document.getElementById('config-temp2').value),
+                threshold: parseFloat(document.getElementById('config-threshold').value),
+                retrieval_strategy: strategy ? strategy.value : 'hybrid',
+                vector_weight: parseFloat(vectorSlider[0].value),
+                keyword_weight: parseFloat(vectorSlider[1].value),
+                rerank_enabled: document.getElementById('rerank-enabled').checked,
+                rerank_model: document.getElementById('rerank-model').value,
+                rerank_top_k: parseInt(document.getElementById('rerank-topk').value),
+                llm_provider: document.getElementById('llm-provider').value,
+                llm_model: document.getElementById('llm-model').value,
+                api_base: document.getElementById('api-base').value,
+                max_tokens: parseInt(document.getElementById('max-tokens').value),
+                system_prompt: document.getElementById('system-prompt').value,
+            };
+
+            const apiKey = document.getElementById('api-key').value;
+            if (apiKey) data.api_key = apiKey;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken()}` },
+                    body: JSON.stringify(data),
+                });
+                if (res.status === 401) { localStorage.removeItem('auth_token'); window.location.href = 'admin-login.html'; return; }
+                const result = await res.json();
+                alert(result.message || '配置已保存');
+            } catch (e) {
+                alert('保存失败，请检查后端服务是否运行');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_username');
+            localStorage.removeItem('auth_role');
+            window.location.href = 'admin-login.html';
+        }
+
+        // ── 初始化 ──
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            document.getElementById('llm-model').addEventListener('change', updateModelDesc);
+            document.getElementById('api-base').addEventListener('input', function() {
+                this.dataset.userModified = 'true';
+            });
+        });
+    </script>
+</body>
+</html>
