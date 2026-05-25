@@ -1,12 +1,22 @@
 [
   {
+    "id": "u0",
+    "username": "admin",
+    "display_name": "管理员",
+    "role": "超级管理员",
+    "department": "管理层",
+    "status": "正常",
+    "last_login": "2026-05-25 15:10:34",
+    "password": "admin123"
+  },
+  {
     "id": "u1",
     "username": "chen_admin",
     "display_name": "陈经理",
     "role": "超级管理员",
     "department": "管理层",
     "status": "正常",
-    "last_login": "2024-03-22 10:15",
+    "last_login": "2026-05-25 01:11:48",
     "password": "admin123"
   },
   {
@@ -27,7 +37,7 @@
     "role": "普通用户",
     "department": "IT技术部",
     "status": "正常",
-    "last_login": "-"
+    "last_login": "2026-05-25 01:05:01"
   },
   {
     "id": "u982813c4",
