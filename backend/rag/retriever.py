@@ -44,7 +44,7 @@ def _keyword_search(query: str, k: int) -> List[Tuple[Document, float]]:
     """BM25 keyword search with jieba Chinese tokenization."""
     _build_bm25_index()
 
-    if _bm25_index is None or _bm25_index.doc_count == 0:
+    if _bm25_index is None:
         return []
 
     query_tokens = list(jieba.cut(query))
